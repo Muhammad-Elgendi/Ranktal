@@ -1,0 +1,493 @@
+.report-container {
+    position: relative;
+    height: 500px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+}
+.progress span {
+    position: absolute;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    color: #ffffff;
+}
+.my-nav {
+    padding: 0;
+    /*direction: rtl;*/
+}
+
+
+#overallscore {
+    text-align: center;
+    font-size: 30pt;
+}
+.seoBox-title{
+    font-size: 20px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 10px 0 10px;
+    background-color: #F5F5F5;
+}
+
+#score {
+    text-align: center;
+    font-size: 15pt;
+}
+
+#scoreRow {
+    margin-top: 15px;
+}
+
+#url-container {
+    direction: ltr;
+    font-size: 15pt;
+    overflow: hidden;
+}
+
+.container {
+    border: 1px solid #b1b7ba;
+    margin-top: 30px;
+    padding: 10px 10px 10px 10px;
+}
+
+.success {
+    height: 40px;
+    background: #e8f9e0;
+    border: #91c89c solid 1px;
+    border-radius: 5px;
+    box-sizing: unset;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.fail {
+    height: 40px;
+    background: #f9e4e1;
+    border: #fca88a solid 1px;
+    border-radius: 5px;
+    box-sizing: unset;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.warn {
+    background: #e3e3e3;
+    height: 40px;
+    border: #b2b2b2 solid 1px;
+    border-radius: 5px;
+    box-sizing: unset;
+    margin-bottom: 10px;
+    margin-top: 20px;
+}
+
+.big-success {
+    color: #2ca02c;
+    font-size: 30px;
+    padding: 4px 5px 0px 0px;
+
+}
+
+.big-fail {
+    color: #f44b5e;
+    font-size: 30px;
+    padding: 4px 5px 0px 0px;
+}
+
+.big-warn {
+    color: #b1b7ba;
+    font-size: 30px;
+    padding: 4px 5px 0px 0px;
+}
+
+.success-mark {
+    color: #2ca02c;
+    font-size: 20px;
+    padding-right: 5px;
+}
+
+.fail-mark {
+    color: #f44b5e;
+    font-size: 20px;
+    padding-right: 5px;
+}
+
+.warn-mark {
+    color: #b1b7ba;
+    font-size: 20px;
+    padding-right: 5px;
+}
+
+.clear {
+    clear: both;
+}
+
+.padding-bottom {
+    padding-bottom: 25px;
+}
+
+.info {
+    float: right;
+    margin-left: 5px;
+}
+
+.padding-top {
+    padding-top: 5px;
+}
+
+.my-blue {
+    color: #0C5460;
+}
+
+.col1links {
+    width: 50%;
+    direction: ltr;
+}
+
+.col2links {
+    width: 42%;
+}
+
+.col3links {
+    width: 8%;
+}
+
+.col1bklinks {
+    width: 40%;
+    direction: ltr;
+}
+
+.col2bklinks {
+    width: 40%;
+    direction: ltr;
+}
+
+.col3bklinks {
+    width: 20%;
+}
+
+.col1pmDesk{
+    width: 50%;
+}
+.col2pmDesk{
+    width: 50%;
+}
+
+.center {
+    text-align: center;
+}
+
+.center-block {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.item-title {
+font-size: 23px;
+padding: 3px 15px 5px 5px;
+margin: 0 auto;
+width: fit-content !important;
+float: right;
+}
+
+.item-name {
+font-size: 20px;
+font-weight: bold;
+margin: 0 0 1rem 10px;
+width: fit-content !important;
+float: right;
+}
+
+.right-paragraph {
+float: right;
+}
+
+.transparency
+{
+    /* Match size of container, and make the layer transparent */
+    /*position: fixed;*/
+    /*width:300px;*/
+    /*height:500px;*/
+    /*background-color: grey; !* Any base color will do *!*/
+    filter:alpha(opacity=70);
+    opacity: 0.7;
+    -moz-opacity: 0.7;
+    -khtml-opacity:0.7;
+}
+
+.hidden-item{
+    display: none;
+}
+
+.my-row:nth-child(even) {
+background-color: #dddddd;
+}
+
+#link-table {
+/*font-family: arial, sans-serif;*/
+border-collapse: collapse;
+table-layout: fixed;
+width: 100%;
+word-wrap: break-word;
+}
+
+.table-data {
+border: 1px solid #dddddd;
+text-align: center;
+padding: 8px;
+#overflow: hidden;
+#text-overflow: ellipsis;
+}
+
+.mobileView img {
+    background-color: #ffffff;
+    border: 1px solid #c3e8f4;
+    border-radius: 5px;
+    box-shadow: 0 0 0 4px #f0fbff;
+    box-sizing: border-box;
+    color: #111111;
+    padding: 5px 10px;
+}
+
+.my-img {
+    max-width: 100%;
+    height: auto;
+}
+
+#screen img {
+    height: 142px;
+    margin: 9px 9px 0 10px;
+    width: 231px;
+}
+
+#screen .loading{
+    margin: 53px 5px 0 10px;
+    height: auto;
+    width: auto;
+}
+
+#screen .computer {
+    background: rgba(0, 0, 0, 0) url(../img/screen.png) no-repeat scroll left top;
+    height: 219px;
+    /*left: 0;*/
+    /*position: absolute;*/
+    /*top: 0;*/
+    width: 250px;
+}
+
+/*bilal touches*/
+
+.text-success {
+    color: #2ecc71;
+}
+#overallscore {
+    color: #2ecc71;
+}
+.big-success {
+    color: #2ecc71;
+}
+.success-mark {
+    color: #2ecc71;
+}
+/* Make it one degree of color
+    3C8DBC
+ */
+.alert-info {
+    background-color: #3C8DBC !important;
+    /*color: #31708f !important ;*/
+}
+
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+    background-color: #3C8DBC;
+    color: #FFFFFF;
+}
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+    background-color: #3C8DBC;
+    color: #FFFFFF;
+}
+
+.skin-blue .main-header .navbar {
+    background-color: #3c8dbc;
+}
+
+.progress-bar-success {
+    background-color: #2ecc71;
+}
+
+.progress-bar-striped{
+    background-image: -webkit-linear-gradient(45deg,rgba(39, 174, 96,1.0) 25%,transparent 25%,transparent 50%,rgba(39, 174, 96,1.0) 50%,rgba(39, 174, 96,1.0) 75%,transparent 75%,transparent);
+    background-image: -o-linear-gradient(45deg,rgba(39, 174, 96,1.0) 25%,transparent 25%,transparent 50%,rgba(39, 174, 96,1.0) 50%,rgba(39, 174, 96,1.0) 75%,transparent 75%,transparent);
+    background-image: linear-gradient(45deg,rgba(39, 174, 96,1.0) 25%,transparent 25%,transparent 50%,rgba(39, 174, 96,1.0) 50%,rgba(39, 174, 96,1.0) 75%,transparent 75%,transparent);
+    -webkit-background-size: 40px 40px;
+    background-size: 40px 40px;
+}
+
+.progress span {
+    /*color: #ffffff;*/
+    /*-webkit-text-fill-color: white; !* Will override color (regardless of order) *!*/
+    /*-webkit-text-stroke-width: 1px;*/
+    /*-webkit-text-stroke-color: #2ecc71;*/
+    /*color: white;*/
+    /*!*font-size: em;*!*/
+    /*-webkit-text-stroke: 1px #2ecc71;*/
+}
+
+
+.scoreProgress-label, .scoreProgress {
+    border-radius: 11px;
+    box-shadow: none;
+    display: inline-block;
+    vertical-align: middle;
+}
+.scoreProgress-label {
+    color: #514949;
+    font-size: 15px;
+    font-weight: 300;
+}
+.scoreProgress-bar {
+    background-color: #ced0d4;
+    border: 1px solid #428bca;
+    border-radius: 11px;
+    box-shadow: none;
+    height: 24px;
+    margin: -1px;
+}
+.scoreProgress {
+    background-color: #F5F5F5;
+    border: 1px solid #e6e9ed;
+    box-shadow: none;
+    display: inline-block;
+    margin-bottom: 0;
+    overflow: visible;
+    vertical-align: middle;
+}
+.scoreProgress .scoreProgress-value {
+    display: inline;
+}
+.scoreProgress.scoreProgress-xxs {
+    height: 1px;
+}
+.scoreProgress.scoreProgress-xxs .scoreProgress-bar {
+    border-radius: 0;
+    border-top: medium none;
+    height: 0;
+    position: relative;
+}
+.scoreProgress.scoreProgress-xxs .scoreProgress-value {
+    display: none;
+}
+.scoreProgress.scoreProgress-xs {
+    width: 150px;
+    height: 8px;
+}
+.scoreProgress.scoreProgress-xs .scoreProgress-bar {
+    height: 8px;
+    min-width: 8px;
+}
+.scoreProgress.scoreProgress-xs .scoreProgress-value {
+    display: none;
+}
+.scoreProgress.scoreProgress-sm {
+    height: 12px;
+}
+.scoreProgress.scoreProgress-sm .scoreProgress-bar {
+    height: 12px;
+    min-width: 12px;
+}
+.scoreProgress.scoreProgress-sm .scoreProgress-bar {
+    font-size: 10px;
+    line-height: 10px;
+}
+.scoreProgress.scoreProgress-md {
+    height: 18px;
+}
+.scoreProgress.scoreProgress-md .scoreProgress-bar {
+    height: 18px;
+    min-width: 18px;
+}
+.scoreProgress.scoreProgress-md .scoreProgress-bar {
+    font-size: 14px;
+    line-height: 16px;
+}
+.scoreProgress.scoreProgress-visible-value .scoreProgress-bar {
+    overflow: visible;
+    position: relative;
+}
+.scoreProgress.scoreProgress-visible-value .scoreProgress-value {
+    box-shadow: 0 0 10px 1px #428bca;
+    display: block;
+    height: 1px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 1px;
+}
+.scoreProgress-success .scoreProgress-bar {
+    background-color: #d7edd3;
+    border-color: #27ae60;
+    color: #27ae60;
+}
+.scoreProgress-warning .scoreProgress-bar {
+    background-color: #fee6c6;
+    border-color: #f39c12;
+    color: #f39c12;
+}
+.scoreProgress-danger .scoreProgress-bar {
+    background-color: #f6d4d3;
+    border-color: #e74b3b;
+    color: #e74b3b;
+}
+
+.my-indicator{
+    padding-left: 20px;
+}
+.margin-bottom{
+    margin-bottom: 11px;
+}
+.margin-top{
+    margin-bottom: 11px;
+}
+.my-time-dashboard{
+    padding-right: 32px;
+}
+.btn-success {
+    background-color: #27ae60;
+    border-color: #008d4c;
+}
+
+.my-icon{
+    padding-right: 15px;
+}
+
+#download-btn{
+    display: none;
+}
+#reanalyse-btn{
+    display: none;
+}
+
+@media print {
+
+}
+
+/*#section1 {*/
+/*padding-top: 50px;*/
+/*height: 500px;*/
+/*color: #fff;*/
+/*background-color: #1E88E5;*/
+/*}*/
+
+/*#section2 {*/
+/*padding-top: 50px;*/
+/*height: 500px;*/
+/*color: #fff;*/
+/*background-color: #673ab7;*/
+/*}*/
+
+/*#section3 {*/
+/*padding-top: 50px;*/
+/*height: 500px;*/
+/*color: #fff;*/
+/*background-color: #ff9800;*/
+/*}*/
