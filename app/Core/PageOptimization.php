@@ -11,11 +11,12 @@ require 'vendor/autoload.php';
  **/
 
 
-$p =new PageOptimization("https://lovejinju.net");
+$p =new PageOptimization("https://lovejinju.net",'متجري');
 
 var_dump( $p->isAccessible );
-var_dump( $p->isAllowedFromRobots() );
-var_dump( $p->isAllowedFromPage() );
+var_dump( $p->isKeywordStuffTitle );
+// var_dump( $p->isAllowedFromRobots() );
+// var_dump( $p->isAllowedFromPage() );
  class PageOptimization{
 
     private $url;
@@ -28,10 +29,28 @@ var_dump( $p->isAllowedFromPage() );
     
     public $isAccessible;
 
-    function __construct($url){
+    private $keyword;
+
+    public $isKeywordStuffTitle;
+
+    public $isMultiTitle;
+
+    public $isOneCanonical;
+
+    public $isBroadKeywordTitle;
+
+    public $isGoodTitleLength;
+
+    public $isKeywordInTitle;
+
+
+
+    function __construct($url,$keyword){
         $this->url = $url;
+        $this->keyword = $keyword;
         $this->connectPage();
-        $this->isAccessible = ($this->httpCode != 200) && $this->isAllowedFromRobots() && $this->isAllowedFromPage();   
+        $this->isAccessible = ($this->httpCode == 200) && $this->isAllowedFromRobots() && $this->isAllowedFromPage();
+        $this->setTitleChecks();   
 
     }
 
@@ -80,7 +99,7 @@ var_dump( $p->isAllowedFromPage() );
     private function connectPage(){        
         $ch = curl_init($this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        // curl_setopt($ch, CURLOPT_VERBOSE, 1);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         
         $response = curl_exec($ch);
@@ -124,9 +143,11 @@ var_dump( $p->isAllowedFromPage() );
             }   
         }
         $links=$doc->getElementsByTagName('link');
+        $canonicalCount = 0;
         $pathOfUrl = parse_url($this->url, PHP_URL_PATH);
         foreach($links as $link){
-            if ($link->getAttribute('rel')=="canonical"){  
+            if ($link->getAttribute('rel')=="canonical"){
+                $canonicalCount++;
                 $href = $link->getAttribute('href'); 
                 $pathOfCanonical = parse_url($href, PHP_URL_PATH);
                 if($pathOfCanonical === $pathOfUrl){          
@@ -134,7 +155,22 @@ var_dump( $p->isAllowedFromPage() );
                 }    
             }               
         }
+        $this->isOneCanonical = $canonicalCount == 1;
         return true;
+    }
+
+    private function setTitleChecks(){
+        $doc = new \DOMDocument();
+		libxml_use_internal_errors(true);
+		$doc->loadHTML($this->doc);
+		libxml_use_internal_errors(false);
+        $titles=$doc->getElementsByTagName('title');
+        $firstTitle = $titles->item(0)->nodeValue;
+        $this->isKeywordStuffTitle = substr_count ( $firstTitle, $this->keyword ) > 2;
+        $this->isMultiTitle =  $titles->length > 1;
+        $this->isBroadKeywordTitle = stripos ( $firstTitle , $this->keyword ) === 0 ;
+        $this->isGoodTitleLength = mb_strlen($firstTitle,'utf8') <= 60;
+        $this->isKeywordInTitle = strpos($this->keyword,$firstTitle) !== false  ;      
     }
 
      
