@@ -10,7 +10,13 @@ require 'vendor/autoload.php';
  * 
  **/
 
+
+$p =new PageOptimization();
+$p->isAllowedFromPage('https://lovejinju.net');
+
  class PageOptimization{
+
+    private $doc;
 
     function __constructor(){
 
@@ -49,38 +55,61 @@ require 'vendor/autoload.php';
         }
     }
 
-    private function get_headers_from_curl_response($response){
-    $headers = array();
+    // private function get_headers_from_curl_response($response){
+    // $headers = array();
 
-    $header_text = substr($response, 0, strpos($response, "\r\n\r\n"));
+    // $header_text = substr($response, 0, strpos($response, "\r\n\r\n"));
 
-    foreach (explode("\r\n", $header_text) as $i => $line)
-        if ($i === 0)
-            $headers['http_code'] = $line;
-        else
-        {
-            list ($key, $value) = explode(': ', $line);
+    // foreach (explode("\r\n", $header_text) as $i => $line)
+    //     if ($i === 0)
+    //         $headers['http_code'] = $line;
+    //     else
+    //     {
+    //         list ($key, $value) = explode(': ', $line);
 
-            $headers[$key] = $value;
-        }
+    //         $headers[$key] = $value;
+    //     }
 
-    return $headers;
-    }
+    // return $headers;
+    // }
 
-    private function isAllowedFromPage(){
-        $ch = curl_init();
+    public function isAllowedFromPage($url){
+        $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_VERBOSE, 1);
         curl_setopt($ch, CURLOPT_HEADER, 1);
-        // ...
         
         $response = curl_exec($ch);
         
         // Then, after your curl_exec call:
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        if($httpcode != 200){
+            return false;
+        }
         $header = substr($response, 0, $header_size);
+        foreach (explode("\r\n", $header) as $i => $line){
+            if($i != 0){
+                list ($key, $value) = explode(': ', $line);
+                if($key == "X-Robots-Tag"){
+                    if(stripos($value,'noindex') !== false || stripos($value,'none') !== false ){
+                        return false;
+                    }
+                }    
+            }
+        }       
         $body = substr($response, $header_size);
+        $this->doc = new \DOMDocument;
+        libxml_use_internal_errors(true);
+        $this->doc->loadHTML($body);
+        libxml_use_internal_errors(false);
+        // $body=$this->doc->getElementsByTagName('body')->item(0);
+        // var_dump($body);
+
+        //meta robots 
+        //meta refresh
+        //meta canonical URL
     }
      
  }
+
