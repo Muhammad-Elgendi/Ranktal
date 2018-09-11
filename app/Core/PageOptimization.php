@@ -12,36 +12,54 @@ require 'vendor/autoload.php';
 
 
 $p =new PageOptimization("https://lovejinju.net",'متجري');
+var_dump(get_object_vars($p));
 
-var_dump( $p->isAccessible );
-var_dump( $p->isKeywordStuffTitle );
-// var_dump( $p->isAllowedFromRobots() );
-// var_dump( $p->isAllowedFromPage() );
+
  class PageOptimization{
 
     private $url;
 
     private $httpCode;
 
-    private $header;
+    public $header;
 
     private $doc;
-    
-    public $isAccessible;
 
     private $keyword;
 
+    //Accessible to Search Engines
+    public $isAccessible;    
+
+    //Avoid Keyword Stuffing in Page Title
     public $isKeywordStuffTitle;
 
+    //Avoid Multiple Page Title Elements
     public $isMultiTitle;
 
+    //Only One Canonical URL
     public $isOneCanonical;
 
+    //Broad Keyword Use in Page Title
     public $isBroadKeywordTitle;
 
+    //Optimal Page Title Length
     public $isGoodTitleLength;
 
+    //Exact Keyword is Used in Page Title
     public $isKeywordInTitle;
+
+    //Exact Keyword Used in Document at Least Once
+    public $isExactKeywordInDoc;
+
+    //Avoid Keyword Stuffing in Document
+    public $isKeywordStuffDoc;
+
+    //Sufficient Characters in Content
+    public $isSufficientCharInContent;
+
+    //Sufficient Words in Content
+    public $isSufficientWordsInContent;
+    
 
 
 
@@ -50,7 +68,8 @@ var_dump( $p->isKeywordStuffTitle );
         $this->keyword = $keyword;
         $this->connectPage();
         $this->isAccessible = ($this->httpCode == 200) && $this->isAllowedFromRobots() && $this->isAllowedFromPage();
-        $this->setTitleChecks();   
+        $this->setTitleChecks();
+        $this->setContentChecks();   
 
     }
 
@@ -96,6 +115,16 @@ var_dump( $p->isKeywordStuffTitle );
             return true;        
     }
 
+    public function get_headers_into_array($header_text) { 
+        $headers = array();
+        foreach (explode("\r\n", $header_text) as $i => $line) 
+             if ($i !== 0 && !empty($line)){ 
+                  list ($key, $value) = explode(': ', $line);
+                  $headers[$key][] = $value; 
+             } 
+        return $headers; 
+    }
+
     private function connectPage(){        
         $ch = curl_init($this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -106,21 +135,19 @@ var_dump( $p->isKeywordStuffTitle );
         
         // Then, after your curl_exec call:
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $this->httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);       
-        $this->header = substr($response, 0, $header_size);
+        $this->httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); 
+        $header = substr($response, 0, $header_size);      
+        $this->header = $this->get_headers_into_array($header);
         $body = substr($response, $header_size);
         $this->doc = $body;       
     }
 
-    public function isAllowedFromPage(){
-        foreach (explode("\r\n", $this->header) as $i => $line){
-            if($i != 0){
-                list ($key, $value) = explode(': ', $line);
-                if($key == "X-Robots-Tag"){
-                    if(stripos($value,'noindex') !== false || stripos($value,'none') !== false ){                        
-                        return false;
-                    }
-                }    
+    public function isAllowedFromPage(){        
+        if(isset($this->header['X-Robots-Tag'])){
+            foreach($this->header['X-Robots-Tag'] as $value){
+                if(stripos($value,'noindex') !== false || stripos($value,'none') !== false ){                        
+                    return false;
+                }
             }
         }
         $doc = new \DOMDocument();
@@ -173,6 +200,26 @@ var_dump( $p->isKeywordStuffTitle );
         $this->isKeywordInTitle = strpos($this->keyword,$firstTitle) !== false  ;      
     }
 
+    private function setContentChecks(){
+        $countOfKeywordInDoc = substr_count ( $this->doc, $this->keyword );
+        $this->isExactKeywordInDoc = $countOfKeywordInDoc > 1;
+        $this->isKeywordStuffDoc = $countOfKeywordInDoc > 15;
+        $doc = new \DOMDocument();
+		libxml_use_internal_errors(true);
+		$doc->loadHTML($this->doc);
+		libxml_use_internal_errors(false);
+        $body=$doc->getElementsByTagName('body')->item(0)->nodeValue;
+        $countOfBodyNoSpaces =  mb_strlen($body,'utf8') - substr_count($body, ' ');
+        $this->isSufficientCharInContent = $countOfBodyNoSpaces >= 300;
+        $word_count = str_word_count($body, 0);
+        $this->isSufficientWordsInContent = $word_count >= 50;
+
+
+    }
+
+    private function setKeywordsChecks(){
+
+    }
+
      
  }
-
