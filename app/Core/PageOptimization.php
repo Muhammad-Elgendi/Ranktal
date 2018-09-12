@@ -60,7 +60,14 @@ var_dump(get_object_vars($p));
     //Sufficient Words in Content
     public $isSufficientWordsInContent;
     
+    //Use Keywords in your URL
+    public $isKeywordInUrl;
 
+    //Optimal Use of Keywords in Header Tags
+    public $isGoodKeywordInHeader;
+
+    //Keywords in Image Alt Attribute
+    public $isKeywordInAlt;
 
 
     function __construct($url,$keyword){
@@ -68,9 +75,6 @@ var_dump(get_object_vars($p));
         $this->keyword = $keyword;
         $this->connectPage();
         $this->isAccessible = ($this->httpCode == 200) && $this->isAllowedFromRobots() && $this->isAllowedFromPage();
-        $this->setTitleChecks();
-        $this->setContentChecks();   
-
     }
 
     private function makeConnection($url){
@@ -154,7 +158,7 @@ var_dump(get_object_vars($p));
 		libxml_use_internal_errors(true);
 		$doc->loadHTML($this->doc);
 		libxml_use_internal_errors(false);
-        $metas=$doc->getElementsByTagName('meta');
+        $metas=$doc->getElementsByTagName('head')->item(0)->getElementsByTagName('meta');
         foreach($metas as $meta){
             if ($meta->getAttribute('name')=="robots"){
                 $content = $meta->getAttribute('content');
@@ -169,7 +173,7 @@ var_dump(get_object_vars($p));
                 }
             }   
         }
-        $links=$doc->getElementsByTagName('link');
+        $links=$doc->getElementsByTagName('head')->item(0)->getElementsByTagName('link');
         $canonicalCount = 0;
         $pathOfUrl = parse_url($this->url, PHP_URL_PATH);
         foreach($links as $link){
@@ -191,13 +195,13 @@ var_dump(get_object_vars($p));
 		libxml_use_internal_errors(true);
 		$doc->loadHTML($this->doc);
 		libxml_use_internal_errors(false);
-        $titles=$doc->getElementsByTagName('title');
+        $titles=$doc->getElementsByTagName('head')->item(0)->getElementsByTagName('title');
         $firstTitle = $titles->item(0)->nodeValue;
         $this->isKeywordStuffTitle = substr_count ( $firstTitle, $this->keyword ) > 2;
         $this->isMultiTitle =  $titles->length > 1;
         $this->isBroadKeywordTitle = stripos ( $firstTitle , $this->keyword ) === 0 ;
         $this->isGoodTitleLength = mb_strlen($firstTitle,'utf8') <= 60;
-        $this->isKeywordInTitle = strpos($this->keyword,$firstTitle) !== false  ;      
+        $this->isKeywordInTitle = stripos($this->keyword,$firstTitle) !== false  ;      
     }
 
     private function setContentChecks(){
@@ -217,9 +221,54 @@ var_dump(get_object_vars($p));
 
     }
 
-    private function setKeywordsChecks(){
+    private function setUrlChecks(){
+        $this->isKeywordInUrl = stripos($this->keyword,$this->url) !== false  ;
 
     }
 
+    private function setHeaderChecks(){
+        $doc = new \DOMDocument();
+		libxml_use_internal_errors(true);
+		$doc->loadHTML($this->doc);
+		libxml_use_internal_errors(false);
+        $heading1=$doc->getElementsByTagName('body')->item(0)->getElementsByTagName('h1');
+        if($heading1->length != 0){
+            $countOfUse = 0;
+            foreach($heading1 as $tag){
+                if(stripos ( $tag , $this->keyword ) === 0){
+                    $countOfUse++;                   
+                }
+            }
+            $this->isGoodKeywordInHeader = $countOfUse < 3;
+        }
+        else{
+            $this->isGoodKeywordInHeader = false;
+        }
+    }
+
+    public function setImagesChecks(){
+        $doc =new \DOMDocument();
+		libxml_use_internal_errors(true);
+		$doc->loadHTML($this->doc);
+		libxml_use_internal_errors(false);
+        $imageElements=$doc->getElementsByTagName('body')->item(0)->getElementsByTagName('img');
+        if($imageElements->length != 0){            
+            foreach($imageElements as $tag){
+                if(stripos ( $tag->getAttribute('alt') , $this->keyword ) !== false){
+                  $this->isKeywordInAlt = true ;
+                  break;                   
+                }
+            }            
+        }
+        else{
+            $this->isKeywordInAlt = false ;
+        }
+    }
+
+
+
+    private function setDescriptionChecks(){
+
+    }
      
  }
