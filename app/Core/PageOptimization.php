@@ -91,11 +91,29 @@ var_dump(get_object_vars($p));
     //URL Uses Only Standard Characters
     public $useStandardChar;
 
-    //Avoid Keyword Stuf ng in the URL
+    //Avoid Keyword Stuffing in the URL
     public $isKeywordStuffUrl;
 
     //Minimize URL Length
     public $isGoodUrlLength;
+
+    //Use Meta Descriptions
+    public $isUseDescription;
+
+    //Keywords in the Meta Description
+    public $isKeywordInDescription;
+
+    //Use External Links
+    public $isUseExternal;
+
+    //Only One Meta Description
+    public $isOneDescription;
+
+    //Optimal Meta Description Length
+    public $isGoodDescriptionLength;
+
+    //Includes a Rel Canonical Tag
+    public $isUseCanonical;        
 
     function __construct($url,$keyword){
         $this->url = $url;
@@ -198,8 +216,8 @@ var_dump(get_object_vars($p));
                 if(!empty($content) ){
                     return false;
                 }
-            }   
-        }
+            }
+        }        
         $links=$doc->getElementsByTagName('head')->item(0)->getElementsByTagName('link');
         $canonicalCount = 0;
         $pathOfUrl = parse_url($this->url, PHP_URL_PATH);
@@ -214,6 +232,7 @@ var_dump(get_object_vars($p));
             }               
         }
         $this->isOneCanonical = $canonicalCount == 1;
+        $this->isUseCanonical = $canonicalCount > 0;
         return true;
     }
 
@@ -299,6 +318,29 @@ var_dump(get_object_vars($p));
     
     public function setDescriptionChecks(){
 
+        $doc = new \DOMDocument();
+		libxml_use_internal_errors(true);
+		$doc->loadHTML($this->doc);
+		libxml_use_internal_errors(false);
+        $metas=$doc->getElementsByTagName('head')->item(0)->getElementsByTagName('meta');
+        $descriptionCount = 0;
+        $description ='';
+        foreach ($metas as $meta){
+            if ($meta->getAttribute('name')=="description"){
+                $descriptionCount++;
+                if($descriptionCount == 1){
+                    $description = $meta->getAttribute('content');
+                }            
+            }
+        }
+        
+        $this->isUseDescription = $descriptionCount != 0 && !empty($description);
+        $keywordCountInDescription = substr_count ( $description, $this->keyword );
+        $this->isKeywordInDescription = $keywordCountInDescription > 0 && $keywordCountInDescription < 4;
+        $this->isOneDescription = $descriptionCount == 1;
+        $descriptionLength = mb_strlen($description,'utf8');
+        $this->isGoodDescriptionLength = $descriptionLength > 54 && $descriptionLength < 300;
+
     }
 
     private function isExternal($url,$host) {
@@ -327,6 +369,7 @@ var_dump(get_object_vars($p));
             }
             $internals = $ahrefs->length - $externals;
             $this->isManyExternal = $externals > 99;
+            $this->isUseExternal = $externals > 0;
             $this->isManyInternal = $internals > 99;            
         }
     }
