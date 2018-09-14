@@ -12,10 +12,20 @@ require 'vendor/autoload.php';
 
 
 $p =new PageOptimization("https://lovejinju.net",'متجري');
+
+$class_methods = get_class_methods($p);
+
+foreach ($class_methods as $method_name) {
+    if($method_name != "__construct")
+        $p->$method_name();
+}
+
 var_dump(get_object_vars($p));
 
 
  class PageOptimization{
+
+     //TODO use parse_url once and deal with NULL if component is not existed
 
     private $url;
 
@@ -69,6 +79,23 @@ var_dump(get_object_vars($p));
     //Keywords in Image Alt Attribute
     public $isKeywordInAlt;
 
+    //Avoid Too Many External Links
+    public $isManyExternal;
+
+    //Avoid Too Many Internal Links
+    public $isManyInternal;
+
+    //Use Static URLs
+    public $isStaticUrl;
+
+    //URL Uses Only Standard Characters
+    public $useStandardChar;
+
+    //Avoid Keyword Stuf ng in the URL
+    public $isKeywordStuffUrl;
+
+    //Minimize URL Length
+    public $isGoodUrlLength;
 
     function __construct($url,$keyword){
         $this->url = $url;
@@ -102,7 +129,7 @@ var_dump(get_object_vars($p));
         }
     }  
 
-    public function isAllowedFromRobots(){
+    private function isAllowedFromRobots(){
         $robotsContent = $this->getRobots();
 		if($robotsContent) {
             $parser = new \RobotsTxtParser($robotsContent);
@@ -119,7 +146,7 @@ var_dump(get_object_vars($p));
             return true;        
     }
 
-    public function get_headers_into_array($header_text) { 
+    private function get_headers_into_array($header_text) { 
         $headers = array();
         foreach (explode("\r\n", $header_text) as $i => $line) 
              if ($i !== 0 && !empty($line)){ 
@@ -146,7 +173,7 @@ var_dump(get_object_vars($p));
         $this->doc = $body;       
     }
 
-    public function isAllowedFromPage(){        
+    private function isAllowedFromPage(){        
         if(isset($this->header['X-Robots-Tag'])){
             foreach($this->header['X-Robots-Tag'] as $value){
                 if(stripos($value,'noindex') !== false || stripos($value,'none') !== false ){                        
@@ -190,7 +217,7 @@ var_dump(get_object_vars($p));
         return true;
     }
 
-    private function setTitleChecks(){
+    public function setTitleChecks(){
         $doc = new \DOMDocument();
 		libxml_use_internal_errors(true);
 		$doc->loadHTML($this->doc);
@@ -204,7 +231,7 @@ var_dump(get_object_vars($p));
         $this->isKeywordInTitle = stripos($this->keyword,$firstTitle) !== false  ;      
     }
 
-    private function setContentChecks(){
+    public function setContentChecks(){
         $countOfKeywordInDoc = substr_count ( $this->doc, $this->keyword );
         $this->isExactKeywordInDoc = $countOfKeywordInDoc > 1;
         $this->isKeywordStuffDoc = $countOfKeywordInDoc > 15;
@@ -221,12 +248,19 @@ var_dump(get_object_vars($p));
 
     }
 
-    private function setUrlChecks(){
+    public function setUrlChecks(){
         $this->isKeywordInUrl = stripos($this->keyword,$this->url) !== false  ;
-
+        $this->isStaticUrl = empty(parse_url($this->url, PHP_URL_QUERY));
+        $matchNonStandard = preg_match_all("/([^a-zA-Z\d\s,!.#+-:&])+/", $this->url, $output_array);
+        $this->useStandardChar = empty($output_array[0]);
+        $this->isKeywordStuffUrl = substr_count ( $this->url, $this->keyword ) > 1;
+        $path = parse_url($this->url, PHP_URL_PATH);
+        $formattedPath = rtrim($path, '/');
+        $folder_depth = substr_count($formattedPath , "/");
+        $this->isGoodUrlLength = mb_strlen($this->url,'utf8') < 75 && $folder_depth < 4;
     }
 
-    private function setHeaderChecks(){
+    public function setHeaderChecks(){
         $doc = new \DOMDocument();
 		libxml_use_internal_errors(true);
 		$doc->loadHTML($this->doc);
@@ -252,23 +286,49 @@ var_dump(get_object_vars($p));
 		$doc->loadHTML($this->doc);
 		libxml_use_internal_errors(false);
         $imageElements=$doc->getElementsByTagName('body')->item(0)->getElementsByTagName('img');
+        $this->isKeywordInAlt = false ;
         if($imageElements->length != 0){            
             foreach($imageElements as $tag){
                 if(stripos ( $tag->getAttribute('alt') , $this->keyword ) !== false){
                   $this->isKeywordInAlt = true ;
-                  break;                   
+                  return;                   
                 }
             }            
-        }
-        else{
-            $this->isKeywordInAlt = false ;
-        }
+        }       
+    }
+    
+    public function setDescriptionChecks(){
+
     }
 
+    private function isExternal($url,$host) {
+        $site = parse_url($url, PHP_URL_HOST);
+        // we will treat url like '/relative.php' as relative
+        if ( empty($site) ) return false;
+        // url host looks exactly like the local host
+        if ( strcasecmp($site, $host) === 0 ) return false; 
+        // check if the url host is a subdomain
+        return strrpos(strtolower($site), '.'.$host) !== strlen($site) - strlen('.'.$host);      
+    }
 
-
-    private function setDescriptionChecks(){
-
+    public function setLinksChecks(){
+        $doc =new \DOMDocument();
+		libxml_use_internal_errors(true);
+		$doc->loadHTML($this->doc);
+		libxml_use_internal_errors(false);
+        $ahrefs=$doc->getElementsByTagName('body')->item(0)->getElementsByTagName('a');
+        if($ahrefs->length != 0){
+            $host = parse_url($this->url, PHP_URL_HOST);
+            $externals = 0;
+            foreach($ahrefs as $ahref){
+              if($this->isExternal($ahref->getAttribute('href'), $host)){
+                $externals++;
+              }
+            }
+            $internals = $ahrefs->length - $externals;
+            $this->isManyExternal = $externals > 99;
+            $this->isManyInternal = $internals > 99;            
+        }
     }
      
  }
