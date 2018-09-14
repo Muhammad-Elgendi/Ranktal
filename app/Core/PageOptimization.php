@@ -11,7 +11,7 @@ require 'vendor/autoload.php';
  **/
 
 
-$p =new PageOptimization("https://lovejinju.net",'متجري');
+$p =new PageOptimization("https://is.net.sa","شركة تصميم مواقع");
 
 $class_methods = get_class_methods($p);
 
@@ -25,9 +25,9 @@ var_dump(get_object_vars($p));
 
  class PageOptimization{
 
-     //TODO use parse_url once and deal with NULL if component is not existed
-
     private $url;
+
+    private $parsedUrl;
 
     private $httpCode;
 
@@ -118,8 +118,7 @@ var_dump(get_object_vars($p));
     function __construct($url,$keyword){
         $this->url = $url;
         $this->keyword = $keyword;
-        $this->connectPage();
-        $this->isAccessible = ($this->httpCode == 200) && $this->isAllowedFromRobots() && $this->isAllowedFromPage();
+        $this->connectPage();        
     }
 
     private function makeConnection($url){
@@ -138,13 +137,11 @@ var_dump(get_object_vars($p));
     }
 
     private function getRobots(){
-        $robotsUrl=parse_url($this->url, PHP_URL_SCHEME).'://'.parse_url($this->url, PHP_URL_HOST).'/robots.txt';
-        $content=$this->makeConnection($robotsUrl);
-        if($content) {            
-            return $content;            
-        }else{
-            return false;
+        if(isset($this->parsedUrl["scheme"]) && isset($this->parsedUrl["host"])){
+            $robotsUrl=$this->parsedUrl["scheme"].'://'.$this->parsedUrl["host"].'/robots.txt';
+            return $this->makeConnection($robotsUrl);            
         }
+        return false;
     }  
 
     private function isAllowedFromRobots(){
@@ -152,7 +149,7 @@ var_dump(get_object_vars($p));
 		if($robotsContent) {
             $parser = new \RobotsTxtParser($robotsContent);
             $agents=['*','Googlebot','Bingbot','Slurp','DuckDuckBot','Baiduspider','YandexBot'];
-            $pathToPage = parse_url($this->url, PHP_URL_PATH);            
+            $pathToPage = isset($this->parsedUrl["path"]) ? $this->parsedUrl["path"] : '/';            
             foreach($agents as $agent){
                 $parser->setUserAgent($agent);         
                 if ($parser->isDisallowed($pathToPage)) {
@@ -174,7 +171,12 @@ var_dump(get_object_vars($p));
         return $headers; 
     }
 
-    private function connectPage(){        
+    private function connectPage(){
+        $parsedUrl = parse_url($this->url);
+        if(!$parsedUrl){
+            return;
+        }
+        $this->parsedUrl = $parsedUrl;        
         $ch = curl_init($this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         // curl_setopt($ch, CURLOPT_VERBOSE, 1);
@@ -191,7 +193,7 @@ var_dump(get_object_vars($p));
         $this->doc = $body;       
     }
 
-    private function isAllowedFromPage(){        
+    private function isAllowedFromPage(){
         if(isset($this->header['X-Robots-Tag'])){
             foreach($this->header['X-Robots-Tag'] as $value){
                 if(stripos($value,'noindex') !== false || stripos($value,'none') !== false ){                        
@@ -218,22 +220,38 @@ var_dump(get_object_vars($p));
                 }
             }
         }        
-        $links=$doc->getElementsByTagName('head')->item(0)->getElementsByTagName('link');
-        $canonicalCount = 0;
-        $pathOfUrl = parse_url($this->url, PHP_URL_PATH);
+        $links=$doc->getElementsByTagName('head')->item(0)->getElementsByTagName('link');       
+        $pathOfUrl =  isset($this->parsedUrl["path"]) ? $this->parsedUrl["path"] : '/';
         foreach($links as $link){
-            if ($link->getAttribute('rel')=="canonical"){
-                $canonicalCount++;
+            if ($link->getAttribute('rel')=="canonical"){              
                 $href = $link->getAttribute('href'); 
                 $pathOfCanonical = parse_url($href, PHP_URL_PATH);
-                if($pathOfCanonical === $pathOfUrl){          
+                if($pathOfCanonical !== $pathOfUrl){          
                     return false;            
                 }    
             }               
         }
+        return true;
+    }
+
+    public function setAccessibilityChecks(){
+        $this->isAccessible = ($this->httpCode == 200) && $this->isAllowedFromRobots() && $this->isAllowedFromPage();
+    }
+
+    public function setCanonicalChecks(){
+        $doc = new \DOMDocument();
+		libxml_use_internal_errors(true);
+		$doc->loadHTML($this->doc);
+		libxml_use_internal_errors(false);
+        $links=$doc->getElementsByTagName('head')->item(0)->getElementsByTagName('link');
+        $canonicalCount = 0;      
+        foreach($links as $link){
+            if ($link->getAttribute('rel')=="canonical"){
+                $canonicalCount++;                   
+            }               
+        }
         $this->isOneCanonical = $canonicalCount == 1;
         $this->isUseCanonical = $canonicalCount > 0;
-        return true;
     }
 
     public function setTitleChecks(){
@@ -269,11 +287,11 @@ var_dump(get_object_vars($p));
 
     public function setUrlChecks(){
         $this->isKeywordInUrl = stripos($this->keyword,$this->url) !== false  ;
-        $this->isStaticUrl = empty(parse_url($this->url, PHP_URL_QUERY));
+        $this->isStaticUrl = empty($this->parsedUrl["query"]);
         $matchNonStandard = preg_match_all("/([^a-zA-Z\d\s,!.#+-:&])+/", $this->url, $output_array);
         $this->useStandardChar = empty($output_array[0]);
         $this->isKeywordStuffUrl = substr_count ( $this->url, $this->keyword ) > 1;
-        $path = parse_url($this->url, PHP_URL_PATH);
+        $path = isset($this->parsedUrl["path"]) ? $this->parsedUrl["path"] : '/';
         $formattedPath = rtrim($path, '/');
         $folder_depth = substr_count($formattedPath , "/");
         $this->isGoodUrlLength = mb_strlen($this->url,'utf8') < 75 && $folder_depth < 4;
@@ -288,11 +306,11 @@ var_dump(get_object_vars($p));
         if($heading1->length != 0){
             $countOfUse = 0;
             foreach($heading1 as $tag){
-                if(stripos ( $tag , $this->keyword ) === 0){
+                if(stripos ( $tag->nodeValue , $this->keyword ) === 0){
                     $countOfUse++;                   
                 }
             }
-            $this->isGoodKeywordInHeader = $countOfUse < 3;
+            $this->isGoodKeywordInHeader =  $countOfUse > 0 && $countOfUse < 3;
         }
         else{
             $this->isGoodKeywordInHeader = false;
@@ -359,8 +377,8 @@ var_dump(get_object_vars($p));
 		$doc->loadHTML($this->doc);
 		libxml_use_internal_errors(false);
         $ahrefs=$doc->getElementsByTagName('body')->item(0)->getElementsByTagName('a');
-        if($ahrefs->length != 0){
-            $host = parse_url($this->url, PHP_URL_HOST);
+        if($ahrefs->length != 0 && isset($this->parsedUrl["host"])){
+            $host = $this->parsedUrl["host"];
             $externals = 0;
             foreach($ahrefs as $ahref){
               if($this->isExternal($ahref->getAttribute('href'), $host)){
@@ -372,6 +390,5 @@ var_dump(get_object_vars($p));
             $this->isUseExternal = $externals > 0;
             $this->isManyInternal = $internals > 99;            
         }
-    }
-     
+    }     
  }
