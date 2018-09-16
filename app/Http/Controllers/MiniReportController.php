@@ -28,8 +28,8 @@ class MiniReportController extends Controller
         $array=json_decode($json,true);
 
         foreach ($array as $url) {
-            $statement = DB::select("SHOW TABLE STATUS LIKE 'mini_reports'");
-            $nextId = $statement[0]->Auto_increment;
+            $statement = DB::select("SELECT nextval('mini_reports_id_seq');");
+            $nextId = $statement[0]+1;
             MakeMiniReport::dispatch($url, $nextId,true)->onQueue('bulk-reports');;
         }
 

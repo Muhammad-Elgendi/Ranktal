@@ -40,8 +40,8 @@ class reportController extends Controller
             return redirect('comprehensive-report/'.$report->id);
         }
 
-        $statement = DB::select("SHOW TABLE STATUS LIKE 'reports'");
-        $nextId = $statement[0]->Auto_increment;
+        $statement = DB::select("SELECT nextval('reports_id_seq');");
+        $nextId = (int)$statement[0]+1;
         MakeReport::dispatch($url,$nextId,true);
         return redirect('comprehensive-report/'.$nextId);
     }
