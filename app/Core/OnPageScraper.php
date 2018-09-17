@@ -11,76 +11,143 @@ require 'vendor/autoload.php';
  **/
 
 
-class OnPageChecks{
+class OnPageScraper{	
+	
+	private $parsedUrl;
 
-    private $doc;
+	private $httpCode;
+
+	private $header;
+
+	private $doc;
 
 	public $isMultiTitle;
 
 	public $title;
 
-	public $titleLength;
-
-	public $isGoodTitleLength;
-
-	public $isGoodTitle;
-
 	public $url;
 
 	public $urlStatus;
 
-    function __construct(){
+	public $description;
+
+	public $contentType;
+
+	public $charset;
+
+	public $viewport;
+
+	public $robotsMeta;
+
+	public $isMultiDescription;
+
+	public $xRobots;
+
+	public $refreshMeta;
+
+	public $refreshHeader;
+
+	public $canonical;
+
+    function __construct($url){
+		$this->url = $url;
+	}
 	
+	private function connectPage(){
+        $parsedUrl = parse_url($this->url);
+        if(!$parsedUrl){
+            return;
+        }
+        $this->parsedUrl = $parsedUrl;        
+        $ch = curl_init($this->url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        // curl_setopt($ch, CURLOPT_VERBOSE, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        
+        $response = curl_exec($ch);
+        
+        // Then, after your curl_exec call:
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $this->httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); 
+        $header = substr($response, 0, $header_size);      
+        $this->header = $this->get_headers_into_array($header);
+        $body = substr($response, $header_size);
+        $this->doc = $body;       
     }
     
-    public function setTitleChecks($html_code){
+    public function getTitleAttr(){
         $doc = new \DOMDocument;
 		libxml_use_internal_errors(true);
-		$doc->loadHTML($html_code);
+		$doc->loadHTML($this->doc);
 		libxml_use_internal_errors(false);
 		$count = $doc->getElementsByTagName('head')->item(0)->getElementsByTagName('title')->length;
 		$this->isMultiTitle = $count > 1;		
         $this->title=$doc->getElementsByTagName('head')->item(0)->getElementsByTagName('title')->item(0)->nodeValue;
-        $this->titleLength=mb_strlen($this->title,'utf8');
-		$this->isGoodTitleLength= $this->titleLength > 10 && $this->titleLength < 60;
-		$this->isGoodTitle = isset($this->title) && !$this->multiTitle && $this->isGoodTitleLength;
 	}
 
-	/**
-     * returns the Domain name of Url
-     * @param $url
-     * @return string
-     */
-	private function urlToDomain($url) {
-        if ( substr($url, 0, 8) == 'https://' ) {
-            $url = substr($url, 8);
-        }
-        if ( substr($url, 0, 7) == 'http://' ) {
-            $url = substr($url, 7);
-        }
-        if ( substr($url, 0, 4) == 'www.' ) {
-            $url = substr($url, 4);
-        }
-        if ( strpos($url, '/') !== false ) {
-            $explode = explode('/', $url);
-            $url     = $explode['0'];
-        }
-        return $url;
-   }
+	public function getUrlAttr(){
+		$this->url=rawurldecode($this->url);
+		$this->urlStatus = $this->httpCode;
+	}
 
-	public function setUrlChecks($url,$status){
-		$this->url=rawurldecode($url);
-		$this->urlStatus = $status;
-		// $this->domain=$this->urlToDomain($this->url);
-		// $this->urlLength=mb_strlen($this->url,'utf8');
-        // $this->domainLength=mb_strlen($this->domain,'utf8');
-		// $this->status=get_headers($this->url,1)[0];
-		// $this->google_cache_url='http://google.com/search?q=cache:'.$this->url;
-		// $this->count_of_spaces=substr_count($this->url, ' ');
-		// $this->isGoodUrlLength = $this->urlLength < 200;
-		// $this->isUrlHasSpaces = 	$this->count_of_spaces > 0;	
-		// $this->isUrlHasGoodStatus = $status==="200" || $status==="301" ||$status==="404"||$status==="503";
-		// $this->isGoodUrl =  $this->isGoodUrlLength && !$this->isUrlHasSpaces && $this->isUrlHasGoodStatus ;
+	public function getMetaAttr(){
+		$doc = new \DOMDocument;
+		libxml_use_internal_errors(true);
+		$doc->loadHTML($this->doc);
+		libxml_use_internal_errors(false);		
+		$items = $doc->getElementsByTagName('head')->item(0)>getElementsByTagName('meta');
+		$usesDescription=0;		
+		foreach ($items as $item) {
+			if ($item->getAttribute('name') == 'description'){
+				$usesDescription++;
+				if($usesDescription == 1){
+					$this->description = $item->getAttribute('content');
+				}
+			}
+			if ($item->getAttribute('http-equiv') == 'Content-Type'){				
+				$this->contentType = $item->getAttribute('content');
+				$this->charset = $item->getAttribute('charset');				
+			}
+			if ($item->getAttribute('name') == 'viewport'){				
+				$this->viewport = $item->getAttribute('content');
+			}
+			if ($item->getAttribute('name') == 'robots'){				
+				$this->robotsMeta = $item->getAttribute('content');
+			}
+			if ($meta->getAttribute('http-equiv')=="refresh"){
+                $this->refreshMeta = $meta->getAttribute('content');                
+            }    	
+		}
+		$this->isMultiDescription = $usesDescription > 1;
+	}
+
+	public function getHeaderAttr(){
+		if(isset($this->header['X-Robots-Tag'])){
+			$this->xRobots = '';
+            foreach($this->header['X-Robots-Tag'] as $value){
+                $this->xRobots +=' '.$value; 
+            }
+		}
+		if(isset($this->header['Refresh'])){
+			$this->refreshHeader ='';
+            foreach($this->header['Refresh'] as $value){
+				$this->refreshHeader +=' '.$value;   
+            }
+        }
+	}
+
+	public function getCanonicalAttr(){
+		$doc = new \DOMDocument;
+		libxml_use_internal_errors(true);
+		$doc->loadHTML($this->doc);
+		libxml_use_internal_errors(false);		
+		$items = $doc->getElementsByTagName('head')->item(0)->getElementsByTagName('link');
+		foreach ($items as $item) {
+			if ($item->getAttribute('rel') == 'canonical' && !empty($item->getAttribute('href'))){			    
+                $this->canonical = $item->getAttribute('href');
+        	    break;
+        	}
+		}
 	}
 
 

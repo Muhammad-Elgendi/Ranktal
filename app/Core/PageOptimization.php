@@ -201,6 +201,13 @@ var_dump(get_object_vars($p));
                 }
             }
         }
+        if(isset($this->header['Refresh'])){
+            foreach($this->header['Refresh'] as $value){
+                if(stripos($value,'url=') !== false){                        
+                    return false;
+                }
+            }
+        }
         $doc = new \DOMDocument();
 		libxml_use_internal_errors(true);
 		$doc->loadHTML($this->doc);
