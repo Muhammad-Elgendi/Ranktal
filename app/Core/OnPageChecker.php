@@ -77,6 +77,44 @@ class OnPageChecker{
     public $isViewportExist;
 
     public $isMetaContentTypeExist;
+//Page
+	public $canonical;
+
+	public $ratio;
+
+	public $language;
+
+    public $docType;
+    
+    public $isCanonicalExist;
+
+    public $isGoodTextHtmlRatio;
+
+    public $isLanguageExist;
+
+    public $isDocTypeExist;
+//Headers
+    public $h1;
+
+    public $h2;
+
+    public $h3;
+
+    public $h4;
+
+    public $h5;
+
+    public $h6;
+
+    public $isMultiH1;
+
+    public $isGoodHeader;
+//Images
+    public $alt;
+
+    public $emptyAlt;
+
+    public $isGoodImg;
 
     function __construct($json){
         $obj = json_decode($json);
@@ -133,6 +171,29 @@ class OnPageChecker{
         $this->isGoodDescription = $this->isGoodDescriptionLength && $this->isDescriptionExist && !$this->isMultiDescription;
         $this->isViewportExist=!empty($this->viewport);
         $this->isMetaContentTypeExist = !empty($this->contentType) && !empty($this->charset);
+    }
+
+    public function setPagechecks(){
+        $this->isCanonicalExist = !empty($this->canonical);
+        $this->isGoodTextHtmlRatio = $this->ratio > 25 && $this->ratio < 70;
+        $this->isLanguageExist = !empty($this->language);
+        $this->isDocTypeExist = !empty($this->docType);
+    }
+
+    private function getCountIfArray($var){
+        return is_array($var) ? count($var) : 0 ;        
+    }
+
+    public function setHeadersChecks(){
+        $countH1 = getCountIfArray($this->h1);
+        $this->isMultiH1 = $countH1 > 1;
+        $this->isGoodHeader = $countH1 > 0 && getCountIfArray($this->h2) > 0 && getCountIfArray($this->h3) > 0;
+    }
+
+    public function setImagesChecks(){
+        $countAlt = getCountIfArray($this->alt);
+        $countEmptyAlt = getCountIfArray($this->emptyAlt);
+        $this->isGoodImg = ($countAlt+$countEmptyAlt) > 0 && $countEmptyAlt === 0;
     }
 
     //TODO setAccessabilty checks robots+xrobots + meta refresh + refresh header + canonical URL

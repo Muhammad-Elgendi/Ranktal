@@ -282,10 +282,10 @@ class Check{
             if (!empty($iItem->nodeValue))
                 $this->iItems[] = $iItem->nodeValue;
         foreach ($emItems as $emItem)
-            if (!empty($emItems->nodeValue))
+            if (!empty($emItem->nodeValue))
                 $this->emItems[] = $emItem->nodeValue;
         foreach ($strongItems as $strongItem)
-            if (!empty($strongItems->nodeValue))
+            if (!empty($strongItem->nodeValue))
                 $this->strongItems[] = $strongItem->nodeValue;
     }
 
