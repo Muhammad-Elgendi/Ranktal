@@ -13,6 +13,14 @@ require 'vendor/autoload.php';
 
 class OnPageChecker{
 
+	public $parsedUrl;
+
+	public $httpCode;
+
+	public $header;
+
+	public $doc;
+
 //Title
     public $isMultiTitle;
 
@@ -115,6 +123,34 @@ class OnPageChecker{
     public $emptyAlt;
 
     public $isGoodImg;
+//Checks
+    public $ampLink;
+
+    public $og;
+
+    public $twitterCard;
+
+    public $framesCount;
+
+    public $bItems;
+
+    public $iItems;
+
+    public $emItems;
+
+    public $strongItems;
+
+    public $markedItems;
+
+    public $urlRedirects;
+
+    public $isFlashExist;
+
+    public $links;
+
+    public $isAllowedFromRobots;
+
+    public $isAccessible;
 
     function __construct($json){
         $obj = json_decode($json);
@@ -196,5 +232,44 @@ class OnPageChecker{
         $this->isGoodImg = ($countAlt+$countEmptyAlt) > 0 && $countEmptyAlt === 0;
     }
 
-    //TODO setAccessabilty checks robots+xrobots + meta refresh + refresh header + canonical URL
+    public function setChecks(){
+        $this->isFrameExist=$this->framesCount > 0;     
+        $this->isAmpCopyExist=!empty($this->ampLink);
+        $this->isOpenGraphExist=!empty($this->og);
+        $this->isTwitterCardExist=!empty($this->twitterCard);  
+        $this->isFormattedTextExist=!empty($this->bItems) || !empty($this->iItems) || !empty($this->emItems) || !empty($this->strongItems);
+    }
+
+    private function isAllowedFromPage(){
+        if(!empty($this->xRobots)){
+            if(stripos($value,'noindex') !== false || stripos($value,'none') !== false ){                        
+                return false;
+            }
+        }
+        if(!empty($this->robotsMeta)){
+            if(stripos($value,'noindex') !== false || stripos($value,'none') !== false ){                        
+                return false;
+            }
+        }
+        if(!empty($this->refreshHeader)){
+            if(stripos($value,'url=') !== false){                        
+                return false;
+            } 
+        }
+        if (!empty($this->refreshMeta)){  
+            if(stripos($value,'url=') !== false){                        
+                return false;
+            } 
+        }
+        $pathOfUrl =  isset($this->parsedUrl["path"]) ? $this->parsedUrl["path"] : '/';
+        $pathOfCanonical = parse_url($this->canonical, PHP_URL_PATH);
+        if($pathOfCanonical !== $pathOfUrl){          
+            return false;            
+        }
+        return true;
+    }
+
+    public function setAccessabiltyChecks(){
+        $this->isAccessible = ($this->httpCode == 200) && $this->isAllowedFromRobots && $this->isAllowedFromPage();
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Core;
 require 'vendor/autoload.php';
-
+use Illuminate\Contracts\Cache\Repository as Cache;
 /**
  *
  * Developed by :
@@ -10,16 +10,32 @@ require 'vendor/autoload.php';
  * 
  **/
 
+$p =new OnPageScraper("https://is.net.sa");
+
+$class_methods = get_class_methods($p);
+
+foreach ($class_methods as $method_name) {
+    if($method_name != "__construct")
+        $p->$method_name();
+}
+
+var_dump(get_object_vars($p));
+// var_dump($p->strongItems);
+ 
 
 class OnPageScraper{	
+	/**
+     * The cache instance.
+     */
+    protected $cache;
 	
-	private $parsedUrl;
+	public $parsedUrl;
 
-	private $httpCode;
+	public $httpCode;
 
-	private $header;
+	public $header;
 
-	private $doc;
+	public $doc;
 
 	public $isMultiTitle;
 
@@ -93,8 +109,14 @@ class OnPageScraper{
 
 	public $isFlashExist;
 
-    function __construct($url){
+	public $links;
+
+	public $isAllowedFromRobots;
+
+    function __construct(Cache $cache,$url){
+		$this->cache = $cache;
 		$this->url = $url;
+		$this->connectPage(); 
 	}
 	
 	private function connectPage(){
@@ -117,6 +139,16 @@ class OnPageScraper{
         $this->header = $this->get_headers_into_array($header);
         $body = substr($response, $header_size);
         $this->doc = $body;       
+	}
+	
+	private function get_headers_into_array($header_text) { 
+        $headers = array();
+        foreach (explode("\r\n", $header_text) as $i => $line) 
+             if ($i !== 0 && !empty($line)){ 
+                  list ($key, $value) = explode(': ', $line);
+                  $headers[$key][] = $value; 
+             } 
+        return $headers; 
     }
     
     public function getTitleAttr(){
@@ -139,7 +171,7 @@ class OnPageScraper{
 		libxml_use_internal_errors(true);
 		$doc->loadHTML($this->doc);
 		libxml_use_internal_errors(false);		
-		$items = $doc->getElementsByTagName('head')->item(0)>getElementsByTagName('meta');
+		$items = $doc->getElementsByTagName('head')->item(0)->getElementsByTagName('meta');
 		$usesDescription=0;		
 		foreach ($items as $item) {
 			if ($item->getAttribute('name') == 'description'){
@@ -349,7 +381,6 @@ class OnPageScraper{
 			$this->isFlashExist = false; 
 	}
 
-
     public function getAllLinks(){
         $doc = new \DOMDocument;
         libxml_use_internal_errors(true);
@@ -360,19 +391,66 @@ class OnPageScraper{
 		$defaultRel .=isset($this->robotsMeta) ? " ".$this->robotsMeta : '';
         foreach ($anchors as $anchor) {            
             $text=$anchor->nodeValue;
-            $link=$anchor->getAttribute("href");
+            $link=rawurldecode($anchor->getAttribute("href"));
             $rel=$anchor->getAttribute("rel");
             if(strpos($rel, 'nofollow')=== false && strpos($defaultRel, 'nofollow')=== false && strpos($defaultRel, 'none')=== false)
-                $relStatus='dofollow';
+                $relStatus='Dofollow';
             else
-                $relStatus='nofollow';
-
-                $this->aText[]=$text;
-                $this->aHref[]=$link;
-                $this->aRel[]=$rel;
-                $this->aStatus[]=$relStatus;
+				$relStatus='Nofollow';
+				
+			$this->links[] =['aText' => $text,
+							 'aHref' => $link,							
+							 'aStatus' => $relStatus];
         }
+	}
+
+	private function makeConnection($url){
+        // Use Curl to send off your request.
+        $options = array(
+            CURLOPT_RETURNTRANSFER => true
+        );
+        $ch = curl_init($url);
+        curl_setopt_array($ch, $options);
+        $content = curl_exec($ch);
+        curl_close($ch);
+        if ( $content === false )
+            return false;
+        else
+            return $content;
     }
-	
+
+    private function getRobots(){
+        if(isset($this->parsedUrl["scheme"]) && isset($this->parsedUrl["host"])){
+            $robotsUrl=$this->parsedUrl["scheme"].'://'.$this->parsedUrl["host"].'/robots.txt';
+            return $this->makeConnection($robotsUrl);            
+        }
+        return false;
+    }  
+
+    public function setIsAllowedFromRobots(){
+		$cacheKey = md5($this->parsedUrl["host"].'/robots.txt');
+		//"e6cc277ec2bb14ca698d23a414d196a3"
+		$minutes = 600;
+		$robotsContent = $this->cache->remember($cacheKey, $minutes, function () {
+			return $this->getRobots();
+		}); 
+		if($robotsContent) {
+            $parser = new \RobotsTxtParser($robotsContent);
+            $agents=['*','Googlebot','Bingbot','Slurp','DuckDuckBot','Baiduspider','YandexBot'];
+            $pathToPage = isset($this->parsedUrl["path"]) ? $this->parsedUrl["path"] : '/';            
+            foreach($agents as $agent){
+                $parser->setUserAgent($agent);         
+                if ($parser->isDisallowed($pathToPage)) {
+					$this->isAllowedFromRobots =false;
+                    return;
+                }
+			}
+			$this->isAllowedFromRobots = true;
+            return;            
+        }else{
+			$this->isAllowedFromRobots = true;
+            return;  
+		}      
+    }
 
 }

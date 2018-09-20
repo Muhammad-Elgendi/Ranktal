@@ -1,9 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
+    "hash": "331414b439e92758c7b122f0d961899a",
     "content-hash": "d3d6396226117cf4233b1a8cc90a328b",
     "packages": [
         {
@@ -60,7 +61,7 @@
                 "ssl",
                 "tls"
             ],
-            "time": "2018-08-08T08:57:40+00:00"
+            "time": "2018-08-08 08:57:40"
         },
         {
             "name": "geoip2/geoip2",
@@ -112,7 +113,7 @@
                 "geolocation",
                 "maxmind"
             ],
-            "time": "2018-04-10T15:32:59+00:00"
+            "time": "2018-04-10 15:32:59"
         },
         {
             "name": "maxmind-db/reader",
@@ -168,7 +169,7 @@
                 "geolocation",
                 "maxmind"
             ],
-            "time": "2018-02-21T21:23:33+00:00"
+            "time": "2018-02-21 21:23:33"
         },
         {
             "name": "maxmind/web-service-common",
@@ -214,7 +215,7 @@
             ],
             "description": "Internal MaxMind Web Service API",
             "homepage": "https://github.com/maxmind/web-service-common-php",
-            "time": "2018-02-12T22:31:54+00:00"
+            "time": "2018-02-12 22:31:54"
         },
         {
             "name": "t1gor/robots-txt-parser",
@@ -271,7 +272,7 @@
                 "robots.txt",
                 "yandex"
             ],
-            "time": "2018-07-21T20:01:19+00:00"
+            "time": "2018-07-21 20:01:19"
         },
         {
             "name": "vipnytt/useragentparser",
@@ -329,7 +330,7 @@
                 "useragent",
                 "x-robots-tag"
             ],
-            "time": "2017-12-17T14:23:27+00:00"
+            "time": "2017-12-17 14:23:27"
         }
     ],
     "packages-dev": [],
