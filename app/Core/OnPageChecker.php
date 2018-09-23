@@ -13,14 +13,9 @@ require 'vendor/autoload.php';
 
 class OnPageChecker{
 
-	public $parsedUrl;
+	private $parsedUrl;
 
-	public $httpCode;
-
-	public $header;
-
-	public $doc;
-
+	private $httpCode;
 //Title
     public $isMultiTitle;
 
