@@ -40,11 +40,15 @@ class Metrics{
     // public $countryCode;
     public $countryRank;
     public $alexaBackLinksCount;
-    public $mozMetrics;
-    public $$this->mozMetrics["External Equity Links"]
+    public $MozRankURL;
+    public $MozRankSubdomain;
+    public $PageAuthority;
+    public $DomainAuthority;
+    public $MozTotalLinks;
+    public $MozExternalEquityLinks;
 
       /**
-     * Alexa constructor.
+     * Metrics constructor.
      * @param $url
      */
 	function __construct($url){		
@@ -154,19 +158,11 @@ class Metrics{
 		$response=$test->getNamedResponse();		
 		if($response){	
             $this->MozRankURL = $response['MozRank: URL normalized'];
-            $this->MozRankSubdomain = $response['MozRank: Subdomain normalized'];      
-            unset($this->mozMetrics['MozRank: URL raw'],$this->mozMetrics['MozRank: Subdomain raw'],$this->mozMetrics['MozRank: Subdomain normalized'],$this->mozMetrics['MozRank: URL normalized']);		
-			$this->mozMetrics=$response;
-		}
-		return;
-    }
-    
-    public function makeReadableMozMetrics(){
-
-        if (isset($this->mozMetrics)){
-            $this->mozMetrics['MozRank: URL']=$this->mozMetrics['MozRank: URL normalized'];
-            $this->mozMetrics['MozRank: Subdomain']=$this->mozMetrics['MozRank: Subdomain normalized'];      
-            unset($this->mozMetrics['MozRank: URL raw'],$this->mozMetrics['MozRank: Subdomain raw'],$this->mozMetrics['MozRank: Subdomain normalized'],$this->mozMetrics['MozRank: URL normalized']);
-        }
+            $this->MozRankSubdomain = $response['MozRank: Subdomain normalized'];
+            $this->PageAuthority = $response['Page Authority'];
+            $this->DomainAuthority = $response['Domain Authority'];
+            $this->MozTotalLinks =  $response['Links'];
+            $this->MozExternalEquityLinks  = $response['External Equity Links'];
+		}	
     }
 }
