@@ -79,6 +79,7 @@ Route::get('load-mini-bulk-report','MiniReportController@loadMiniReports');
 /*
  * Dev env routes
  */
+Route::get('checker','checkerController@findOrCreateCheck');
 //Route::get('/report-generation', function () {
 //    return view('report-generation');
 //});

@@ -2,7 +2,7 @@
 
 namespace App\Core;
 require 'vendor/autoload.php';
-use Illuminate\Contracts\Cache\Repository as Cache;
+
 /**
  *
  * Developed by :
@@ -24,11 +24,7 @@ var_dump(get_object_vars($p));
  
 
 class OnPageScraper{	
-	/**
-     * The cache instance.
-     */
-    protected $cache;
-	
+
 	public $parsedUrl;
 
 	public $httpCode;
@@ -113,8 +109,9 @@ class OnPageScraper{
 
 	public $isAllowedFromRobots;
 
-    function __construct(Cache $cache,$url){
-		$this->cache = $cache;
+	private $robotsContent;
+
+    function __construct($url){
 		$this->url = $url;
 		$this->connectPage(); 
 	}
@@ -419,23 +416,23 @@ class OnPageScraper{
             return $content;
     }
 
-    private function getRobots(){
-        if(isset($this->parsedUrl["scheme"]) && isset($this->parsedUrl["host"])){
-            $robotsUrl=$this->parsedUrl["scheme"].'://'.$this->parsedUrl["host"].'/robots.txt';
-            return $this->makeConnection($robotsUrl);            
-        }
-        return false;
-    }  
+    public function getRobots(){
+		if(empty($this->robotsContent)) {
+			if(isset($this->parsedUrl["scheme"]) && isset($this->parsedUrl["host"])){
+				$robotsUrl=$this->parsedUrl["scheme"].'://'.$this->parsedUrl["host"].'/robots.txt';
+				$this->robotsContent = $this->makeConnection($robotsUrl);            
+			}
+			return false;
+		}
+		else return $this->robotsContent;
+	}
+	
+	
 
     public function setIsAllowedFromRobots(){
-		$cacheKey = md5($this->parsedUrl["host"].'/robots.txt');
-		//"e6cc277ec2bb14ca698d23a414d196a3"
-		$minutes = 600;
-		$robotsContent = $this->cache->remember($cacheKey, $minutes, function () {
-			return $this->getRobots();
-		}); 
-		if($robotsContent) {
-            $parser = new \RobotsTxtParser($robotsContent);
+		 
+		if(!empty($this->robotsContent)) {
+            $parser = new \RobotsTxtParser($this->robotsContent);
             $agents=['*','Googlebot','Bingbot','Slurp','DuckDuckBot','Baiduspider','YandexBot'];
             $pathToPage = isset($this->parsedUrl["path"]) ? $this->parsedUrl["path"] : '/';            
             foreach($agents as $agent){
@@ -445,11 +442,9 @@ class OnPageScraper{
                     return;
                 }
 			}
-			$this->isAllowedFromRobots = true;
-            return;            
+			$this->isAllowedFromRobots = true;          
         }else{
-			$this->isAllowedFromRobots = true;
-            return;  
+			$this->isAllowedFromRobots = true;       
 		}      
     }
 
