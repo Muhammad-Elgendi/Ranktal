@@ -11,21 +11,24 @@ class checkerController extends Controller
     //
 
     public function findOrCreateCheck(){
-        $p =new OnPageScraper(Cache::get(),"https://is.net.sa");
-        $cacheKey = md5($this->parsedUrl["host"].'/robots.txt');
-		//"e6cc277ec2bb14ca698d23a414d196a3"
+        $scraper =new OnPageScraper("https://is.net.sa");
+        $cacheKey = md5($scraper->parsedUrl["host"].'/robots.txt');
+		// //"e6cc277ec2bb14ca698d23a414d196a3"
 		$minutes = 600;
-		$robotsContent = $this->cache->remember($cacheKey, $minutes, function () {
-			return $this->getRobots();
-		});
+		$robotsContent = Cache::remember($cacheKey, $minutes, function () use ($scraper){
+			return $scraper->getRobots();
+        });
+        $scraper->setRobotsContent($robotsContent);
 
-        $class_methods = get_class_methods($p);
+        $class_methods = get_class_methods($scraper);
 
         foreach ($class_methods as $method_name) {
-            if($method_name != "__construct")
-                $p->$method_name();
+            if($method_name != "__construct" && $method_name != "setRobotsContent")
+                $scraper->$method_name();
         }
 
-        var_dump(get_object_vars($p));
+        var_dump(get_object_vars($scraper));
+
+        // var_dump(Cache::get($cacheKey));
     }
 }

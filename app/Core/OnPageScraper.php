@@ -10,20 +10,23 @@ require 'vendor/autoload.php';
  * 
  **/
 
-$p =new OnPageScraper("https://is.net.sa");
+// $p =new OnPageScraper("https://is.net.sa");
+// $p->setRobotsContent($p->getRobots());
 
-$class_methods = get_class_methods($p);
+// $class_methods = get_class_methods($p);
 
-foreach ($class_methods as $method_name) {
-    if($method_name != "__construct")
-        $p->$method_name();
-}
+// foreach ($class_methods as $method_name) {
+//     if($method_name != "__construct" && $method_name != "setRobotsContent")
+//         $p->$method_name();
+// }
 
-var_dump(get_object_vars($p));
+// var_dump(get_object_vars($p));
 // var_dump($p->strongItems);
  
 
 class OnPageScraper{	
+
+	private $robotsContent;
 
 	public $parsedUrl;
 
@@ -105,11 +108,11 @@ class OnPageScraper{
 
 	public $isFlashExist;
 
-	public $links;
-
 	public $isAllowedFromRobots;
 
-	private $robotsContent;
+	public $links;	
+
+//  You should call getRobots and assign it to setRobotsContent to fetch the robots.txt
 
     function __construct($url){
 		$this->url = $url;
@@ -414,15 +417,18 @@ class OnPageScraper{
             return false;
         else
             return $content;
-    }
+	}
+	
+	public function setRobotsContent($robotsContent){
+		$this->robotsContent = $robotsContent;
+	}
 
     public function getRobots(){
 		if(empty($this->robotsContent)) {
 			if(isset($this->parsedUrl["scheme"]) && isset($this->parsedUrl["host"])){
 				$robotsUrl=$this->parsedUrl["scheme"].'://'.$this->parsedUrl["host"].'/robots.txt';
-				$this->robotsContent = $this->makeConnection($robotsUrl);            
+				return $this->makeConnection($robotsUrl);            
 			}
-			return false;
 		}
 		else return $this->robotsContent;
 	}
