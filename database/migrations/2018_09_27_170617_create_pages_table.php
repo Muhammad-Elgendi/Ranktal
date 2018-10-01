@@ -16,8 +16,11 @@ class CreatePagesTable extends Migration
         Schema::create('pages', function (Blueprint $table) {
             $table->increments('id');
             $table->string('url',3000)->unique();
-            $table->integer('url_status');
-
+            $table->unsignedInteger('http_code');
+            $table->json('parsed_url');
+            $table->string('title');
+            $table->boolean('is_multi_title');
+            
             $table->timestamps();
         });
     }

@@ -42,8 +42,6 @@ class OnPageScraper{
 
 	public $url;
 
-	public $urlStatus;
-
 	public $description;
 
 	public $contentType;
@@ -162,8 +160,7 @@ class OnPageScraper{
 	}
 
 	public function getUrlAttr(){
-		$this->url=rawurldecode($this->url);
-		$this->urlStatus = $this->httpCode;
+		$this->url=rawurldecode($this->url);		
 	}
 
 	public function getMetaAttr(){

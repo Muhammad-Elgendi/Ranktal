@@ -30,9 +30,7 @@ class OnPageChecker{
     public $isGoodTitle;
 //Url    
     public $url;
-
-    public $urlStatus;
-    
+ 
     public $domain;
 
     public $urlLength;
@@ -191,7 +189,7 @@ class OnPageChecker{
 		$this->countSpacesInUrl=substr_count($this->url, ' ');
 		$this->isGoodUrlLength = $this->urlLength < 200;
 		$this->isUrlHasSpaces = $this->countSpacesInUrl > 0;	
-		$this->isUrlHasGoodStatus = $this->urlStatus===200 || $this->urlStatus===301 ||$this->urlStatus===404 || $this->urlStatus===503;
+		$this->isUrlHasGoodStatus = $this->httpCode===200 || $this->httpCode===301 ||$this->httpCode===404 || $this->httpCode===503;
 		$this->isGoodUrl =  $this->isGoodUrlLength && !$this->isUrlHasSpaces && $this->isUrlHasGoodStatus ;
     }
 
