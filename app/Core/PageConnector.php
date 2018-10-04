@@ -10,24 +10,38 @@ require 'vendor/autoload.php';
  * 
  **/
 
+// $p =new PageConnector("http://lovejinju.net");
+// $class_methods = get_class_methods($p);
+
+// foreach ($class_methods as $method_name) {
+//     if($method_name != "__construct")
+//         $p->$method_name();
+// }
+
+// // echo end($p->httpCodes);
+
+// // var_dump($p->httpCodes);
+
+// var_dump(get_object_vars($p));
+
 
 class PageConnector{
 
     public $url;
 
-    private $isGoodUrl;
+    public $isGoodUrl;
+
+    public $isGoodStatus;
+
+    public $httpCodes;
+    
+    public $urlRedirects;
 
     public $parsedUrl;
-
-	public $httpCode;
 
 	public $header;
 
     public $doc;
-    
-    public $urlRedirects;
-
-    //TODO : Get URL redirects HTTP status codes
 
     function __construct($url){
         $this->url=rawurldecode($url);	
@@ -41,20 +55,18 @@ class PageConnector{
                   $headers[$key][] = $value; 
              } 
         return $headers; 
-    }    
-    
-    public function isGoodUrl(){
-        if(!isset($this->isGoodUrl)){
-            $this->isGoodUrl = filter_var($this->url, FILTER_VALIDATE_URL);          
-        }
-        return $this->isGoodUrl;
     }
 
-	public function connectPage(){        
-        if(!$isGoodUrl){
+	public function connectPage($url =null){  
+        if($url != null){
+            $this->url = $url;
+        }
+        $this->isGoodUrl = !empty(filter_var($this->url, FILTER_VALIDATE_URL));       
+        if(!$this->isGoodUrl){
             return;
         }
-        $this->parsedUrl = parse_url($this->url);        
+        $this->urlRedirects[] = $this->url;      
+               
         $ch = curl_init($this->url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         // curl_setopt($ch, CURLOPT_VERBOSE, 1);
@@ -63,30 +75,29 @@ class PageConnector{
         $response = curl_exec($ch);
         
         // Then, after your curl_exec call:
+        
+        $this->httpCodes[] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $redirect = curl_getinfo($ch, CURLINFO_REDIRECT_URL);   
+        if(!empty($redirect)){
+            $this->connectPage($redirect); 
+            return;
+        }
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $this->httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); 
         $header = substr($response, 0, $header_size);      
         $this->header = $this->get_headers_into_array($header);
         $body = substr($response, $header_size);
-        $this->doc = $body;       
-    }
-    
-    public function setURLRedirects(){
-        if (isset($this->header['Location'])) {
-            $this->urlRedirects = array_merge($this->urlRedirects,$this->header['Location']);
-        }
-    }
-    
-    /**
-     * @param $url
-     * @return bool|mixed
-     */
-    public function getRedirectUrlOrFail () {        
-        if (isset($this->header ['Location'])) {
-            return array_pop($headers['Location']);
-        }
-        return false;
+        $this->doc = $body; 
+        $this->parsedUrl = parse_url($this->url);       
     }
 
-
+    public function setIsGoodStatus(){
+        foreach($this->httpCodes as $httpCode){
+            if(!($httpCode===200 || $httpCode===301 || $httpCode===404 || $httpCode===503)){
+                $this->isGoodStatus =false;
+                return;
+            }
+        }
+        $this->isGoodStatus = true;
+    }
+    
 }
