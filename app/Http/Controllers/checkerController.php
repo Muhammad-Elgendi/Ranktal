@@ -15,10 +15,13 @@ class checkerController extends Controller
 {
     //
 
-    public function findOrCreateCheck(){
-        $inputUrl = "http://lovejinju.net";
+    public function findOrCreateCheck(Request $request){
+        $inputUrl = $request->get('q');
         $connector =new PageConnector($inputUrl);
         $connector->connectPage();
+        if(!$connector->isGoodUrl){
+            return "Not Valid URL";
+        }
         $connector->setIsGoodStatus();       
         $connector->httpCodes;
         $connector->urlRedirects;
@@ -63,8 +66,6 @@ class checkerController extends Controller
             return $this->doChecks($foundPage);
         }
 
-        
-
         // var_dump(get_object_vars($connector));
         // var_dump(get_object_vars($scraper));
 
@@ -72,7 +73,8 @@ class checkerController extends Controller
     }
 
     /**
-     * Accept the Raw Scraper Object Or An array and return JSON
+     * Accept the Raw Scraper Object Or An array and
+     * return well formatted JSON
      */
     private function doChecks($obj){
         $checker =new PageChecker($obj);

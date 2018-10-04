@@ -11,16 +11,16 @@ require 'vendor/autoload.php';
  **/
 
 
-$p =new PageOptimization("https://is.net.sa","شركة تصميم مواقع");
+// $p =new PageOptimization("https://is.net.sa","شركة تصميم مواقع");
 
-$class_methods = get_class_methods($p);
+// $class_methods = get_class_methods($p);
 
-foreach ($class_methods as $method_name) {
-    if($method_name != "__construct")
-        $p->$method_name();
-}
+// foreach ($class_methods as $method_name) {
+//     if($method_name != "__construct")
+//         $p->$method_name();
+// }
 
-var_dump(get_object_vars($p));
+// var_dump(get_object_vars($p));
 
 
  class PageOptimization{
@@ -31,7 +31,7 @@ var_dump(get_object_vars($p));
 
     private $httpCode;
 
-    public $header;
+    private $header;
 
     private $doc;
 
@@ -115,10 +115,13 @@ var_dump(get_object_vars($p));
     //Includes a Rel Canonical Tag
     public $isUseCanonical;        
 
-    function __construct($url,$keyword){
+    function __construct($url,$keyword,$parsedUrl,$httpCode,$header,$body){
         $this->url = $url;
         $this->keyword = $keyword;
-        $this->connectPage();        
+        $this->parsedUrl = $parsedUrl;
+		$this->httpCode =  $httpCode;
+		$this->header = $header;       
+        $this->doc = $body;     
     }
 
     private function makeConnection($url){
@@ -159,38 +162,6 @@ var_dump(get_object_vars($p));
             return true;            
         }else
             return true;        
-    }
-
-    private function get_headers_into_array($header_text) { 
-        $headers = array();
-        foreach (explode("\r\n", $header_text) as $i => $line) 
-             if ($i !== 0 && !empty($line)){ 
-                  list ($key, $value) = explode(': ', $line);
-                  $headers[$key][] = $value; 
-             } 
-        return $headers; 
-    }
-
-    private function connectPage(){
-        $parsedUrl = parse_url($this->url);
-        if(!$parsedUrl){
-            return;
-        }
-        $this->parsedUrl = $parsedUrl;        
-        $ch = curl_init($this->url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        // curl_setopt($ch, CURLOPT_VERBOSE, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        
-        $response = curl_exec($ch);
-        
-        // Then, after your curl_exec call:
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $this->httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); 
-        $header = substr($response, 0, $header_size);      
-        $this->header = $this->get_headers_into_array($header);
-        $body = substr($response, $header_size);
-        $this->doc = $body;       
     }
 
     private function isAllowedFromPage(){
