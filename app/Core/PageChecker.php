@@ -11,7 +11,7 @@ require 'vendor/autoload.php';
  **/
 
 
-class OnPageChecker{
+class PageChecker{
 
 	private $parsedUrl;
 
@@ -119,7 +119,7 @@ class OnPageChecker{
 //Checks
     public $ampLink;
 
-    public $og;
+    public $openGraph;
 
     public $twitterCard;
 
@@ -133,9 +133,7 @@ class OnPageChecker{
 
     public $strongItems;
 
-    public $markedItems;
-
-    public $urlRedirects;
+    public $markItems;
 
     public $isFlashExist;
 
@@ -228,9 +226,9 @@ class OnPageChecker{
     public function setChecks(){
         $this->isFrameExist=$this->framesCount > 0;     
         $this->isAmpCopyExist=!empty($this->ampLink);
-        $this->isOpenGraphExist=!empty($this->og);
+        $this->isOpenGraphExist=!empty($this->openGraph);
         $this->isTwitterCardExist=!empty($this->twitterCard);  
-        $this->isFormattedTextExist=!empty($this->bItems) || !empty($this->iItems) || !empty($this->emItems) || !empty($this->strongItems);
+        $this->isFormattedTextExist=!empty($this->bItems) || !empty($this->iItems) || !empty($this->emItems) || !empty($this->strongItems) || !empty($this->markItems);
     }
 
     private function isAllowedFromPage(){

@@ -10,7 +10,7 @@ require 'vendor/autoload.php';
  * 
  **/
 
-// $p =new OnPageScraper("https://is.net.sa");
+// $p =new PageScraper("https://is.net.sa");
 // $p->setRobotsContent($p->getRobots());
 
 // $class_methods = get_class_methods($p);
@@ -24,7 +24,7 @@ require 'vendor/autoload.php';
 // var_dump($p->strongItems);
  
 
-class OnPageScraper{	
+class PageScraper{	
 
 	private $robotsContent;
 
@@ -86,7 +86,7 @@ class OnPageScraper{
 
 	public $ampLink;
 
-	public $og;
+	public $openGraph;
 
 	public $twitterCard;
 
@@ -100,54 +100,24 @@ class OnPageScraper{
 
 	public $strongItems;
 
-	public $markedItems;
-
-	public $urlRedirects;
+	public $markItems;
 
 	public $isFlashExist;
 
 	public $isAllowedFromRobots;
 
-	public $links;	
+	public $links;
 
+//  You should call pageConnector and pass these arguments to constructor
 //  You should call getRobots and assign it to setRobotsContent to fetch the robots.txt
 
-    function __construct($url){
+    function __construct($url,$parsedUrl,$httpCode,$header,$body){
 		$this->url = $url;
-		$this->connectPage(); 
+		$this->parsedUrl = $parsedUrl;
+		$this->httpCode =  $httpCode;
+		$this->header = $header;       
+        $this->doc = $body;   
 	}
-	
-	private function connectPage(){
-        $parsedUrl = parse_url($this->url);
-        if(!$parsedUrl){
-            return;
-        }
-        $this->parsedUrl = $parsedUrl;        
-        $ch = curl_init($this->url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        // curl_setopt($ch, CURLOPT_VERBOSE, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        
-        $response = curl_exec($ch);
-        
-        // Then, after your curl_exec call:
-        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        $this->httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE); 
-        $header = substr($response, 0, $header_size);      
-        $this->header = $this->get_headers_into_array($header);
-        $body = substr($response, $header_size);
-        $this->doc = $body;       
-	}
-	
-	private function get_headers_into_array($header_text) { 
-        $headers = array();
-        foreach (explode("\r\n", $header_text) as $i => $line) 
-             if ($i !== 0 && !empty($line)){ 
-                  list ($key, $value) = explode(': ', $line);
-                  $headers[$key][] = $value; 
-             } 
-        return $headers; 
-    }
     
     public function getTitleAttr(){
         $doc = new \DOMDocument;
@@ -157,10 +127,6 @@ class OnPageScraper{
 		$count = $doc->getElementsByTagName('head')->item(0)->getElementsByTagName('title')->length;
 		$this->isMultiTitle = $count > 1;		
         $this->title=$doc->getElementsByTagName('head')->item(0)->getElementsByTagName('title')->item(0)->nodeValue;
-	}
-
-	public function getUrlAttr(){
-		$this->url=rawurldecode($this->url);		
 	}
 
 	public function getMetaAttr(){
@@ -192,7 +158,7 @@ class OnPageScraper{
 			}
 			$property=$item->getAttribute('property');
 			if (strpos($property,'og:') !== false){
-				$this->og[$property] = $item->getAttribute('content');  
+				$this->openGraph[$property] = $item->getAttribute('content');  
 			}			
 			$twitter=$item->getAttribute('name');			
 			if (strpos($twitter,'twitter:') !== false){
@@ -308,7 +274,7 @@ class OnPageScraper{
         $iItems = $body->getElementsByTagName('i');
         $emItems = $body->getElementsByTagName('em');
 		$strongItems = $body->getElementsByTagName('strong');
-		$markedItems = $body->getElementsByTagName('mark');
+		$markItems = $body->getElementsByTagName('mark');
         foreach ($bItems as $bItem){
             if (!empty($bItem->nodeValue)){
 				$this->bItems[] = $bItem->nodeValue;
@@ -329,19 +295,13 @@ class OnPageScraper{
 				$this->strongItems[] = $strongItem->nodeValue;
 			}
 		}
-		foreach ($markedItems as $markedItem){
-            if (!empty($markedItem->nodeValue)){
-				$this->markedItems[] = $markedItem->nodeValue;
+		foreach ($markItems as $markItem){
+            if (!empty($markItem->nodeValue)){
+				$this->markItems[] = $markItem->nodeValue;
 			}
 		}
 	}
 
-	public function getURLRedirects(){
-        if (isset($this->header['Location'])) {
-            $this->urlRedirects = array_merge($this->urlRedirects,$this->header['Location']);
-        }
-	}
-	
 	public function setFlashAttr(){
         $doc = new \DOMDocument;
         libxml_use_internal_errors(true);
