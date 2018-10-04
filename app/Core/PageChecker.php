@@ -143,10 +143,11 @@ class PageChecker{
 
     public $isAccessible;
 
-    function __construct($json){
-        $obj = json_decode($json);
+    function __construct($obj){
         foreach($obj as $key => $value) {
-            $this->$key = $value;
+            if(property_exists($this, $key)){
+                $this->$key = $value;
+            }
        }
     }
     
@@ -154,7 +155,7 @@ class PageChecker{
         $this->isTitleExist = !empty($this->title);		
         $this->titleLength=mb_strlen($this->title,'utf8');
 		$this->isGoodTitleLength= $this->titleLength > 10 && $this->titleLength < 60;
-		$this->isGoodTitle = $this->isTitleExist && !$this->multiTitle && $this->isGoodTitleLength;
+		$this->isGoodTitle = $this->isTitleExist && !$this->isMultiTitle && $this->isGoodTitleLength;
     }
 
     /**
@@ -212,14 +213,14 @@ class PageChecker{
     }
 
     public function setHeadersChecks(){
-        $countH1 = getCountIfArray($this->h1);
+        $countH1 = $this->getCountIfArray($this->h1);
         $this->isMultiH1 = $countH1 > 1;
-        $this->isGoodHeader = $countH1 > 0 && getCountIfArray($this->h2) > 0 && getCountIfArray($this->h3) > 0;
+        $this->isGoodHeader = $countH1 > 0 && $this->getCountIfArray($this->h2) > 0 && $this->getCountIfArray($this->h3) > 0;
     }
 
     public function setImagesChecks(){
-        $countAlt = getCountIfArray($this->alt);
-        $countEmptyAlt = getCountIfArray($this->emptyAlt);
+        $countAlt = $this->getCountIfArray($this->alt);
+        $countEmptyAlt = $this->getCountIfArray($this->emptyAlt);
         $this->isGoodImg = ($countAlt+$countEmptyAlt) > 0 && $countEmptyAlt === 0;
     }
 

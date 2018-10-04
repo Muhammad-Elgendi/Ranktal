@@ -14,11 +14,8 @@ class CreateHtmlsTable extends Migration
     public function up()
     {
         Schema::create('htmls', function (Blueprint $table) {
-            $table->unsignedInteger('page_id');
-            $table->primary('page_id');
-            $table->foreign('page_id')
-                ->references('id')->on('pages')
-                ->onDelete('cascade');
+            $table->unsignedInteger('page_id')->primary();
+            $table->foreign('page_id')->references('id')->on('pages')->onDelete('cascade');
             $table->json('header');
             $table->mediumText('doc');    
             $table->timestamps();

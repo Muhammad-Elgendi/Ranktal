@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Html extends Model
 {
 
+    public $incrementing = false;
+    protected $primaryKey = 'page_id';
     protected $casts = [
         'header' => 'array'
     ];

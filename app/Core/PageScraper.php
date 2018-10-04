@@ -10,7 +10,7 @@ require 'vendor/autoload.php';
  * 
  **/
 
-// $p =new PageScraper("https://is.net.sa");
+// $p =new PageScraper("https://lovejinju.net/");
 // $p->setRobotsContent($p->getRobots());
 
 // $class_methods = get_class_methods($p);
@@ -32,9 +32,9 @@ class PageScraper{
 
 	public $httpCode;
 
-	public $header;
+	private $header;
 
-	public $doc;
+	private $doc;
 
 	public $isMultiTitle;
 
