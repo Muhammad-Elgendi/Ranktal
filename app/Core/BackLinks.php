@@ -1,23 +1,23 @@
 <?php
 namespace App\Core;
-require_once 'Moz.php';
-require_once 'vendor/autoload.php';
-require_once '../../vendor/autoload.php';
-require_once "../../vendor/laravel/framework/src/Illuminate/Foundation/helpers.php";
+require 'Moz.php';
+require 'vendor/autoload.php';
+// require '../../vendor/autoload.php';
+// require "../../vendor/laravel/framework/src/Illuminate/Foundation/helpers.php";
 
 $dotenv = new \Dotenv\Dotenv(dirname(dirname(__DIR__)));
 $dotenv->load();
 
-$p =new BackLinks("https://is.net.sa");
+// $p =new BackLinks("https://is.net.sa");
 
-$class_methods = get_class_methods($p);
+// $class_methods = get_class_methods($p);
 
-foreach ($class_methods as $method_name) {
-    if($method_name != "__construct")
-        $p->$method_name();
-}
+// foreach ($class_methods as $method_name) {
+//     if($method_name != "__construct")
+//         $p->$method_name();
+// }
 
-var_dump(get_object_vars($p));
+// var_dump(get_object_vars($p));
 /**
  *
  * Developed by :
@@ -46,13 +46,14 @@ var_dump(get_object_vars($p));
 class BackLinks{
 
     private $url;
+    private $limit;
     //holds the Domain name of site
 	private $domain;
     /**
      * holds the response of mozLinks
      * @var
      */
-	public $backlinks;
+	public $backlinks = [];
     /**
      * holds the response of openLinkProfiler
      * @var
@@ -62,9 +63,12 @@ class BackLinks{
      * BackLinks constructor.
      * @param $url
      */
-	function __construct($url){
+	function __construct($url,$limit = null){
         $this->url=$url;
         $this->domain=parse_url($this->url, PHP_URL_HOST);		
+        if($limit !== null){
+            $this->limit = $limit;
+        }
     }
 
     private function makeConnection($url){
@@ -82,10 +86,37 @@ class BackLinks{
             return $content;
     }
 
+    /**
+     * set alexa backLinks if succeed
+     */
+	public function setAlexaBackLinks(){
+        //form the request url
+        $requestUrl = 'https://www.alexa.com/siteinfo/'. $this->domain;
+        $content = $this->makeConnection($requestUrl);
+        if ($content) {
+            // search for "sites liking in"
+            $doc = new \DOMDocument;
+            libxml_use_internal_errors(true);
+            $doc->loadHTML($content);
+            libxml_use_internal_errors(false);
+            try {
+                $anchors = $doc->getElementsByTagName('table')->item(3)->getElementsByTagName('a');
+                foreach ($anchors as $anchor) {
+                    $link = $anchor->getAttribute('href');
+                    if (stripos($link, 'siteinfo/') === false)
+                        $this->backlinks[] =['Source URL'=> $link, 'Target URL' => $this->domain ] ;
+                }
+            }
+            catch (\Exception $e) {
+                return;
+            }
+        }
+    }
+
 	/*
 		Currently the request is set to page_to_domain means that it shows all backlinks that refer to the domain of URL not Just the Page
 
-		and I set the limit of links to 10
+		and I set the defualt limit of links to 10
 
 		also this api brings the anchor text of the link and shows Dofollow links only
 
@@ -96,7 +127,10 @@ class BackLinks{
         $id = env('MOZ_ID', 'mozscape-b8c7023e7a');
         $secret = env('MOZ_SECRET', '5ec326509fe6cc73fd0333c67022a273');
         $expire = env('MOZ_EXPIRE', 300);
-		$test=new Moz($id,$secret,$expire);
+        $test=new Moz($id,$secret,$expire);
+        if($this->limit !== null){
+            $test->setLimit($this->limit-count($this->backlinks));
+        }
 		$test->setURL($this->url);		
 		$test->sendRequest('links');//get mozLinks
 		$response=$test->getRawResponse();		
@@ -113,35 +147,11 @@ class BackLinks{
             foreach ($response as $link){
                 $this->backlinks[] = ['Anchor Text' => $link['lt'],
                                       'Target URL'  => $link['luuu'],
-                                      'Source URL'  => $link['uu']];             
+                                      'Source URL'  => $link['uu'],
+                                      'isDoFollow'  => true];             
             }
 		}
 	}
    
-    /**
-     * set alexa backLinks if succeed
-     */
-	public function setAlexaBackLinks(){
-        //form the request url
-        $requestUrl = 'https://www.alexa.com/siteinfo/' . $this->domain;
-        $content = $this->makeConnection($requestUrl);
-        if ($content) {
-            // search for "sites liking in"
-            $doc = new \DOMDocument;
-            libxml_use_internal_errors(true);
-            $doc->loadHTML($content);
-            libxml_use_internal_errors(false);
-            try {
-                $anchors = $doc->getElementsByTagName('table')->item(3)->getElementsByTagName('a');
-                foreach ($anchors as $anchor) {
-                    $link = $anchor->getAttribute('href');
-                    if (stripos($link, 'siteinfo/') === false)
-                        $this->backlinks[]['Source URL'] = $link;
-                }
-            }
-            catch (\Exception $e) {
-                return;
-            }
-        }
-    }
+
 }

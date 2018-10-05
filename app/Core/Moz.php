@@ -22,15 +22,16 @@ namespace App\Core;
 
 class Moz{
 
-    public $accessID;
-    public $secretKey;
-    public $expires;
-    public $objectURL;
+    private $accessID;
+    private $secretKey;
+    private $expires;
+    private $objectURL;
     //Set defualt to our required data
-    public $cols=103079266336;
+    private $cols=103079266336;
     private $urlSafeSignature;
     private $error='';
     private $response;
+    private $limit =10;
 
     /**
      * Moz constructor.
@@ -76,6 +77,13 @@ class Moz{
     }
 
     /**
+     * @param $limit
+     */
+    function setLimit($limit){
+        $this->limit = $limit;
+    }
+
+    /**
      * @param $type
      * @return bool
      */
@@ -88,7 +96,7 @@ class Moz{
                 break;
 
             case 'links':
-                $requestUrl = "http://lsapi.seomoz.com/linkscape/links/".urlencode($this->objectURL)."?AccessID=".$this->accessID."&Expires=".$this->expires."&Signature=".$this->urlSafeSignature."&Scope=page_to_domain&Filter=external+follow&Sort=page_authority&SourceCols=4&TargetCols=4&LinkCols=4&Limit=10";
+                $requestUrl = "http://lsapi.seomoz.com/linkscape/links/".urlencode($this->objectURL)."?AccessID=".$this->accessID."&Expires=".$this->expires."&Signature=".$this->urlSafeSignature."&Scope=page_to_domain&Filter=external+follow&Sort=page_authority&SourceCols=4&TargetCols=4&LinkCols=4&Limit=".$this->limit;
                 break;
             default:
                 return false;

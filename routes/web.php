@@ -81,6 +81,7 @@ Route::get('load-mini-bulk-report','MiniReportController@loadMiniReports');
  */
 Route::get('checker','checkerController@findOrCreateCheck');
 Route::get('optimizer','optimizerController@check');
+Route::get('backlinks','backlinksController@getBacklinks');
 //Route::get('/report-generation', function () {
 //    return view('report-generation');
 //});
