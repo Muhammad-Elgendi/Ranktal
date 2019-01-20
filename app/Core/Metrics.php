@@ -2,8 +2,8 @@
 namespace App\Core;
 require_once 'Moz.php';
 require_once 'vendor/autoload.php';
-require_once '../../vendor/autoload.php';
-require_once "../../vendor/laravel/framework/src/Illuminate/Foundation/helpers.php";
+// require_once '../../vendor/autoload.php';
+// require_once "../../vendor/laravel/framework/src/Illuminate/Foundation/helpers.php";
 /**
  *
  * Developed by :
@@ -12,21 +12,21 @@ require_once "../../vendor/laravel/framework/src/Illuminate/Foundation/helpers.p
 $dotenv = new \Dotenv\Dotenv(dirname(dirname(__DIR__)));
 $dotenv->load();
 
-$p =new Metrics("https://is.net.sa");
+// $p =new Metrics("https://is.net.sa");
 
-$class_methods = get_class_methods($p);
+// $class_methods = get_class_methods($p);
 
-foreach ($class_methods as $method_name) {
-    if($method_name != "__construct")
-        $p->$method_name();
-}
+// foreach ($class_methods as $method_name) {
+//     if($method_name != "__construct")
+//         $p->$method_name();
+// }
 
-var_dump(get_object_vars($p));
+// var_dump(get_object_vars($p));
 
 class Metrics{
 
     //holds the URL of page
-	private $url;
+	public $url;
 	//holds the Domain name of site
 	private $domain;
 

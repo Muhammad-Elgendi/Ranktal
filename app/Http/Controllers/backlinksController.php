@@ -8,12 +8,18 @@ use App\Backlink;
 
 class backlinksController extends Controller
 {
-    //
+    //TODO
+    /**
+     * Add validation of urls
+     */
 
     public function getBacklinks(Request $request){
         $target = $request->get('target');
         $src = $request->get('src');
-        if( (empty($target) && empty($src)) ) {
+        // validate urls
+        $isGoodTarget = !empty(filter_var($target, FILTER_VALIDATE_URL));
+        $isGoodSrc = !empty(filter_var($src, FILTER_VALIDATE_URL));
+        if( (empty($target) && empty($src)) || (!empty($src) && !$isGoodSrc) || (!empty($target)&& !$isGoodTarget) ) {
                 return "Not Vaild Parameters";
         }
         elseif(!empty($target) && !empty($src)){
