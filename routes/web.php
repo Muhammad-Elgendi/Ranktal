@@ -78,10 +78,12 @@ Route::get('load-mini-bulk-report','MiniReportController@loadMiniReports');
 
 /*
  * Dev env routes
+ * New endpoints routes
  */
 Route::get('checker','checkerController@findOrCreateCheck');
 Route::get('optimizer','optimizerController@check');
-Route::get('backlinks','backlinksController@getBacklinks');
+Route::get('metrics','metricsController@getMetrics');
+Route::get('pageInsights','pageInsightsController@getPageInsights');
 //Route::get('/report-generation', function () {
 //    return view('report-generation');
 //});
