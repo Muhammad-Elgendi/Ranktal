@@ -54,6 +54,7 @@ return array(
     'App\\Metric' => $baseDir . '/app/Metric.php',
     'App\\MiniReport' => $baseDir . '/app/MiniReport.php',
     'App\\Page' => $baseDir . '/app/Page.php',
+    'App\\PageInsight' => $baseDir . '/app/PageInsight.php',
     'App\\Providers\\AppServiceProvider' => $baseDir . '/app/Providers/AppServiceProvider.php',
     'App\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',
     'App\\Providers\\BroadcastServiceProvider' => $baseDir . '/app/Providers/BroadcastServiceProvider.php',

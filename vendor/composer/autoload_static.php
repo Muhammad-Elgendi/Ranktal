@@ -432,6 +432,7 @@ class ComposerStaticInit257e896880c419c4342bdf5d27f1fdde
         'App\\Metric' => __DIR__ . '/../..' . '/app/Metric.php',
         'App\\MiniReport' => __DIR__ . '/../..' . '/app/MiniReport.php',
         'App\\Page' => __DIR__ . '/../..' . '/app/Page.php',
+        'App\\PageInsight' => __DIR__ . '/../..' . '/app/PageInsight.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
         'App\\Providers\\AuthServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AuthServiceProvider.php',
         'App\\Providers\\BroadcastServiceProvider' => __DIR__ . '/../..' . '/app/Providers/BroadcastServiceProvider.php',
