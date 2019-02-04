@@ -85,6 +85,8 @@ Route::get('optimizer','optimizerController@check');
 Route::get('metrics','metricsController@getMetrics');
 Route::get('pageInsights','pageInsightsController@getPageInsights');
 Route::get('backlinks','backlinksController@getBacklinks');
+Route::get('add-site','SitesController@addSite');
+Route::get('get-site','SitesController@getSite');
 //Route::get('/report-generation', function () {
 //    return view('report-generation');
 //});

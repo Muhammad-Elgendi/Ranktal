@@ -31,6 +31,11 @@ class User extends Authenticatable
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
+    public function sites()
+    {
+        return $this->hasMany('App\Site');
+    }
+
     public function reports()
     {
         return $this->hasMany('App\Report');
