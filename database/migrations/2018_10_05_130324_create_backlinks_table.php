@@ -17,9 +17,9 @@ class CreateBacklinksTable extends Migration
             $table->string('source_url',2083);
             $table->string('target_url',2083);
             $table->string('anchor_text',2500)->nullable();            
-            $table->boolean('isDoFollow')->nullable();
-            $table->primary(['source_url', 'target_url','anchor_text','isDoFollow']);
-            $table->timestamps();
+            $table->boolean('is_dofollow')->nullable();
+            $table->primary(['source_url', 'target_url','anchor_text','is_dofollow']);
+            $table->timestamp('created_at')->nullable();
         });
     }
 

@@ -68,7 +68,7 @@ class backlinksController extends Controller
                 $newLink->source_url = $backlink['Source URL'];
                 $newLink->target_url = $backlink['Target URL'];
                 $newLink->anchor_text = $backlink['Anchor Text'];
-                $newLink->isDoFollow = $backlink['isDoFollow'];
+                $newLink->is_doFollow = $backlink['isDoFollow'];
                 $newLink->save();
             }
         }

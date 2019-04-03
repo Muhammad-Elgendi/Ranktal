@@ -8,8 +8,11 @@ class Backlink extends Model
 {
     //
     public $incrementing = false;
-    protected $primaryKey = ['source_url', 'target_url','anchor_text','isDoFollow'];
+    protected $primaryKey = ['source_url', 'target_url','anchor_text','is_dofollow'];
     protected $casts =[
-        'isDoFollow' => 'boolean'
+        'is_dofollow' => 'boolean'
     ];
+
+    // set created_at only
+    public function setUpdatedAt($value){ ; }
 }
