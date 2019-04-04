@@ -11,82 +11,91 @@
 |
 */
 
-// Home الرئيسية
-Route::get('/', function () {
-    return view('welcome');
-});
+$optionalLanguageRoutes = function () {
 
-// Membership system routes
-Auth::routes();
+    // Home الرئيسية
+    Route::get('/', function () {
+        return view('welcome');
+    });
 
-//Dashboard لوحة التحكم
-Route::get('/dashboard', 'HomeController@index')->name('dashboard');
+    // Membership system routes
+    Auth::routes();
 
-/**
- * comprehensive-reports Routes
- */
+    //Dashboard لوحة التحكم
+    Route::get('dashboard', 'HomeController@index')->name('dashboard');
 
-//comprehensive-reports تقارير شاملة
-Route::get('/comprehensive-reports','reportController@index');
+    /*
+    * New endpoints routes
+    */
+    Route::get('checker', 'checkerController@findOrCreateCheck');
+    Route::get('optimizer', 'optimizerController@check');
+    Route::get('metrics', 'metricsController@getMetrics');
+    Route::get('pageInsights', 'pageInsightsController@getPageInsights');
+    Route::get('backlinks', 'backlinksController@getBacklinks');
+    Route::get('add-site', 'SitesController@addSite');
+    Route::get('get-site', 'SitesController@getSite');
 
-//To send URL of comprehensive-report
-Route::post('report','reportController@makeReport');
+    /**
+     * comprehensive-reports Routes
+     */
 
-//view-comprehensive-reports عرض التقارير الشاملة
-Route::get('comprehensive-report/{id}','reportController@view');
+    //comprehensive-reports تقارير شاملة
+    Route::get('/comprehensive-reports', 'reportController@index');
 
-// To load comprehensive-reports models using ajax
-Route::get('load-report/{id}','reportController@loadReport');
+    //To send URL of comprehensive-report
+    Route::post('report', 'reportController@makeReport');
 
-//To Regenerate comprehensive-report
-Route::get('regenerate-report/{id}','reportController@regenerateReport');
+    //view-comprehensive-reports عرض التقارير الشاملة
+    Route::get('comprehensive-report/{id}', 'reportController@view');
 
-/**
- * On-page report *MiniReport (Detailed)* Routes
- */
+    // To load comprehensive-reports models using ajax
+    Route::get('load-report/{id}', 'reportController@loadReport');
 
-//on-page-reports تقارير السيو الداخلي
-Route::get('on-page-reports','MiniReportController@index');
+    //To Regenerate comprehensive-report
+    Route::get('regenerate-report/{id}', 'reportController@regenerateReport');
 
-//To send URL of on-page-report
-Route::post('on-page-report','MiniReportController@makeReport');
+    /**
+     * On-page report *MiniReport (Detailed)* Routes
+     */
 
-//view-on-page-reports عرض لتقارير السيو الداخلي
-Route::get('on-page-report/{id}','MiniReportController@view');
+    //on-page-reports تقارير السيو الداخلي
+    Route::get('on-page-reports', 'MiniReportController@index');
 
-// To load on-page-reports models using ajax
-Route::get('load-on-page-report/{id}','MiniReportController@loadReport');
+    //To send URL of on-page-report
+    Route::post('on-page-report', 'MiniReportController@makeReport');
 
-//To Regenerate on-page-report
-Route::get('regenerate-on-page-report/{id}','MiniReportController@regenerateReport');
+    //view-on-page-reports عرض لتقارير السيو الداخلي
+    Route::get('on-page-report/{id}', 'MiniReportController@view');
 
-/**
- * Bulk-mini-report Rotes
- */
+    // To load on-page-reports models using ajax
+    Route::get('load-on-page-report/{id}', 'MiniReportController@loadReport');
 
-//To send URLs of bulk-on-page-report
-Route::post('bulk-reports','MiniReportController@makeBulkReports');
+    //To Regenerate on-page-report
+    Route::get('regenerate-on-page-report/{id}', 'MiniReportController@regenerateReport');
 
-//view-bulk-reports عرض لتقارير السيو المجمعه
-Route::get('bulk-report/{id}','MiniReportController@bulkView');
+    /**
+     * Bulk-mini-report Rotes
+     */
 
-// To load bulk-reports models using ajax
-Route::get('load-bulk-report/{id}','MiniReportController@loadBulkReports');
+    //To send URLs of bulk-on-page-report
+    Route::post('bulk-reports', 'MiniReportController@makeBulkReports');
 
-// To load single-mini-reports models using ajax
-Route::get('load-mini-bulk-report','MiniReportController@loadMiniReports');
+    //view-bulk-reports عرض لتقارير السيو المجمعه
+    Route::get('bulk-report/{id}', 'MiniReportController@bulkView');
 
-/*
- * Dev env routes
- * New endpoints routes
- */
-Route::get('checker','checkerController@findOrCreateCheck');
-Route::get('optimizer','optimizerController@check');
-Route::get('metrics','metricsController@getMetrics');
-Route::get('pageInsights','pageInsightsController@getPageInsights');
-Route::get('backlinks','backlinksController@getBacklinks');
-Route::get('add-site','SitesController@addSite');
-Route::get('get-site','SitesController@getSite');
+    // To load bulk-reports models using ajax
+    Route::get('load-bulk-report/{id}', 'MiniReportController@loadBulkReports');
+
+    // To load single-mini-reports models using ajax
+    Route::get('load-mini-bulk-report', 'MiniReportController@loadMiniReports');
+};
+
+// Add routes with lang-prefix
+Route::group(['prefix' => '{lang}', 'where' => ['lang' => '[a-zA-Z]{2}']], $optionalLanguageRoutes);
+
+// Add routes without prefix
+$optionalLanguageRoutes();
+
 //Route::get('/report-generation', function () {
 //    return view('report-generation');
 //});
@@ -99,4 +108,3 @@ Route::get('get-site','SitesController@getSite');
 //Route::get('store','baseTestsController@store');
 //Route::get('test','baseTestsController@test');
 //Route::get('search/{id}','reportController@search');
-

@@ -23,8 +23,8 @@ class checkerController extends Controller
             return "Not Valid URL";
         }
         $connector->setIsGoodStatus();       
-        $connector->httpCodes;
-        $connector->urlRedirects;
+        // $connector->httpCodes;
+        // $connector->urlRedirects;
 
         $foundPage = Page::where('url', $connector->url)->first();
 

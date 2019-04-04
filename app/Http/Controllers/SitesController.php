@@ -51,6 +51,8 @@ class SitesController extends Controller
 
     public function distributeJobs(){
         // distrbute Crawling jobs to nodes 
+        // Premature Optimization Is the Root of All Evil
+        // Use load balancer instead
     }
 
     public function getSite(Request $request){
@@ -65,5 +67,6 @@ class SitesController extends Controller
 
     private function showChecks($siteId){
         // prepare readable checks for user in json 
+        
     }
 }

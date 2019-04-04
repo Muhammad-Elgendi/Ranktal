@@ -36,4 +36,10 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    // override the redirectTo property value
+    public function redirectTo()
+    {
+        return app()->getLocale() . '/dashboard';
+    }
 }

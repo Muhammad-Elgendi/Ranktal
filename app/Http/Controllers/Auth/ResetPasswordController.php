@@ -36,4 +36,10 @@ class ResetPasswordController extends Controller
     {
         $this->middleware('guest');
     }
+
+    // override the redirectTo property value
+    public function redirectTo()
+    {
+        return app()->getLocale() . '/dashboard';
+    }
 }

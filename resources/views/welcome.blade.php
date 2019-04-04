@@ -69,10 +69,10 @@
             @if (Route::has('login'))
                 <div class="top-right links">
                     @auth
-                        <a href="{{ url('/dashboard') }}">لوحة التحكم</a>
+                        <a href="{{ route('dashboard', app()->getLocale()) }}">لوحة التحكم</a>
                     @else
-                        <a href="{{ route('login') }}">دخول</a>
-                        <a href="{{ route('register') }}">حساب جديد</a>
+                        <a href="{{ route('login', app()->getLocale()) }}">دخول</a>
+                        <a href="{{ route('register', app()->getLocale()) }}">حساب جديد</a>
                     @endauth
                 </div>
             @endif

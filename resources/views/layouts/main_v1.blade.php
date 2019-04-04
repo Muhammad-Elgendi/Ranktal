@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="ar" prefix="og: http://ogp.me/ns#">
+<html dir="rtl" lang="{{ app()->getLocale() }}" prefix="og: http://ogp.me/ns#">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -304,11 +304,11 @@
                                     <a href="#" class="btn btn-default btn-flat">الملف الشخصي</a>
                                 </div>
                                 <div class="pull-left">
-                                    <a href="{{ route('logout') }}"
+                                    <a href="{{ route('logout', app()->getLocale()) }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();"
                                        class="btn btn-default btn-flat">تسجيل الخروج</a>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                    <form id="logout-form" action="{{ route('logout', app()->getLocale()) }}" method="POST"
                                           style="display: none;">
                                         {{ csrf_field() }}
                                     </form>
