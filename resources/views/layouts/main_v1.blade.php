@@ -304,11 +304,11 @@
                                     <a href="#" class="btn btn-default btn-flat">الملف الشخصي</a>
                                 </div>
                                 <div class="pull-left">
-                                    <a href="{{ route('logout', app()->getLocale()) }}"
+                                    <a href="{{ route('lang.logout', app()->getLocale()) }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();"
                                        class="btn btn-default btn-flat">تسجيل الخروج</a>
-                                    <form id="logout-form" action="{{ route('logout', app()->getLocale()) }}" method="POST"
+                                    <form id="logout-form" action="{{ route('lang.logout', app()->getLocale()) }}" method="POST"
                                           style="display: none;">
                                         {{ csrf_field() }}
                                     </form>

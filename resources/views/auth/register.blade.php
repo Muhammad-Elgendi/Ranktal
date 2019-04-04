@@ -8,7 +8,7 @@
                 <div class="panel-heading">تسجيل حساب جديد</div>
 
                 <div class="panel-body">
-                    <form class="form-horizontal" method="POST" action="{{ route('register', app()->getLocale()) }}">
+                    <form class="form-horizontal" method="POST" action="{{ route('lang.register', app()->getLocale()) }}">
                         {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">

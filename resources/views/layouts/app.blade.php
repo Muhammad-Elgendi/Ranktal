@@ -48,8 +48,8 @@
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Authentication Links -->
                         @guest
-                            <li><a href="{{ route('login', app()->getLocale()) }}">دخول</a></li>
-                            <li><a href="{{ route('register', app()->getLocale()) }}">حساب جديد</a></li>
+                            <li><a href="{{ route('lang.login', app()->getLocale()) }}">دخول</a></li>
+                            <li><a href="{{ route('lang.register', app()->getLocale()) }}">حساب جديد</a></li>
                         @else
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true">
@@ -58,13 +58,13 @@
 
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a href="{{ route('logout', app()->getLocale()) }}"
+                                        <a href="{{ route('lang.logout', app()->getLocale()) }}"
                                             onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                             تسجيل الخروج
                                         </a>
 
-                                        <form id="logout-form" action="{{ route('logout', app()->getLocale()) }}" method="POST" style="display: none;">
+                                        <form id="logout-form" action="{{ route('lang.logout', app()->getLocale()) }}" method="POST" style="display: none;">
                                             {{ csrf_field() }}
                                         </form>
                                     </li>

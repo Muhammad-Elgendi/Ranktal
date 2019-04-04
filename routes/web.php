@@ -91,7 +91,7 @@ $optionalLanguageRoutes = function () {
 };
 
 // Add routes with lang-prefix
-Route::group(['prefix' => '{lang}', 'where' => ['lang' => '[a-zA-Z]{2}']], $optionalLanguageRoutes);
+Route::group(['prefix' => '{lang}', 'where' => ['lang' => '[a-zA-Z]{2}'] , 'as' => 'lang.'], $optionalLanguageRoutes);
 
 // Add routes without prefix
 $optionalLanguageRoutes();

@@ -8,7 +8,7 @@
                 <div class="panel-heading">تسجيل الدخول</div>
 
                 <div class="panel-body">
-                    <form class="form-horizontal" method="POST" action="{{ route('login' , app()->getLocale()) }}">
+                    <form class="form-horizontal" method="POST" action="{{ route('lang.login' , app()->getLocale()) }}">
                         {{ csrf_field() }}
 
                         <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
@@ -55,7 +55,7 @@
                                     دخول
                                 </button>
 
-                                <a class="btn btn-link" href="{{ route('password.request', app()->getLocale()) }}">
+                                <a class="btn btn-link" href="{{ route('lang.password.request', app()->getLocale()) }}">
                                     نسيت كلمة المرور؟
                                 </a>
                             </div>
