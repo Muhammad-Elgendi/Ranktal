@@ -1,5 +1,6 @@
 @extends('layouts.main_v1')
-@section('title','لوحة التحكم')
+@section('direction',app()->getLocale() == "ar" ? "rtl" : "ltr")
+@section('title', __('dashboard'))
 
 @section('styles','')
 
@@ -13,4 +14,4 @@
 @section('user-image',url('/img/user.png'))
 
 
-@section('user-type','الخطة العادية')
+@section('user-type',__('pro-plan'))

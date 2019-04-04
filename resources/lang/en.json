@@ -1,0 +1,17 @@
+{
+    "dashboard":"Dashboard",
+    "profile":"Profile",
+    "logout":"Logout",
+    "pro-plan":"Pro plan",
+    "online":"Online",
+    "search-placeholder": "Search",
+    "main-menu":"Main menu",
+    "reports":"Reports",
+    "reports-management" : "Reports management",
+    "comprehensive-reports": "Comprehensive reports",
+    "onpage-reports" :"OnPage reports",
+    "seo-tracker" : "SEO tracker",
+    "keywords": "Keywords",
+    "version": "Version",
+    "copyright-statement": "All copyrights reserved"
+}

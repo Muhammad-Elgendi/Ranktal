@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="{{ app()->getLocale() }}" prefix="og: http://ogp.me/ns#">
+<html dir="@yield('direction')" lang="{{ app()->getLocale() }}" prefix="og: http://ogp.me/ns#">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -46,8 +46,12 @@
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
     <link href="https://fonts.googleapis.com/css?family=Cairo" rel="stylesheet">
-    <!-- rtl style -->
-    <link rel="stylesheet" href="{{url('dist/css/rtl.css')}}">
+
+    @if (app()->getLocale() == "ar")
+      <!-- rtl style -->
+      <link rel="stylesheet" href="{{url('dist/css/rtl.css')}}">
+    @endif
+   
     @yield('styles')
 </head>
 <body class="hold-transition skin-blue sidebar-mini">
@@ -301,13 +305,13 @@
                             <!-- Menu Footer-->
                             <li class="user-footer">
                                 <div class="pull-right">
-                                    <a href="#" class="btn btn-default btn-flat">الملف الشخصي</a>
+                                    <a href="#" class="btn btn-default btn-flat">@lang('profile')</a>
                                 </div>
                                 <div class="pull-left">
                                     <a href="{{ route('lang.logout', app()->getLocale()) }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();"
-                                       class="btn btn-default btn-flat">تسجيل الخروج</a>
+                                       class="btn btn-default btn-flat">@lang('logout')</a>
                                     <form id="logout-form" action="{{ route('lang.logout', app()->getLocale()) }}" method="POST"
                                           style="display: none;">
                                         {{ csrf_field() }}
@@ -335,13 +339,13 @@
                 </div>
                 <div class="pull-right info">
                     <p>{{ Auth::user()->name }}</p>
-                    <a href="#"><i class="fa fa-circle text-success"></i> متصل</a>
+                    <a href="#"><i class="fa fa-circle text-success"></i>@lang('online')</a>
                 </div>
             </div>
             <!-- search form -->
             <form action="#" method="get" class="sidebar-form">
                 <div class="input-group">
-                    <input type="text" name="q" class="form-control" placeholder="البحث ...">
+                    <input type="text" name="q" class="form-control" placeholder="@lang('search-placeholder') ...">
                     <span class="input-group-btn">
                 <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i>
                 </button>
@@ -351,10 +355,10 @@
             <!-- /.search form -->
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
-                <li class="header">القائمة الرئيسية</li>
+                <li class="header">@lang("main-menu")</li>
                 <li>
                     <a href="{{url('dashboard')}}">
-                        <i class="fa fa-dashboard"></i> <span>لوحة التحكم</span>
+                        <i class="fa fa-dashboard"></i> <span>@lang("dashboard")</span>
                     </a>
                     <!--  <ul class="treeview-menu">
                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
@@ -372,20 +376,20 @@
                 {{--</li>--}}
                 <li class="treeview">
                     <a href="#">
-                        <i class="fa fa-file-text"></i> <span>التقارير</span>
+                        <i class="fa fa-file-text"></i> <span>@lang("reports")</span>
                         {{--<span class="pull-right-container">--}}
               {{--<i class="fa fa-angle-left pull-right"></i>--}}
             {{--</span>--}}
                     </a>
                     <ul class="treeview-menu">
-                        <li><a href="{{url('reports')}}"><i class="fa fa-circle-o"></i>إدارة التقارير</a></li>
-                        <li><a href="{{url('comprehensive-reports')}}"><i class="fa fa-circle-o"></i>تقارير شاملة</a></li>
-                        <li><a href="{{url('on-page-reports')}}"><i class="fa fa-circle-o"></i>تقارير سيو داخلي</a></li>
+                        <li><a href="{{url('reports')}}"><i class="fa fa-circle-o"></i>@lang("reports-management")</a></li>
+                        <li><a href="{{url('comprehensive-reports')}}"><i class="fa fa-circle-o"></i>@lang('comprehensive-reports')</a></li>
+                        <li><a href="{{url('on-page-reports')}}"><i class="fa fa-circle-o"></i>@lang('onpage-reports')</a></li>
                     </ul>
                 </li>
                 <li>
                     <a href="#">
-                        <i class="fa fa-binoculars"></i> <span>مراقب السيو</span>
+                        <i class="fa fa-binoculars"></i> <span>@lang('seo-tracker')</span>
                     </a>
                     <!--  <ul class="treeview-menu">
                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
@@ -394,7 +398,7 @@
                 </li>
                 <li>
                     <a href="#">
-                        <i class="fa fa-line-chart"></i> <span>الكلمات المفتاحية</span>
+                        <i class="fa fa-line-chart"></i> <span>@lang("keywords")</span>
                     </a>
                     <!--  <ul class="treeview-menu">
                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
@@ -585,10 +589,10 @@
     <!-- /.content-wrapper -->
     <footer class="main-footer">
         <div class="pull-left hidden-xs">
-            <b>الإصدار</b> 1.0
-        </div>
-        <strong>الحقوق &copy; 2017 </strong>جميع الحقوق
-        محفوظة.
+            <b>@lang("version")</b> 1.0
+        </div>&nbsp;       
+      @lang('copyright-statement').
+      <strong> &copy; 2019 </strong>
     </footer>
 
     <!-- Control Sidebar -->

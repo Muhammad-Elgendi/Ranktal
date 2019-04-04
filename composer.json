@@ -11,7 +11,8 @@
         "geoip2/geoip2": "^2.7",
         "laravel/framework": "5.5.*",
         "laravel/tinker": "~1.0",
-        "laravelcollective/html": "^5.5"
+        "laravelcollective/html": "^5.5",
+        "mariuzzo/laravel-js-localization": "^1.4"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^2.4",

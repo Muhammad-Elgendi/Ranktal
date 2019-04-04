@@ -1,0 +1,17 @@
+{
+    "dashboard":"لوحة التحكم",
+    "profile":"الملف الشخصي",
+    "logout":"تسجيل الخروج",
+    "pro-plan":"الخطة الإحترافية",
+    "online":"متصل",
+    "search-placeholder":"البحث",
+    "main-menu":"القائمة الرئيسية",
+    "reports":"التقارير",
+    "reports-management":"إدارة التقارير",
+    "comprehensive-reports": "تقارير شاملة",
+    "onpage-reports" : "تقارير سيو داخلي",
+    "seo-tracker" : "مراقب السيو",
+    "keywords": "الكلمات المفتاحية",
+    "version": "الإصدار",
+    "copyright-statement":"جميع الحقوق محفوظة"
+}

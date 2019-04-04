@@ -171,6 +171,8 @@ return [
          */
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
+        Mariuzzo\LaravelJsLocalization\LaravelJsLocalizationServiceProvider::class,
+        
         /*
          * Package Service Providers...
          */
