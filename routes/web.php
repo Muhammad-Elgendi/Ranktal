@@ -24,11 +24,13 @@ $optionalLanguageRoutes = function () {
     //Dashboard لوحة التحكم
     Route::get('dashboard', 'HomeController@index')->name('dashboard');
 
+    //Page Optimization view
+    Route::get('dashboard/page-optimization', 'optimizerController@index')->name('page-optimization');
     /*
     * New endpoints routes
     */
     Route::get('checker', 'checkerController@findOrCreateCheck');
-    Route::get('optimizer', 'optimizerController@check');
+    Route::get('optimizer', 'optimizerController@check')->name('optimizer');
     Route::get('metrics', 'metricsController@getMetrics');
     Route::get('pageInsights', 'pageInsightsController@getPageInsights');
     Route::get('backlinks', 'backlinksController@getBacklinks');

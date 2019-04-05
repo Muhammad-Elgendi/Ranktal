@@ -8,7 +8,12 @@ use App\Core\PageConnector;
 
 class optimizerController extends Controller
 {
-    //
+    // View Method
+    public function index(){
+       return view('dashboard.pageOptimization');
+    }
+
+
 
     public function check(Request $request){
         $inputUrl = $request->get('u');

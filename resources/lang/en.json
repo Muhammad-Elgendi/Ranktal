@@ -2,6 +2,16 @@
     "dashboard":"Dashboard",
     "profile":"Profile",
     "logout":"Logout",
+    "signin":"Sign in",
+    "signup":"Sign up",
+    "e-mail":"E-mail",
+    "password": "Password",
+    "confirm-password":"Confirm password",
+    "reset-password":"Reset password",
+    "send-link-reset-password":"Send link to reset password",
+    "remember-me":"Remember me",
+    "forget-password":"Forget password?",
+    "name":"Name",
     "pro-plan":"Pro plan",
     "online":"Online",
     "search-placeholder": "Search",
@@ -13,5 +23,9 @@
     "seo-tracker" : "SEO tracker",
     "keywords": "Keywords",
     "version": "Version",
-    "copyright-statement": "All copyrights reserved"
+    "copyright-statement": "All copyrights reserved",
+    "page-optimization":"Page optimization",
+    "arabic":"Arabic",
+    "english":"English",
+    "page-link":"Page link"
 }

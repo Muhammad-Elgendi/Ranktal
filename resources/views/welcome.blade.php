@@ -1,16 +1,16 @@
 <!doctype html>
-<html lang="{{ app()->getLocale() }}">
+<html dir="{{ in_array(app()->getLocale(),config('app.rtl')) ? "rtl" : "ltr" }}" lang="{{ app()->getLocale() }}">
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>{{ucfirst(config('app.name'))}}</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
 
-        <!-- Styles -->
+        <!-- Styles --> 
         <style>
             html, body {
                 background-color: #fff;
@@ -65,21 +65,25 @@
         </style>
     </head>
     <body>
+        
         <div class="flex-center position-ref full-height">
+        
+           
+
             @if (Route::has('login'))
-                <div class="top-right links">
+                <div class="top-right links">          
                     @auth
-                        <a href="{{ route('lang.dashboard', app()->getLocale()) }}">لوحة التحكم</a>
+                        <a href="{{ route('lang.dashboard', app()->getLocale()) }}">@lang('dashboard')</a>
                     @else
-                        <a href="{{ route('lang.login', app()->getLocale()) }}">دخول</a>
-                        <a href="{{ route('lang.register', app()->getLocale()) }}">حساب جديد</a>
+                        <a href="{{ route('lang.login', app()->getLocale()) }}">@lang('signin')</a>
+                        <a href="{{ route('lang.register', app()->getLocale()) }}">@lang('signup')</a>
                     @endauth
                 </div>
             @endif
 
             <div class="content">
                 <div class="title m-b-md">
-                    SeoAr
+                    {{ucfirst(config('app.name'))}}
                 </div>
 
                 <div class="links">

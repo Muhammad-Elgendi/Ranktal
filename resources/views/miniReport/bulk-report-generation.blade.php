@@ -1,4 +1,4 @@
-@extends('layouts.main_v1')
+@extends('layouts.main')
 @section('title','إعداد تقرير مجمع')
 @section('user-image',url('/img/user.png'))
 @section('user-type','الخطة العادية')

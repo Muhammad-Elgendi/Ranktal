@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="rtl" lang="{{ app()->getLocale() }}" prefix="og: http://ogp.me/ns#">
+<html dir="{{ in_array(app()->getLocale(),config('app.rtl')) ? "rtl" : "ltr" }}"  lang="{{ app()->getLocale() }}" prefix="og: http://ogp.me/ns#">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,12 +8,16 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>SeoAr</title>
+    <title>{{ucfirst(config('app.name'))}}</title>
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
+    @if(app()->getLocale() == "ar")
     <!-- Load Bootstrap RTL theme from RawGit -->
     <link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">
+    @endif
+    
     <link href="{{ asset('css/membership.css') }}" rel="stylesheet">
 </head>
 <body>
@@ -21,8 +25,8 @@
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container">
                 <!-- Branding Image -->
-                <a class="navbar-brand navbar-right" href="{{ url('/') }}">
-                    SeoAr
+                <a class="{{ in_array(app()->getLocale(),config('app.rtl')) ? "navbar-brand navbar-right" : "navbar-brand" }}" href="{{ url('/') }}">
+                    {{ucfirst(config('app.name'))}}
                 </a>
 
                 <div class="navbar-header">
@@ -48,8 +52,8 @@
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Authentication Links -->
                         @guest
-                            <li><a href="{{ route('lang.login', app()->getLocale()) }}">دخول</a></li>
-                            <li><a href="{{ route('lang.register', app()->getLocale()) }}">حساب جديد</a></li>
+                            <li><a href="{{ route('lang.login', app()->getLocale()) }}">@lang('signin')</a></li>
+                            <li><a href="{{ route('lang.register', app()->getLocale()) }}">@lang('signup')</a></li>
                         @else
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true">
@@ -61,7 +65,7 @@
                                         <a href="{{ route('lang.logout', app()->getLocale()) }}"
                                             onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                                            تسجيل الخروج
+                                            @lang('logout')
                                         </a>
 
                                         <form id="logout-form" action="{{ route('lang.logout', app()->getLocale()) }}" method="POST" style="display: none;">

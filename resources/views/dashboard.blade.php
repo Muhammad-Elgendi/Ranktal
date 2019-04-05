@@ -1,5 +1,5 @@
-@extends('layouts.main_v1')
-@section('direction',app()->getLocale() == "ar" ? "rtl" : "ltr")
+@extends('layouts.main')
+@section('direction',in_array(app()->getLocale(),config('app.rtl')) ? "rtl" : "ltr")
 @section('title', __('dashboard'))
 
 @section('styles','')

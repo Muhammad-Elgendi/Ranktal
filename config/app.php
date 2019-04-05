@@ -80,7 +80,17 @@ return [
 
     'locale' => 'en',
 
+    /**
+     * Application Languages
+     */
+
     'locales' => ['ar','en'],
+    'flags' => ['ar'=>'sa','en'=>'us'],
+    /**
+     * Right to Left Languages
+     */
+
+    'rtl' =>['ar'],
 
     /*
     |--------------------------------------------------------------------------
