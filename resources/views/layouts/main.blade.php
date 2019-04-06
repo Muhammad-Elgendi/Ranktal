@@ -12,8 +12,6 @@
 
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <!-- Bootstrap 3.3.7 -->
-    <link rel="stylesheet" href="{{url('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{url('bower_components/font-awesome/css/font-awesome.min.css')}}">
     <!-- Ionicons -->
@@ -48,9 +46,22 @@
     <link href="https://fonts.googleapis.com/css?family=Cairo" rel="stylesheet">
 
     @if (in_array(app()->getLocale(),config('app.rtl')))
-      <!-- rtl style -->
-      <link rel="stylesheet" href="{{url('dist/css/rtl.css')}}">
+    {{-- <!-- Load Bootstrap3.3.7-rtl -->
+    <link rel="stylesheet" href="{{url('bower_components/bootstrap-3.3.7-rtl/css/bootstrap.min.css')}}"> --}}
+
+      <!-- Bootstrap 3.3.7 -->
+      <link rel="stylesheet" href="{{url('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
+      
+    <!-- Load bootstrap-rtl-ondemand -->
+    <link rel="stylesheet" href="{{url('bower_components/bootstrap-rtl-ondemand/dist/css/bootstrap-rtl-ondemand.min.css')}}">
+
+    <!-- AdminLTE-RTL style -->
+    <link rel="stylesheet" href="{{url('dist/css/rtl.css')}}">
+    @else
+      <!-- Bootstrap 3.3.7 -->
+      <link rel="stylesheet" href="{{url('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
     @endif
+
     <!-- flag-icon -->
     <link rel="stylesheet" href="{{url('bower_components/flag-icon-css/css/flag-icon.min.css')}}">
 

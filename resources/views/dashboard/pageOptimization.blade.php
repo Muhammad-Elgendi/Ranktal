@@ -73,7 +73,7 @@
                 {!! Form::open(['url' => 'report']) !!}
                 <div class="col-lg-5 col-xs-12">
                         {{-- <div class="flex-center position-ref full-height"> --}}
-                                <p class="text-left title">@lang('page-link')</p>
+                                <p class="title">@lang('page-link')</p>
                                 <div class="form-group" id="text-box">
                                     {{ Form::text('url', null, ['class' => 'form-control','placeholder'=>__('page-link')]) }}
                                 </div>
@@ -81,7 +81,7 @@
                 </div>
                 <div class="col-lg-5 col-xs-12">
                         {{-- <div class="flex-center position-ref full-height">                              --}}
-                                <p class="text-left title">@lang('keyword')</p>
+                                <p class="title">@lang('keyword')</p>
                                 <div class="form-group" id="text-box">
                                     {{ Form::text('url', null, ['class' => 'form-control','placeholder'=>__('keyword')]) }}
                                 </div>                            

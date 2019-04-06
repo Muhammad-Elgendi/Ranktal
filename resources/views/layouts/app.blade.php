@@ -13,9 +13,21 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
-    @if(app()->getLocale() == "ar")
-    <!-- Load Bootstrap RTL theme from RawGit -->
-    <link rel="stylesheet" href="//cdn.rawgit.com/morteza/bootstrap-rtl/v3.3.4/dist/css/bootstrap-rtl.min.css">
+    @if(in_array(app()->getLocale(),config('app.rtl')))
+  
+   {{-- <!-- Load Bootstrap3.3.7-rtl -->
+    <link rel="stylesheet" href="{{url('bower_components/bootstrap-3.3.7-rtl/css/bootstrap.min.css')}}"> --}}
+
+      <!-- Bootstrap 3.3.7 -->
+      <link rel="stylesheet" href="{{url('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
+      
+    <!-- Load bootstrap-rtl-ondemand -->
+    <link rel="stylesheet" href="{{url('bower_components/bootstrap-rtl-ondemand/dist/css/bootstrap-rtl-ondemand.min.css')}}">
+
+  
+    @else
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="{{url('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
     @endif
     
     <link href="{{ asset('css/membership.css') }}" rel="stylesheet">
