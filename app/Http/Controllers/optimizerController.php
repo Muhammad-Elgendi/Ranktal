@@ -40,4 +40,23 @@ class optimizerController extends Controller
 
         return json_encode($optimizer,JSON_PRETTY_PRINT |JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
+
+    public function viewChecksUsingAjax(Request $request){
+        if($request->ajax()){   
+           $json = $this->check($request);
+           $array = json_decode($json);
+           $newRequest = array(array());
+           $counter = 0;
+           foreach($array as $key => $value){
+                $newRequest[$counter]["type"] = empty($value) ? "glyphicon-remove-sign text-danger" : "glyphicon-ok-sign text-success";
+                $newRequest[$counter]["title"] = __($key);
+                $counter++;
+            }
+
+        //    print_r($newRequest);
+            return json_encode($newRequest,JSON_PRETTY_PRINT |JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); 
+        }
+        else
+            return "This page isn't for you ! ^_^";        
+    }
 }

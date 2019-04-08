@@ -21,21 +21,23 @@ $optionalLanguageRoutes = function () {
     // Membership system routes
     Auth::routes();
 
-    //Dashboard لوحة التحكم
-    Route::get('dashboard', 'HomeController@index')->name('dashboard');
+    //Views
+    Route::get('dashboard/page-optimization', 'optimizerController@index')->name('page-optimization'); //Page optimization view    
+    Route::get('dashboard', 'HomeController@index')->name('dashboard'); //Dashboard
 
-    //Page Optimization view
-    Route::get('dashboard/page-optimization', 'optimizerController@index')->name('page-optimization');
-    /*
-    * New endpoints routes
-    */
+    //Ajax Views Routes
+    Route::get('optimizer-view', 'optimizerController@viewChecksUsingAjax')->name('optimizerAjax');
+
+    // Endpoints routes
     Route::get('checker', 'checkerController@findOrCreateCheck');
-    Route::get('optimizer', 'optimizerController@check')->name('optimizer');
+    Route::get('optimizer', 'optimizerController@check')->name('optimizer');  
     Route::get('metrics', 'metricsController@getMetrics');
     Route::get('pageInsights', 'pageInsightsController@getPageInsights');
     Route::get('backlinks', 'backlinksController@getBacklinks');
     Route::get('add-site', 'SitesController@addSite');
     Route::get('get-site', 'SitesController@getSite');
+
+ //------------------------------------------------------------------------------------------------------------
 
     /**
      * comprehensive-reports Routes

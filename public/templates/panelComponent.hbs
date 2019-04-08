@@ -1,0 +1,81 @@
+{{#each this}}
+<div class="panel panel-default">
+    <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#collapse{{@index}}">
+        <h4 class="panel-title">
+            <span class="glyphicon {{type}} fa-lg"></span>
+            {{title}}
+            <span class="glyphicon glyphicon-chevron-down clickable"></span>
+        </h4>
+    </div>
+    <div id="collapse{{@index}}" class="panel-collapse collapse">
+
+        {{!--  body of panel with padding  --}}
+
+        <div class="panel-body">
+            {{!-- info div  --}}
+
+            {{#if infosection}}
+            <div class="alert alert-info">
+                <i class="fa fa-info-circle" aria-hidden="true"></i>
+                <strong>{{infosection.infoword}}</strong>
+                <article>
+                    {{{infosection.info}}}
+                </article>
+            </div>
+            {{/if}}
+
+            {{#if text_before_attributes}}
+            {{{text_before_attributes}}}
+            {{/if}}
+
+            {{!--  attribute table  --}}
+            {{#if attributes}}
+            <table class="table">
+                <tbody>
+                    {{#each attributes}}
+                    <tr>
+                        <th>{{this.[0]}}</th>
+                        <td>{{this.[1]}}</td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            {{/if}}
+
+            {{#if text_after_attributes}}
+            {{{text_after_attributes}}}
+            {{/if}}
+
+            {{!--  Data table --}}
+
+            {{#if tablesection}}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        {{#each tablesection.columns}}
+                        <th>{{this}}</th>
+                        {{/each}}
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each tablesection.rows}}
+                    <tr>
+                        {{#each this}}
+                        <td>{{ this }}</td>
+                        {{/each}}
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            {{/if}}
+
+            {{!-- required action --}}
+
+            {{#if text_after_table}}
+                {{{text_after_table}}}
+            {{/if}}
+            
+        </div>
+    </div>
+</div>
+{{/each}}
