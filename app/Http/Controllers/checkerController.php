@@ -14,6 +14,15 @@ use App\Html;
 class checkerController extends Controller
 {
     //
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
     public function findOrCreateCheck(Request $request){
         $inputUrl = $request->get('q');

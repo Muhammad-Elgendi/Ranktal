@@ -1,6 +1,6 @@
 {{#each this}}
 <div class="panel panel-default">
-    <div class="panel-heading" data-toggle="collapse" data-parent="#accordion" href="#collapse{{@index}}">
+    <div class="panel-heading" data-toggle="collapse" href="#collapse{{@index}}">
         <h4 class="panel-title">
             <span class="glyphicon {{type}} fa-lg"></span>
             {{title}}
@@ -19,7 +19,7 @@
                 <i class="fa fa-info-circle" aria-hidden="true"></i>
                 <strong>{{infosection.infoword}}</strong>
                 <article>
-                    {{{infosection.info}}}
+                    {{infosection.info}}
                 </article>
             </div>
             {{/if}}

@@ -13,6 +13,9 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
+    <!-- flag-icon -->
+    <link rel="stylesheet" href="{{url('bower_components/flag-icon-css/css/flag-icon.min.css')}}">
+
     @if(in_array(app()->getLocale(),config('app.rtl')))
   
    {{-- <!-- Load Bootstrap3.3.7-rtl -->
@@ -87,6 +90,16 @@
                                 </ul>
                             </li>
                         @endguest
+                        {{-- <!-- Languages Switcher --> --}}
+                        <li class="dropdown" style="direction:ltr;">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                            <span class="flag-icon flag-icon-{{config('app.flags')[app()->getLocale()]}}"></span>
+                            {{-- <span class="caret"></span></a> --}}
+                            <ul class="dropdown-menu">
+                            <li><a href="{{ route('lang.home',"ar") }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
+                            <li><a href="{{ route('lang.home',"en") }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
             </div>

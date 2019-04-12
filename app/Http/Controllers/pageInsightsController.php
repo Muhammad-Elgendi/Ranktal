@@ -6,8 +6,18 @@ use Illuminate\Http\Request;
 use App\Core\PageInsights;
 use App\PageInsight;
 
-class pageInsightsController extends Controller
-{
+class pageInsightsController extends Controller{
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     //
     public function getPageInsights(Request $request){
         $url = $request->get('url');

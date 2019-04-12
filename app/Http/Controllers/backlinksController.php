@@ -13,6 +13,16 @@ class backlinksController extends Controller
      * Add validation of urls
      */
 
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function getBacklinks(Request $request){
         $target = $request->get('target');
         $src = $request->get('src');

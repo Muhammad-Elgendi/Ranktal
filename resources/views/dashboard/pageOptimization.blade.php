@@ -18,6 +18,20 @@
     form #button{
         margin: 15px auto;
     }
+    #process-bar{
+        margin: 10px;
+        width: 100px;
+        height: 100px;
+        position: relative;
+    }
+    .container-border{
+        border: 1px solid #ccc;   
+    }
+    .active-issue{
+        background-color: #ccc;
+        color: white;
+    }
+
 </style>
 @endsection
 
@@ -43,6 +57,56 @@
                 {!! Form::close() !!}
         </div>
 
+        <div style="display:none; padding-bottom: 15px;" id="upper-board">
+
+            <div class="row">    
+                <div class="col-lg-6 col-xs-12" id="title">
+                        <p class="title">@lang('page-link')</p> 
+                        <a id="url-value" href=""></a>
+                        
+                        <p class="title">@lang('page-title')</p> 
+                        <p id="title-value"></p>
+                </div>
+
+                <div class="col-lg-6 col-xs-12" id="desc">
+                        <p class="title">@lang('page-description')</p> 
+                        <p id="desc-value"></p> 
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-3 col-xs-12" >
+                    <p class="title">@lang('keyword-found')</p> 
+                    <p class="title" id="found"></p> 
+                </div>
+                <div class="col-lg-3 col-xs-12">
+                    <p class="title">@lang('keyword-locations')</p> 
+                    <ul id="locations"></ul> 
+                </div>             
+                <div class="col-lg-3 col-xs-12" id="page-score">
+
+                    <p class="title">@lang('page-score')</p>
+                    <div id="process-bar"></div>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-3 col-xs-12 container-border text-center" id="hurting-block">
+                    <p class="title">@lang('hurt-score')</p>
+                    <p class="title" id="hurting"></p>
+                </div>
+                <div class="col-lg-3 col-xs-12 container-border text-center" id="helping-block">
+                    <p class="title">@lang('help-score')</p>
+                    <p class="title" id="helping"></p>
+                </div>
+                <div class="col-lg-3 col-xs-12 container-border text-center" id="issues-block">
+                    <p class="title">@lang('all-issues')</p>
+                    <p class="title"  id="all-issues"></p>
+                </div>
+            </div>
+        </div>
+
         <div class="row" id="checks"></div>
 
 </div>
@@ -52,27 +116,103 @@
 
 @section('scripts')
 
-<script>
-$('.panel-default').on('click', function(e) {
-    $(e.target).find("span.clickable").toggleClass('glyphicon-chevron-up glyphicon-chevron-down',200, "easeOutSine" );
-});
-</script>
-
 <script src="{{url('handlebars/handlebars-v4.1.1.js')}}" ></script>
+<script src="{{url('bower_components/progressbar.js/dist/progressbar.min.js')}}" ></script>
 
 <script>
   $( "#button" ).click(function() {
-
-  $.get("{{route('optimizerAjax')}}",{ u: $("#urlInput").val(), k: $("#keywordInput").val() }, function (jsondata) {
-    console.log(jsondata);
-
-    $.get("{{url('templates/panelComponent.hbs')}}", function (data) {
-      var template=Handlebars.compile(data);
-      $("#checks").html(template(jsondata));
-    }, 'html')
     
-  },'json')
+    // reset process bar
+    $('#process-bar').html("");
+
+    $.get("{{route('lang.optimizerAjax',app()->getLocale())}}",{ u: $("#urlInput").val(), k: $("#keywordInput").val() }, function (jsondata) {
+
+            $.get("{{url('templates/panelComponent.hbs')}}", function (data) {
+            var template=Handlebars.compile(data);      
+            $("#checks").html(template(jsondata.checks));
+                // update view
+                updateView(jsondata);
+                attachProcessPar(jsondata);
+            }, 'html')
+
+        },'json')
 });
+
+function updateView(jsondata){
+    $('#upper-board').show();
+    $('#url-value').text(jsondata.url).attr('href',jsondata.url);
+    $('#title-value').text(jsondata.pageTitle);
+    $('#desc-value').text(jsondata.pageDescription);
+    $('#found').text(jsondata.keywordFound);
+    $('#locations').html("<li>Title : "+jsondata.keywordInTitleCount+"</li>"+
+                        "<li>Body : "+jsondata.keywordInBodyCount+"</li>"+
+                        "<li>Meta description : "+jsondata.keywordInDescriptionCount+"</li>"+
+                        "<li>Url : "+jsondata.keywordInUrlCount+"</li>"+
+                        "<li>IMG Alt : "+jsondata.keywordInImgAltCount+"</li>");
+                        $('#hurting').text( $('#checks .glyphicon-remove-sign').size() );
+
+    $('#helping').text( $('#checks .glyphicon-ok-sign').size() );
+    $('#all-issues').text( $('#checks .glyphicon-ok-sign').size() + $('#checks .glyphicon-remove-sign').size() );
+
+    $('.panel-heading').on('click', function(e) {
+        $(e.target).find("span.clickable").toggleClass('glyphicon-chevron-up glyphicon-chevron-down',200, "easeOutSine" );
+    });
+
+    $('#hurting-block').click(function() {
+        $('.glyphicon-remove-sign').parent().parent().parent().show();
+        $('.glyphicon-ok-sign').parent().parent().parent().hide();
+        $( "#hurting-block" ).addClass( "active-issue" );
+        $('#helping-block,#issues-block').removeClass( "active-issue" );
+    });
+    $('#helping-block').click(function() {
+        $('.glyphicon-remove-sign').parent().parent().parent().hide();
+        $('.glyphicon-ok-sign').parent().parent().parent().show();
+        $( "#helping-block" ).addClass( "active-issue" );
+        $('#issues-block,#hurting-block').removeClass( "active-issue" );
+    });
+    $('#issues-block').click(function() {
+        $('.glyphicon-remove-sign').parent().parent().parent().show();
+        $('.glyphicon-ok-sign').parent().parent().parent().show();
+        $( "#issues-block" ).addClass( "active-issue" );
+        $('#helping-block,#hurting-block').removeClass( "active-issue" );
+    });
+}
+
+function attachProcessPar(jsondata){
+    var bar = new ProgressBar.Circle('#process-bar', {
+    color: '#636b6f',
+    // This has to be the same size as the maximum width to
+    // prevent clipping
+    strokeWidth: 10,
+    trailWidth: 4,
+    easing: 'easeInOut',
+    duration: 1400,
+    text: {
+        autoStyleContainer: false,
+        value: '0'
+    },   
+    from: { color: '#aaa', width: 4 },
+    to: { color: jsondata.score >= 70 ? "#00C851" : "#ff4444", width: 10 },
+    // Set default step function for all animate calls
+    step: function(state, circle) {
+        circle.path.setAttribute('stroke', state.color);
+        circle.path.setAttribute('stroke-width', state.width);
+
+        var value = Math.round(circle.value() * 100);
+        if (value === 0) {
+            circle.setText('');
+        } else {
+            circle.setText(value);
+        }       
+    }
+    });
+    bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+    bar.text.style.fontSize = '4rem';
+    
+
+    bar.animate(jsondata.score / 100);  // Number from 0.0 to 1.0
+}
+
 </script>
 
 @endsection

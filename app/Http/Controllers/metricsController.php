@@ -9,6 +9,15 @@ use App\Metric;
 class metricsController extends Controller
 {
     //
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
     public function getMetrics(Request $request){
         // get url parameter

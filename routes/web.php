@@ -16,7 +16,7 @@ $optionalLanguageRoutes = function () {
     // Home الرئيسية
     Route::get('/', function () {
         return view('welcome');
-    });
+    })->name('home');
 
     // Membership system routes
     Auth::routes();
