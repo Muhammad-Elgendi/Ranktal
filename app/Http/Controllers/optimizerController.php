@@ -62,11 +62,14 @@ class optimizerController extends Controller{
             $counter = 0;
             foreach ($array as $key => $value) {
                 if (gettype($value) == "boolean" ) {
-                $newRequest['checks'][$counter]["type"] = empty($value) ? "glyphicon-remove-sign text-danger" : "glyphicon-ok-sign text-success";
-                $newRequest['checks'][$counter]["title"] = __($key);
-                $newRequest['checks'][$counter]["infosection"]["infoword"] =__('about-issue');
-                $newRequest['checks'][$counter]["infosection"]["info"] =__($key."Info");
-                $counter++;
+                    $newRequest['checks'][$counter]["type"] = empty($value) ? "glyphicon-remove-sign text-danger" : "glyphicon-ok-sign text-success";
+                    $newRequest['checks'][$counter]["title"] = __($key);
+                    $newRequest['checks'][$counter]["infosection"]["infoword"] =__('about-issue');
+                    $newRequest['checks'][$counter]["infosection"]["info"] =__($key."Info"); 
+                    $newRequest['checks'][$counter]["text_before_attributes"] =  '<h4>'.__('how-to-fix').'</h4>'.'<p>'.__($key."Fix").'</p>';
+
+                    // $newRequest['checks'][$counter]["list_before_attributes"] =  array_fill(0, 6, 'banana');
+                    $counter++;
                 }
                 else{
                     $newRequest[$key] = $value;

@@ -21,11 +21,26 @@
                 <article>
                     {{infosection.info}}
                 </article>
+                {{#if infosection.list}}
+                    <ul>
+                    {{#each infosection.list}}
+                        <li>{{this}}</li>
+                    {{/each}}
+                    </ul>
+                {{/if}}
             </div>
             {{/if}}
 
             {{#if text_before_attributes}}
-            {{{text_before_attributes}}}
+                {{{text_before_attributes}}}
+            {{/if}}
+
+            {{#if list_before_attributes}}
+                <ul>
+                    {{#each list_before_attributes}}
+                        <li>{{this}}</li>
+                    {{/each}}
+                </ul>
             {{/if}}
 
             {{!--  attribute table  --}}
