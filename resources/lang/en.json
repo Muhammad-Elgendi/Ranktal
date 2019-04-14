@@ -54,7 +54,7 @@
     "isUseExternal":"Use External Links",
     "isOneDescription":"Only One Meta Description",
     "isGoodDescriptionLength":"Optimal Meta Description Length",
-    "isUseCanonical":"Only One Canonical URL",
+    "isUseCanonical":"Includes a Rel Canonical Tag",
     "infoword":"Info",
     "about-issue":"About issue",
     "isAccessibleInfo": "To rank in search results, search engines have to be able to crawl and index your page. Before you can benefit from keyword targeting or other optimization techniques, you must make sure your page is accessible to the search engines.",
