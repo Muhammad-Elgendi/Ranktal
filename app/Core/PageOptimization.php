@@ -284,8 +284,8 @@ class PageOptimization
         $titles = $doc->getElementsByTagName('head')->item(0)->getElementsByTagName('title');
         $firstTitle = $titles->item(0)->nodeValue;
         $this->pageTitle = $firstTitle;
-        $this->keywordInTitleCount = substr_count($firstTitle, $this->keyword);
-        $this->isNotKeywordStuffTitle = substr_count($firstTitle, $this->keyword) <= 2;
+        $this->keywordInTitleCount = substr_count(strtolower($firstTitle), strtolower($this->keyword));
+        $this->isNotKeywordStuffTitle = $this->keywordInTitleCount <= 2;
         $this->isSingleTitle =  $titles->length == 1;
         $this->isBroadKeywordTitle = stripos($firstTitle, $this->keyword) === 0;
         $this->isGoodTitleLength = mb_strlen($firstTitle, 'utf8') <= 60;
@@ -294,7 +294,7 @@ class PageOptimization
 
     public function setContentChecks()
     {
-        $countOfKeywordInDoc = substr_count($this->doc, $this->keyword);
+        $countOfKeywordInDoc = substr_count(strtolower($this->doc), strtolower($this->keyword));
         $this->keywordInBodyCount = $countOfKeywordInDoc;
         $this->isExactKeywordInDoc = $countOfKeywordInDoc > 1;
         $this->isNotKeywordStuffDoc = $countOfKeywordInDoc <= 15;
@@ -311,12 +311,12 @@ class PageOptimization
 
     public function setUrlChecks()
     {
-        $this->keywordInUrlCount = substr_count($this->url, $this->keyword);
+        $this->keywordInUrlCount = substr_count(strtolower($this->url), strtolower($this->keyword));
         $this->isKeywordInUrl = stripos( $this->url ,$this->keyword) !== false;
         $this->isStaticUrl = empty($this->parsedUrl["query"]);
         preg_match_all("/([^a-zA-Z\d\s,!.#+-:&])+/", $this->url, $output_array);
         $this->useStandardChar = empty($output_array[0]);
-        $this->isNotKeywordStuffUrl = substr_count($this->url, $this->keyword) <= 1;
+        $this->isNotKeywordStuffUrl = $this->keywordInUrlCount <= 1;
         $path = isset($this->parsedUrl["path"]) ? $this->parsedUrl["path"] : '/';
         $formattedPath = rtrim($path, '/');
         $folder_depth = substr_count($formattedPath, "/");
@@ -382,7 +382,7 @@ class PageOptimization
         }
         $this->pageDescription = $description;
         $this->isUseDescription = $descriptionCount != 0 && !empty($description);
-        $keywordCountInDescription = substr_count($description, $this->keyword);
+        $keywordCountInDescription = substr_count(strtolower($description), strtolower($this->keyword));
         $this->keywordInDescriptionCount = $keywordCountInDescription;
         $this->isKeywordInDescription = $keywordCountInDescription > 0 && $keywordCountInDescription < 4;
         $this->isOneDescription = $descriptionCount == 1;
