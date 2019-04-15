@@ -289,7 +289,7 @@ class PageOptimization
         $this->isSingleTitle =  $titles->length == 1;
         $this->isBroadKeywordTitle = stripos($firstTitle, $this->keyword) === 0;
         $this->isGoodTitleLength = mb_strlen($firstTitle, 'utf8') <= 60;
-        $this->isKeywordInTitle = stripos($this->keyword, $firstTitle) !== false;
+        $this->isKeywordInTitle = stripos($firstTitle, $this->keyword) !== false;
     }
 
     public function setContentChecks()
@@ -312,7 +312,7 @@ class PageOptimization
     public function setUrlChecks()
     {
         $this->keywordInUrlCount = substr_count($this->url, $this->keyword);
-        $this->isKeywordInUrl = stripos($this->keyword, $this->url) !== false;
+        $this->isKeywordInUrl = stripos( $this->url ,$this->keyword) !== false;
         $this->isStaticUrl = empty($this->parsedUrl["query"]);
         preg_match_all("/([^a-zA-Z\d\s,!.#+-:&])+/", $this->url, $output_array);
         $this->useStandardChar = empty($output_array[0]);
