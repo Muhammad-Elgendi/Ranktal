@@ -117,5 +117,6 @@
     "isUseExternalFix":"Add a link to a relevant, trusted resource that potential visitors may appreciate.",
     "isOneDescriptionFix":"Make sure your page contains only one meta description tag.",
     "isGoodDescriptionLengthFix":"Edit your meta description tag to get your main points across in 50-300 characters. Meta Description content should be between 50-300 characters, and be a useful description of the page that will drive search clicks. Example : &lt;meta name=&quot;description&quot; content=&quot;Get SEO best practices for the meta description tag, including length and content.&quot; /&gt;.",
-    "isUseCanonicalFix":"If this page is a duplicate of another page, add a canonical URL tag to the header of this page to reference the page you want all duplicates to point to. Example : &lt;link rel=&quot;canonical&quot; href=&quot;&lt;url of main version of page&quot; /&gt;."
+    "isUseCanonicalFix":"If this page is a duplicate of another page, add a canonical URL tag to the header of this page to reference the page you want all duplicates to point to. Example : &lt;link rel=&quot;canonical&quot; href=&quot;&lt;url of main version of page&quot; /&gt;.",
+    "print":"Print"
 }
