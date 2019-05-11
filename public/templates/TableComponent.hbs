@@ -1,0 +1,29 @@
+{{!-- table  --}}
+
+    <table class="table table-hover table-bordered">
+        <thead>
+            <tr>
+            <th>Source URL</th>
+            <th>Target URL</th>
+            <th>Anchor Text</th>
+            <th>Follow</th>
+            <th>Last seen</th>
+            </tr>
+        </thead>
+        <tbody>
+                {{#each this}}
+                <tr>
+                    <td><a href="{{this.source_url}}" target="_blank">{{this.source_url}}</a></td>
+                    <td><a href="{{this.target_url}}" target="_blank">{{this.target_url}}</a></td>
+                    <td>{{this.anchor_text}}</td>
+                    {{#if this.is_dofollow}}
+                        <td><span class="glyphicon glyphicon-ok-sign text-success fa-lg"></span></td>
+                    {{else}}
+                        <td><span class="glyphicon glyphicon-remove-sign text-danger fa-lg"></span></td>
+                    {{/if}}                    
+                    <td>{{this.created_at}}</td>
+                </tr>
+                {{/each}}
+        </tbody>
+    </table>
+

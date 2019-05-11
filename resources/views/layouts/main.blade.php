@@ -229,7 +229,16 @@
                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
                        <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
                      </ul> --> --}}
-                </li>               
+                </li>
+                <li>
+                    <a href="{{route('lang.backlinks-checker',app()->getLocale())}}">
+                        <i class="fa fa-crosshairs"></i> <span>@lang("backlinks-checker")</span>
+                    </a>
+                    {{-- <!--  <ul class="treeview-menu">
+                       <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
+                       <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
+                     </ul> --> --}}
+                </li>                 
             </ul>
         </section>
         <!-- /.sidebar -->
