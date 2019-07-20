@@ -1,0 +1,105 @@
+1-Install Linux mint KDE 18.3 or any equivalant distribution that built upon ubuntu 
+My Operating System --- Linux mint KDE 18.3
+Install it from https://linuxmint.com/edition.php?id=251
+
+2-Install PHP and its Extentions
+sudo add-apt-repository -y ppa:ondrej/php
+sudo apt-get update
+sudo apt-get install php7.2 php7.2-cli php7.2-common
+sudo apt-get install php7.2-curl php7.2-gd php7.2-json php7.2-mbstring php7.2-intl php7.2-mysql php7.2-xml php7.2-zip
+
+3-Install OpenJDK 
+sudo add-apt-repository ppa:openjdk-r/ppa
+sudo apt-get update
+sudo apt-get install openjdk-8-jdk
+If you have more than one Java version installed on your system use the following command to switch versions:
+sudo update-alternatives --config java
+
+4- Download & Install IntelliJ IDEA Community Edition
+https://www.jetbrains.com/idea/download/#section=linux
+
+  IntelliJ IDEA Community Linux Installation Instructions
+  ------------------------------------------------------------------------------
+  1. Unpack the IntelliJ IDEA distribution archive that you downloaded to
+     where you wish to install the program. We will refer to this destination
+     location as your {installation home} below.
+
+  2. Open a console and cd into "{installation home}/bin" and type:
+
+       ./idea.sh
+
+     to start the application. As a side effect, this will initialize various
+     configuration files in the ~/.IdeaIC2018.2 directory.
+
+  3. [OPTIONAL] Add "{installation home}/bin" to your PATH environment
+     variable so that you may start IntelliJ IDEA from any directory.
+
+  4. [OPTIONAL] To adjust the value of the JVM heap size, create
+      ~/.IdeaIC2018.2/config/idea.vmoptions (or idea64.vmoptions
+      if using a 64-bit JDK), and set the -Xms and -Xmx parameters. To see how
+      to do this, you can reference the vmoptions file under
+      "{installation home}/bin" as a model.
+      
+5- Install vscode from
+https://code.visualstudio.com/docs/?dv=linux64_deb
+
+6-Install Docker CE
+
+       1- Update the apt package index:
+
+        sudo apt-get update
+       2- Install packages to allow apt to use a repository over HTTPS:
+
+        sudo apt-get install \
+            apt-transport-https \
+            ca-certificates \
+            curl \
+            gnupg-agent \
+            software-properties-common
+       3- Add Docker’s official GPG key:
+
+        curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+        
+       4- Install the latest version of Docker CE and containerd, or go to the next step to install a specific version:
+        
+        sudo apt-get install docker-ce docker-ce-cli containerd.io
+
+7- startup laradock containers
+cd Source Code/seo-saas/laradock/
+
+run containers 
+sudo docker-compose up workspace php-worker nginx postgres pgadmin
+
+8- update .env file configuration
+postgres container name usually is laradock_postgres_1 change the name in the following commands
+
+Check your postgres container IP Address:
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' laradock_postgres_1
+
+and change .env with the ip of conatianer
+DB_HOST=<your ip here>
+
+9-run migration files
+cd Source Code/seo-saas/laradock/
+sudo docker-compose exec workspace bash
+php artisan migrate
+
+
+10- open IntelliJ IDEA and run the crawler
+open folder Source Code/Backlinks-spider/ with IntelliJ
+
+11- run SimpleLuncher.java main method with IntelliJ
+
+12- To browse the project
+http://127.0.0.1/
+
+13- register a new user at
+http://127.0.0.1/en/register
+
+14- access the backlinks checker 
+http://127.0.0.1/en/dashboard/backlinks-checker
+
+15- To access pgadmin interface (phpmyadmin like tool but for postgres)
+http://127.0.0.1:5050
+username : pgadmin4@pgadmin.org
+password : admin
