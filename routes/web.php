@@ -22,13 +22,15 @@ $optionalLanguageRoutes = function () {
     Auth::routes();
 
     //Views
-    Route::get('dashboard/page-optimization', 'optimizerController@index')->name('page-optimization'); //Page optimization view    
     Route::get('dashboard', 'HomeController@index')->name('dashboard'); //Dashboard
-    Route::get('dashboard/backlinks-checker', 'backlinksController@index')->name('backlinks-checker'); //Backlinks checker
+    Route::get('dashboard/page-optimization', 'optimizerController@index')->name('page-optimization'); //Page optimization view    
+    Route::get('dashboard/backlinks-checker', 'backlinksController@index')->name('backlinks-checker'); //Backlinks checker view
+    Route::get('dashboard/seo-audit', 'checkerController@index')->name('seo-audit'); //Seo audit view
 
     //Ajax Views Routes
     Route::get('optimizer-view', 'optimizerController@viewChecksUsingAjax')->name('optimizerAjax');
     Route::get('backlinks-view', 'backlinksController@viewBacklinksUsingAjax')->name('backlinksAjax');
+    Route::get('seo-audit-view', 'checkerController@viewChecksUsingAjax')->name('seoAuditAjax');
 
     // Endpoints routes
     Route::get('checker', 'checkerController@findOrCreateCheck');

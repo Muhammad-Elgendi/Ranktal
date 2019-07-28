@@ -143,6 +143,17 @@ class PageChecker{
 
     public $isAccessible;
 
+    public $isFrameExist;
+
+    public $isAmpCopyExist;
+
+    public $isOpenGraphExist;
+
+    public $isTwitterCardExist;
+
+    public $isFormattedTextExist;
+    
+
     function __construct($obj){
         foreach($obj as $key => $value) {
             if(property_exists($this, $key)){
@@ -234,22 +245,22 @@ class PageChecker{
 
     private function isAllowedFromPage(){
         if(!empty($this->xRobots)){
-            if(stripos($value,'noindex') !== false || stripos($value,'none') !== false ){                        
+            if(stripos($this->xRobots,'noindex') !== false || stripos($this->xRobots,'none') !== false ){                        
                 return false;
             }
         }
         if(!empty($this->robotsMeta)){
-            if(stripos($value,'noindex') !== false || stripos($value,'none') !== false ){                        
+            if(stripos($this->robotsMeta,'noindex') !== false || stripos($this->robotsMeta,'none') !== false ){                        
                 return false;
             }
         }
         if(!empty($this->refreshHeader)){
-            if(stripos($value,'url=') !== false){                        
+            if(stripos($this->refreshHeader,'url=') !== false){                        
                 return false;
             } 
         }
         if (!empty($this->refreshMeta)){  
-            if(stripos($value,'url=') !== false){                        
+            if(stripos($this->refreshMeta,'url=') !== false){                        
                 return false;
             } 
         }

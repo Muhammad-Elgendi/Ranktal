@@ -124,9 +124,9 @@
                         </ul>
                     </li>
                     <!-- Control Sidebar Toggle Button -->
-                    <li>
+                    {{-- <li>
                         <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-                    </li>
+                    </li> --}}
                     {{-- <!-- Languages Switcher --> --}}
                   <li class="dropdown" style="direction:ltr;">
                         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -171,10 +171,21 @@
             <!-- /.search form -->
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
-                <li class="header">@lang("main-menu")</li>
                 <li>
                     <a href="{{route('lang.dashboard',app()->getLocale())}}">
                         <i class="fa fa-dashboard"></i> <span>@lang("dashboard")</span>
+                    </a>
+                    {{-- <!--  <ul class="treeview-menu">
+                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
+                        <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
+                        </ul> --> --}}
+                </li>
+
+                <li class="header">@lang("on-page-tools")</li>
+           
+                <li>
+                    <a href="{{route('lang.page-optimization',app()->getLocale())}}">
+                        <i class="fa fa-cogs"></i> <span>@lang("page-optimization")</span>
                     </a>
                     {{-- <!--  <ul class="treeview-menu">
                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
@@ -182,8 +193,8 @@
                      </ul> --> --}}
                 </li>
                 <li>
-                    <a href="{{route('lang.page-optimization',app()->getLocale())}}">
-                        <i class="fa fa-cogs"></i> <span>@lang("page-optimization")</span>
+                    <a href="{{route('lang.seo-audit',app()->getLocale())}}">
+                        <i class="fa fa-calendar-check-o"></i> <span>@lang('seo-audit')</span>
                     </a>
                     {{-- <!--  <ul class="treeview-menu">
                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
@@ -199,19 +210,6 @@
                 {{--<li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>--}}
                 {{--</ul>--}}
                 {{--</li>--}}
-                <li class="treeview">
-                    <a href="#">
-                        <i class="fa fa-file-text"></i> <span>@lang("reports")</span>
-                        {{--<span class="pull-right-container">--}}
-              {{--<i class="fa fa-angle-left pull-right"></i>--}}
-            {{--</span>--}}
-                    </a>
-                    <ul class="treeview-menu">
-                        <li><a href="{{url('reports')}}"><i class="fa fa-circle-o"></i>@lang("reports-management")</a></li>
-                        <li><a href="{{url('comprehensive-reports')}}"><i class="fa fa-circle-o"></i>@lang('comprehensive-reports')</a></li>
-                        <li><a href="{{url('on-page-reports')}}"><i class="fa fa-circle-o"></i>@lang('onpage-reports')</a></li>
-                    </ul>
-                </li>
                 <li>
                     <a href="#">
                         <i class="fa fa-binoculars"></i> <span>@lang('seo-tracker')</span>
@@ -221,15 +219,39 @@
                        <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
                      </ul> --> --}}
                 </li>
+                <li class="treeview">
+                        <a href="#">
+                            <i class="fa fa-file-text"></i> <span>@lang("reports")</span>
+                            {{--<span class="pull-right-container">--}}
+                  {{--<i class="fa fa-angle-left pull-right"></i>--}}
+                {{--</span>--}}
+                        </a>
+                        <ul class="treeview-menu">
+                            <li><a href="{{url('reports')}}"><i class="fa fa-circle-o"></i>@lang("reports-management")</a></li>
+                            <li><a href="{{url('comprehensive-reports')}}"><i class="fa fa-circle-o"></i>@lang('comprehensive-reports')</a></li>
+                            <li><a href="{{url('on-page-reports')}}"><i class="fa fa-circle-o"></i>@lang('onpage-reports')</a></li>
+                        </ul>
+                    </li>     
+                <li class="header">@lang("keywords")</li>
                 <li>
                     <a href="#">
-                        <i class="fa fa-line-chart"></i> <span>@lang("keywords")</span>
+                        <i class="fa fa-line-chart"></i> <span>@lang("keywords-tracker")</span>
                     </a>
                     {{-- <!--  <ul class="treeview-menu">
                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
                        <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
                      </ul> --> --}}
                 </li>
+                <li>
+                    <a href="#">
+                        <i class="fa fa-bolt"></i> <span>@lang('keywords-generator')</span>
+                    </a>
+                    {{-- <!--  <ul class="treeview-menu">
+                       <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
+                       <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
+                     </ul> --> --}}
+                </li>
+                <li class="header">@lang("backlinks")</li>
                 <li>
                     <a href="{{route('lang.backlinks-checker',app()->getLocale())}}">
                         <i class="fa fa-crosshairs"></i> <span>@lang("backlinks-checker")</span>
@@ -238,7 +260,18 @@
                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
                        <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
                      </ul> --> --}}
-                </li>                 
+                </li>  
+            
+                <li class="header">@lang("support")</li>       
+                <li>
+                        <a href="{{route('lang.backlinks-checker',app()->getLocale())}}">
+                            <i class="fa fa-life-ring"></i> <span>@lang("help-desk")</span>
+                        </a>
+                        {{-- <!--  <ul class="treeview-menu">
+                           <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
+                           <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
+                         </ul> --> --}}
+                    </li>     
             </ul>
         </section>
         <!-- /.sidebar -->
@@ -277,9 +310,9 @@
       @lang('copyright-statement').
       <strong> &copy; 2019 </strong>
     </footer>
-
+    {{--
     <!-- Control Sidebar -->
-    <aside class="control-sidebar control-sidebar-dark">
+     <aside class="control-sidebar control-sidebar-dark">
         <!-- Create the tabs -->
         <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
             <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
@@ -466,8 +499,9 @@
             </div>
             <!-- /.tab-pane -->
         </div>
-    </aside>
+    </aside> 
     <!-- /.control-sidebar -->
+    --}}
     {{-- <!-- Add the sidebar's background. This div must be placed
          immediately after the control sidebar --> --}}
     <div class="control-sidebar-bg"></div>

@@ -1,6 +1,6 @@
 @extends('layouts.main')
 @section('direction',in_array(app()->getLocale(),config('app.rtl')) ? "rtl" : "ltr")
-@section('title', __('page-optimization'))
+@section('title', __('seo-audit'))
 @section('user-image',url('/img/user.png'))
 @section('user-type',__('pro-plan'))
 @section('print-div','printable')
@@ -44,18 +44,13 @@
 <div class="container-fluid" id="printable">    
         <div class="row">
                 {!! Form::open(['url' => 'report','id'=>'the-form']) !!}
-                <div class="col-lg-5 col-md-5 col-sm-6 col-xs-12">
+                <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
                                 <p class="title">@lang('page-link')</p>
                                 <div class="form-group" id="text-box">
                                     {{ Form::text('url', null, ['class' => 'form-control','placeholder'=>__('page-link') ,'id'=>'urlInput','pattern'=>'https?://.+','required','title'=>'Page Link begins with http:// Or https://']) }}
                                 </div>
                 </div>
-                <div class="col-lg-5 col-md-5 col-sm-6 col-xs-12">
-                                <p class="title">@lang('keyword')</p>
-                                <div class="form-group" id="text-box">
-                                    {{ Form::text('url', null, ['class' => 'form-control','placeholder'=>__('keyword') ,'id'=>'keywordInput','pattern'=>'.{1,}','required','title'=>'Enter your Keyword']) }}
-                                </div>                            
-                </div>
+    
                 <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
                            <button id="button" type="button" class="btn btn-primary form-control hidden-print" style="margin-top: 38px;"><i class="fa fa-search"></i></button>
                            <input type="submit" style="display:none;"/>
@@ -80,24 +75,7 @@
                             <p class="title">@lang('page-description')</p> 
                             <p id="desc-value"></p> 
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12" >
-                        <p class="title">@lang('keyword-found')</p> 
-                        <p class="title" id="found"></p> 
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
-                        <p class="title">@lang('keyword-locations')</p> 
-                        <ul id="locations"></ul> 
-                    </div>             
-                    <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6" id="page-score">
-
-                        <p class="title">@lang('page-score')</p>
-                        <div id="process-bar"></div>
-
-                    </div>
-                </div>
+                </div>           
 
                 <div class="row">
                     <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 container-border text-center" id="hurting-block">
@@ -115,7 +93,7 @@
                 </div>
             </div>
 
-            <div class="row" id="checks"></div>
+            <div class="row" id="checks"></div>    
     
 </div>
 
@@ -134,21 +112,17 @@
         //disable button
         $("#button").attr("disabled", true);
 
-        // reset process bar,checks
-        $('#checks,#process-bar').html("");
-
-        $.get("{{route('lang.optimizerAjax',app()->getLocale())}}",{ u: $("#urlInput").val(), k: $("#keywordInput").val() }, function (jsondata) {
+        $.get("{{route('lang.seoAuditAjax',app()->getLocale())}}",{ u: $("#urlInput").val() }, function (jsondata) {
             $("#urlInput").attr("placeholder", $("#urlInput").val());
-            $("#keywordInput").attr("placeholder", $("#keywordInput").val());
 
                 $.get("{{url('templates/panelComponent.hbs')}}", function (data) {
                 var template=Handlebars.compile(data);      
                 $("#checks").html(template(jsondata.checks));
                     // update view
                     updateView(jsondata);
-                    attachProcessPar(jsondata);
-                }, 'html')       
-        },'json')
+                }, 'html');
+                console.log(jsondata);
+        },'json');
 
         //Enable button
         setTimeout(function() {
@@ -166,14 +140,8 @@ function updateView(jsondata){
     $('#url-value').text(jsondata.url).attr('href',jsondata.url);
     $('#title-value').text(jsondata.pageTitle);
     $('#desc-value').text(jsondata.pageDescription);
-    $('#found').text(jsondata.keywordFound);
-    $('#locations').html("<li>Title : "+jsondata.keywordInTitleCount+"</li>"+
-                        "<li>Body : "+jsondata.keywordInBodyCount+"</li>"+
-                        "<li>Meta description : "+jsondata.keywordInDescriptionCount+"</li>"+
-                        "<li>Url : "+jsondata.keywordInUrlCount+"</li>"+
-                        "<li>IMG Alt : "+jsondata.keywordInImgAltCount+"</li>");
-                        $('#hurting').text( $('#checks .glyphicon-remove-sign').size() );
-
+    
+    $('#hurting').text( $('#checks .glyphicon-remove-sign').size() );
     $('#helping').text( $('#checks .glyphicon-ok-sign').size() );
     $('#all-issues').text( $('#checks .glyphicon-ok-sign').size() + $('#checks .glyphicon-remove-sign').size() );
 
@@ -201,40 +169,6 @@ function updateView(jsondata){
     });
 }
 
-function attachProcessPar(jsondata){
-    var bar = new ProgressBar.Circle('#process-bar', {
-    color: '#636b6f',
-    // This has to be the same size as the maximum width to
-    // prevent clipping
-    strokeWidth: 10,
-    trailWidth: 4,
-    easing: 'easeInOut',
-    duration: 1400,
-    text: {
-        autoStyleContainer: false,
-        value: '0'
-    },   
-    from: { color: '#aaa', width: 4 },
-    to: { color: jsondata.score >= 70 ? "#00C851" : "#ff4444", width: 10 },
-    // Set default step function for all animate calls
-    step: function(state, circle) {
-        circle.path.setAttribute('stroke', state.color);
-        circle.path.setAttribute('stroke-width', state.width);
-
-        var value = Math.round(circle.value() * 100);
-        if (value === 0) {
-            circle.setText('');
-        } else {
-            circle.setText(value);
-        }       
-    }
-    });
-    bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
-    bar.text.style.fontSize = '4rem';
-    
-
-    bar.animate(jsondata.score / 100);  // Number from 0.0 to 1.0
-}
 
 </script>
 
