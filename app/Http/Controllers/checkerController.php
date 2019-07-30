@@ -113,8 +113,8 @@ class checkerController extends Controller
             $array = json_decode($json);
             $response = array();
 
-            $sections = ['title','description','url','heading','image','fromatedItems','contentType','viewport','canonical',
-            'ratio','language','docType','accessiblity','ampLink','openGraph','twitterCard','frames','FlashExist','links'];
+            $sections = ['title','description','url','heading','image','fromatedItems','contentTypeAndCharset','viewport','canonical',
+            'ratio','language','docType','accessiblity','amp','openGraph','twitterCard','frames','flash','links'];
 
             /*
              Each section has a variable with its name contains an array that
@@ -122,21 +122,21 @@ class checkerController extends Controller
              And the array of attribute-variable-names in the secound index 
             */  
 
-            $title = ['isGoodTitle',['isMultiTitle','title','isTitleExist','titleLength','isGoodTitleLength']];
+            $title = ['isGoodTitle',['title','isTitleExist','titleLength','isGoodTitleLength','isSingleTitle']];
 
-            $description = ['isGoodDescription',['description','isMultiDescription','isDescriptionExist',
+            $description = ['isGoodDescription',['description','isSingleDescription','isDescriptionExist',
             'descriptionLength','isGoodDescriptionLength']];
 
             $url = ['isGoodUrl',['url','domain','urlLength','domainLength','google_cache_url',
-            'countSpacesInUrl','isGoodUrlLength','isUrlHasSpaces','isUrlHasGoodStatus']];
+            'countSpacesInUrl','isGoodUrlLength','isUrlNotHasSpaces','httpCode','isUrlHasGoodStatus']];
 
-            $heading = ['isGoodHeader',['h1','h2','h3','h4','h5','h6','isMultiH1']];
+            $heading = ['isGoodHeader',['h1','h2','h3','h4','h5','h6','isSingleH1']];
 
             $image = ['isGoodImg',['alt','emptyAlt']];
 
             $fromatedItems = ['isFormattedTextExist',['bItems','iItems','emItems','strongItems','markItems']];
 
-            $contentType = ['isMetaContentTypeExist',['contentType','charset']];
+            $contentTypeAndCharset = ['isContentTypeAndCharsetExist',['contentType','charset']];
 
             $viewport = ['isViewportExist',['viewport']];
 
@@ -148,27 +148,27 @@ class checkerController extends Controller
 
             $docType = ['isDocTypeExist',['docType']];
 
-            $accessiblity = ['isAccessible',['robotsMeta','xRobots','refreshMeta','refreshHeader','isAllowedFromRobots']];
+            $accessiblity = ['isAccessible',['robotsMeta','xRobots','refreshMeta','refreshHeader','isAllowedFromRobots','isAllowedFromPage']];
 
-            $ampLink = ['isAmpCopyExist',['ampLink']];
+            $amp = ['isAmpCopyExist',['ampLink']];
 
             $openGraph = ['isOpenGraphExist',['openGraph']];
 
             $twitterCard = ['isTwitterCardExist',['twitterCard']];
 
-            $frames = ['isFrameExist',['framesCount']];
+            $frames = ['isFramesNotExist',['framesCount']];
 
-            $FlashExist = ['isFlashExist',[]];
+            $flash = ['isFlashNotExist',[]];
 
             // Add Checks to response
             foreach($sections as $index => $value){
                 if($value !== 'links'){
                     $response['checks'][$index] = $this->createViewArray($array,${$value}[0],$value,${$value}[1]);
                 }else{
+                    // Create View component of links
                     $linksArray = array();
-                    $linksArray['title'] = __('links');
-                    $linksArray["infosection"]["infoword"] = __('infoword');
-                    $linksArray["infosection"]["info"] =  __('linksInfo'); 
+                    $linksArray['title'] = __('linksAnalysis');         
+                    $linksArray["attributes"][] = [__('linksCount'),count($array->links)];
                     $linksArray["tablesection"]["columns"] = [__('aText'),__('aHref'),__('aStatus')];
                     foreach($array->links as $ind => $link){
                         $linksArray["tablesection"]["rows"][$ind] = [$link->aText,$link->aHref,$link->aStatus];
@@ -179,7 +179,7 @@ class checkerController extends Controller
             // Add Page URL , Title and description to response
             $response['url'] = $array->url;
             $response['pageTitle'] = $array->title;
-            $response['pageDescription'] = $array->description;
+            $response['pageDescription'] = $array->description;     
             // dd($response);
             return json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         } else
@@ -201,8 +201,17 @@ class checkerController extends Controller
                 if(is_bool($json->$attr)){
                     $flag = empty($json->$attr) ? "glyphicon-remove-sign text-danger" : "glyphicon-ok-sign text-success";
                     $array["attributes"][] = [__($attr),'<span class="glyphicon '.$flag.' fa-lg"></span>'];
-                }else
-                    $array["attributes"][] = [__($attr),$json->$attr];
+                }elseif(is_object($json->$attr)){
+                    foreach($json->$attr as $property => $value){
+                        $array["attributes"][] = [$property,$value];
+                    }
+                }else{
+                    if( $json->$attr === null ){
+                        $array["attributes"][] = [__($attr),__('not-found')];                        
+                    }else{
+                        $array["attributes"][] = [__($attr),$json->$attr];
+                    }
+                }                    
             }
         }
         return $array;

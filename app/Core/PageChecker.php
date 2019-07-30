@@ -15,9 +15,9 @@ class PageChecker{
 
 	private $parsedUrl;
 
-	private $httpCode;
+	public $httpCode;
 //Title
-    public $isMultiTitle;
+    public $isSingleTitle;
 
     public $title;
     
@@ -43,7 +43,7 @@ class PageChecker{
 
     public $isGoodUrlLength;
 
-    public $isUrlHasSpaces;
+    public $isUrlNotHasSpaces;
 
     public $isUrlHasGoodStatus;
 
@@ -59,7 +59,7 @@ class PageChecker{
 
 	public $robotsMeta;
 
-	public $isMultiDescription;
+	public $isSingleDescription;
 
 	public $xRobots;
 
@@ -77,7 +77,7 @@ class PageChecker{
 
     public $isViewportExist;
 
-    public $isMetaContentTypeExist;
+    public $isContentTypeAndCharsetExist;
 //Page
 	public $canonical;
 
@@ -107,7 +107,7 @@ class PageChecker{
 
     public $h6;
 
-    public $isMultiH1;
+    public $isSingleH1;
 
     public $isGoodHeader;
 //Images
@@ -135,15 +135,17 @@ class PageChecker{
 
     public $markItems;
 
-    public $isFlashExist;
+    public $isFlashNotExist;
 
     public $links;
 
     public $isAllowedFromRobots;
 
+    public $isAllowedFromPage;
+
     public $isAccessible;
 
-    public $isFrameExist;
+    public $isFramesNotExist;
 
     public $isAmpCopyExist;
 
@@ -152,7 +154,6 @@ class PageChecker{
     public $isTwitterCardExist;
 
     public $isFormattedTextExist;
-    
 
     function __construct($obj){
         foreach($obj as $key => $value) {
@@ -166,7 +167,7 @@ class PageChecker{
         $this->isTitleExist = !empty($this->title);		
         $this->titleLength=mb_strlen($this->title,'utf8');
 		$this->isGoodTitleLength= $this->titleLength > 10 && $this->titleLength < 60;
-		$this->isGoodTitle = $this->isTitleExist && !$this->isMultiTitle && $this->isGoodTitleLength;
+		$this->isGoodTitle = $this->isTitleExist && $this->isSingleTitle && $this->isGoodTitleLength;
     }
 
     /**
@@ -196,20 +197,20 @@ class PageChecker{
 		$this->urlLength=mb_strlen($this->url,'utf8');
         $this->domainLength=mb_strlen($this->domain,'utf8');
 		$this->google_cache_url='http://google.com/search?q=cache:'.$this->url;
-		$this->countSpacesInUrl=substr_count($this->url, ' ');
+		$this->countSpacesInUrl=substr_count($this->url, ' ') + substr_count($this->url, '%20');
 		$this->isGoodUrlLength = $this->urlLength < 200;
-		$this->isUrlHasSpaces = $this->countSpacesInUrl > 0;	
+		$this->isUrlNotHasSpaces = $this->countSpacesInUrl == 0;	
 		$this->isUrlHasGoodStatus = $this->httpCode===200 || $this->httpCode===301 ||$this->httpCode===404 || $this->httpCode===503;
-		$this->isGoodUrl =  $this->isGoodUrlLength && !$this->isUrlHasSpaces && $this->isUrlHasGoodStatus ;
+		$this->isGoodUrl =  $this->isGoodUrlLength && $this->isUrlNotHasSpaces && $this->isUrlHasGoodStatus ;
     }
 
     public function setMetaChecks(){        
         $this->isDescriptionExist=!empty($this->description);
         $this->descriptionLength=mb_strlen($this->description, 'utf8'); 
         $this->isGoodDescriptionLength  =  $this->descriptionLength > 70 &&  $this->descriptionLength < 160;
-        $this->isGoodDescription = $this->isGoodDescriptionLength && $this->isDescriptionExist && !$this->isMultiDescription;
+        $this->isGoodDescription = $this->isGoodDescriptionLength && $this->isDescriptionExist && $this->isSingleDescription;
         $this->isViewportExist=!empty($this->viewport);
-        $this->isMetaContentTypeExist = !empty($this->contentType) && !empty($this->charset);
+        $this->isContentTypeAndCharsetExist = !empty($this->contentType) && !empty($this->charset);
     }
 
     public function setPagechecks(){
@@ -225,8 +226,8 @@ class PageChecker{
 
     public function setHeadersChecks(){
         $countH1 = $this->getCountIfArray($this->h1);
-        $this->isMultiH1 = $countH1 > 1;
-        $this->isGoodHeader = $countH1 > 0 && $this->getCountIfArray($this->h2) > 0 && $this->getCountIfArray($this->h3) > 0;
+        $this->isSingleH1 = $countH1 == 1;
+        $this->isGoodHeader = $this->isSingleH1 && $this->getCountIfArray($this->h2) > 0 && $this->getCountIfArray($this->h3) > 0;
     }
 
     public function setImagesChecks(){
@@ -236,7 +237,7 @@ class PageChecker{
     }
 
     public function setChecks(){
-        $this->isFrameExist=$this->framesCount > 0;     
+        $this->isFramesNotExist=$this->framesCount == 0;     
         $this->isAmpCopyExist=!empty($this->ampLink);
         $this->isOpenGraphExist=!empty($this->openGraph);
         $this->isTwitterCardExist=!empty($this->twitterCard);  
@@ -264,15 +265,18 @@ class PageChecker{
                 return false;
             } 
         }
-        $pathOfUrl =  isset($this->parsedUrl["path"]) ? $this->parsedUrl["path"] : '/';
-        $pathOfCanonical = parse_url($this->canonical, PHP_URL_PATH);
-        if($pathOfCanonical !== $pathOfUrl){          
-            return false;            
-        }
+        if(!empty($this->canonical)){
+            $pathOfUrl =  isset($this->parsedUrl["path"]) ? $this->parsedUrl["path"] : '/';
+            $pathOfCanonical = parse_url($this->canonical, PHP_URL_PATH);
+            if($pathOfCanonical !== $pathOfUrl){          
+                return false;            
+            }
+        }     
         return true;
     }
 
     public function setAccessabiltyChecks(){
-        $this->isAccessible = ($this->httpCode == 200) && $this->isAllowedFromRobots && $this->isAllowedFromPage();
+        $this->isAllowedFromPage = $this->isAllowedFromPage();
+        $this->isAccessible = ($this->httpCode == 200) && $this->isAllowedFromRobots && $this->isAllowedFromPage;
     }
 }

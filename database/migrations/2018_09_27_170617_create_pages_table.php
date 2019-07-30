@@ -19,9 +19,9 @@ class CreatePagesTable extends Migration
             $table->unsignedInteger('httpCode');
             $table->json('parsedUrl');
             $table->string('title')->nullable();
-            $table->boolean('isMultiTitle');
+            $table->boolean('isSingleTitle');
             $table->string('description',500)->nullable();
-            $table->boolean('isMultiDescription');
+            $table->boolean('isSingleDescription');
             $table->string('contentType')->nullable();
             $table->string('charset')->nullable();
             $table->string('viewport')->nullable();
@@ -50,7 +50,7 @@ class CreatePagesTable extends Migration
             $table->json('emItems')->nullable();
             $table->json('strongItems')->nullable();
             $table->json('markItems')->nullable();
-            $table->boolean('isFlashExist');
+            $table->boolean('isFlashNotExist');
             $table->json('links')->nullable();
             $table->boolean('isAllowedFromRobots');
             $table->timestamps();

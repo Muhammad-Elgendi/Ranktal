@@ -36,7 +36,7 @@ class PageScraper{
 
 	private $doc;
 
-	public $isMultiTitle;
+	public $isSingleTitle;
 
 	public $title;
 
@@ -52,7 +52,7 @@ class PageScraper{
 
 	public $robotsMeta;
 
-	public $isMultiDescription;
+	public $isSingleDescription;
 
 	public $xRobots;
 
@@ -102,7 +102,7 @@ class PageScraper{
 
 	public $markItems;
 
-	public $isFlashExist;
+	public $isFlashNotExist;
 
 	public $isAllowedFromRobots;
 
@@ -125,7 +125,7 @@ class PageScraper{
 		$doc->loadHTML($this->doc);
 		libxml_use_internal_errors(false);
 		$count = $doc->getElementsByTagName('head')->item(0)->getElementsByTagName('title')->length;
-		$this->isMultiTitle = $count > 1;		
+		$this->isSingleTitle = $count == 1;		
         $this->title=$doc->getElementsByTagName('head')->item(0)->getElementsByTagName('title')->item(0)->nodeValue;
 	}
 
@@ -143,8 +143,20 @@ class PageScraper{
 					$this->description = $item->getAttribute('content');
 				}
 			}
-			if ($item->getAttribute('http-equiv') == 'Content-Type'){				
+			if ($item->getAttribute('http-equiv') == 'Content-Type'){			
 				$this->contentType = $item->getAttribute('content');
+				// HTML 4.01 charset <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+				$arr = explode(";", $this->contentType);	
+				if($arr !== false){
+					foreach($arr as $value){
+						if(stripos($value, 'charset=') !== false){
+							$this->charset = substr($value, stripos($value, 'charset='));
+						}
+					}	
+				}	
+			}
+			// Check for HTML 5 charset  <meta charset="UTF-8">
+			if (empty($this->charset) && !empty($item->getAttribute('charset'))){			
 				$this->charset = $item->getAttribute('charset');				
 			}
 			if ($item->getAttribute('name') == 'viewport'){				
@@ -165,7 +177,7 @@ class PageScraper{
 				$this->twitterCard[$twitter] = $item->getAttribute('content');
 			}    	
 		}
-		$this->isMultiDescription = $usesDescription > 1;
+		$this->isSingleDescription = $usesDescription == 1;
 	}
 
 	public function getHeaderAttr(){
@@ -313,29 +325,29 @@ class PageScraper{
         for ($i = 0; $i < $objects->length; $i++) {
             $tag_item = $objects->item($i);
             if ((strpos($tag_item->getAttribute('data'), '.swf')!== false)|(strpos($tag_item->getAttribute('type'), 'shockwave')!== false)){
-				$this->isFlashExist = true;
+				$this->isFlashNotExist = false;
 				return;
 			}   
         }
         for ($i = 0; $i < $params->length; $i++) {
             $tag_item = $params->item($i);
             if (strpos($tag_item->getAttribute('value'), '.swf')!== false){
-				$this->isFlashExist = true;
+				$this->isFlashNotExist = false;
 				return;
 			} 
         }
         for ($i = 0; $i < $embeds->length; $i++) {
             $tag_item = $embeds->item($i);
             if (strpos($tag_item->getAttribute('src'), '.swf')!== false){
-				$this->isFlashExist = true;
+				$this->isFlashNotExist = false;
 				return;
 			}   
         }
 		if(preg_match('(swfobject|swfobject.registerObject|.swf|shockwave)', $this->doc) === 1){
-			$this->isFlashExist = true;  
+			$this->isFlashNotExist = false;  
 		}	
         else
-			$this->isFlashExist = false; 
+			$this->isFlashNotExist = true; 
 	}
 
     public function getAllLinks(){
