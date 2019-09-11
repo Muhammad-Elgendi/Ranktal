@@ -29,7 +29,7 @@ class backlinksController extends Controller
         return view('dashboard.backlinks-checker');
     }
 
-    public function getBacklinks(Request $request){
+    public function handleBacklinks(Request $request){
         $target = $request->get('target');
         $src = $request->get('src');
         // validate urls
@@ -37,8 +37,14 @@ class backlinksController extends Controller
         $isGoodSrc = !empty(filter_var($src, FILTER_VALIDATE_URL));
         if( (empty($target) && empty($src)) || (!empty($src) && !$isGoodSrc) || (!empty($target)&& !$isGoodTarget) ) {
                 return "Not Vaild Parameters";
+        }else{
+            $this->getBacklinks($target,$src);
         }
-        elseif(!empty($target) && !empty($src)){
+    }
+
+    public function getBacklinks($target,$src){
+  
+        if(!empty($target) && !empty($src)){
             $foundBacklinks = Backlink::where('source_url','like','%'.$src.'%')->where('target_url','like','%'.$target.'%')->get();
             if($foundBacklinks->isEmpty()){
                 $this->getBacklinksFromApi($target,30);
@@ -95,27 +101,9 @@ class backlinksController extends Controller
     public function viewBacklinksUsingAjax(Request $request)
     {
         if ($request->ajax()) {
-            $json = $this->getBacklinks($request);
+            $json = $this->handleBacklinks($request);
             $array = json_decode($json);
-            // $newRequest = array();
-            // $counter = 0;
-            // foreach ($array as $key => $value) {
-            //     if (gettype($value) == "boolean" ) {
-            //         $newRequest['checks'][$counter]["type"] = empty($value) ? "glyphicon-remove-sign text-danger" : "glyphicon-ok-sign text-success";
-            //         $newRequest['checks'][$counter]["title"] = __($key);
-            //         $newRequest['checks'][$counter]["infosection"]["infoword"] =__('about-issue');
-            //         $newRequest['checks'][$counter]["infosection"]["info"] =__($key."Info"); 
-            //         $newRequest['checks'][$counter]["text_before_attributes"] =  '<h4>'.__('how-to-fix').'</h4>'.'<p>'.__($key."Fix").'</p>';
-
-            //         // $newRequest['checks'][$counter]["list_before_attributes"] =  array_fill(0, 6, 'banana');
-            //         $counter++;
-            //     }
-            //     else{
-            //         $newRequest[$key] = $value;
-            //     }
-            // }
-
-            //    var_dump($array);
+      
             return json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         } else
             return "This page isn't for you ! ^_^";

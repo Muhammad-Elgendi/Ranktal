@@ -15,7 +15,7 @@ class CreateRedirectsTable extends Migration
     {
         Schema::create('redirects', function (Blueprint $table) {
             $table->string('url',3000);
-            $table->string('RedirectTo',3000);
+            $table->string('redirect',3000);
             $table->primary('url');
             $table->foreign('url')
             ->references('url')->on('urls')

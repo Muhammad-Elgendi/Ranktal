@@ -26,20 +26,23 @@ $optionalLanguageRoutes = function () {
     Route::get('dashboard/page-optimization', 'optimizerController@index')->name('page-optimization'); //Page optimization view    
     Route::get('dashboard/backlinks-checker', 'backlinksController@index')->name('backlinks-checker'); //Backlinks checker view
     Route::get('dashboard/seo-audit', 'checkerController@index')->name('seo-audit'); //Seo audit view
+    Route::get('dashboard/on-demand-crawl', 'CrawlingController@index')->name('on-demand-crawl'); // Site Crawl view
+    Route::get('dashboard/keyword-tracker', 'KeywordTrackerController@index')->name('keyword-tracker'); // Keyword Tracker View
 
     //Ajax Views Routes
     Route::get('optimizer-view', 'optimizerController@viewChecksUsingAjax')->name('optimizerAjax');
     Route::get('backlinks-view', 'backlinksController@viewBacklinksUsingAjax')->name('backlinksAjax');
     Route::get('seo-audit-view', 'checkerController@viewChecksUsingAjax')->name('seoAuditAjax');
+    Route::get('demand-crawl-view', 'CrawlingController@viewSiteCrawlUsingAjax')->name('demandCrawlAjax');
+    Route::get('keyword-tracker-view', 'KeywordTrackerController@vkeywordTrackerUsingAjax')->name('keywordTrackerAjax');
 
     // Endpoints routes
-    Route::get('checker', 'checkerController@findOrCreateCheck');
-    Route::get('optimizer', 'optimizerController@check')->name('optimizer');  
+    Route::get('checker', 'checkerController@findOrCreateCheck'); //Seo audit 
+    Route::get('optimizer', 'optimizerController@check')->name('optimizer');  //Page optimization
     Route::get('metrics', 'metricsController@getMetrics');
     Route::get('pageInsights', 'pageInsightsController@getPageInsights');
-    Route::get('backlinks', 'backlinksController@getBacklinks');
-    Route::get('add-site', 'SitesController@addSite');
-    Route::get('get-site', 'SitesController@getSite');
+    Route::get('backlinks', 'backlinksController@handleBacklinks'); //Backlinks checker
+    Route::get('crawl', 'CrawlingController@doSiteCrawl'); //Site Crawl
 
  //------------------------------------------------------------------------------------------------------------
 

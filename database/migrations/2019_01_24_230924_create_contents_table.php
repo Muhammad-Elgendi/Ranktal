@@ -15,7 +15,7 @@ class CreateContentsTable extends Migration
     {
         Schema::create('contents', function (Blueprint $table) {
             $table->string('url',3000);
-            $table->boolean('is_H1_exist');
+            $table->boolean('is_h1_exist');
             $table->boolean('is_canonical_exist');
             $table->string('url_query');
             $table->unsignedInteger("content_length");

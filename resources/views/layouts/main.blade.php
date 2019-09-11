@@ -21,8 +21,6 @@
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="{{url('dist/css/skins/_all-skins.min.css')}}">
-    <!-- Morris chart -->
-    <link rel="stylesheet" href="{{url('bower_components/morris.js/morris.css')}}">
     <!-- jvectormap -->
     <link rel="stylesheet" href="{{url('bower_components/jvectormap/jquery-jvectormap.css')}}">
     <!-- Date Picker -->
@@ -211,6 +209,15 @@
                 {{--</ul>--}}
                 {{--</li>--}}
                 <li>
+                    <a href="{{route('lang.on-demand-crawl',app()->getLocale())}}">
+                        <i class="fa fa-bug"></i> <span>@lang('on-demand-crawl')</span>
+                    </a>
+                    {{-- <!--  <ul class="treeview-menu">
+                       <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
+                       <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
+                     </ul> --> --}}
+                </li>
+                <li>
                     <a href="#">
                         <i class="fa fa-binoculars"></i> <span>@lang('seo-tracker')</span>
                     </a>
@@ -234,7 +241,7 @@
                     </li>     
                 <li class="header">@lang("keywords")</li>
                 <li>
-                    <a href="#">
+                    <a href="{{route('lang.keyword-tracker',app()->getLocale())}}">
                         <i class="fa fa-line-chart"></i> <span>@lang("keywords-tracker")</span>
                     </a>
                     {{-- <!--  <ul class="treeview-menu">
@@ -518,9 +525,6 @@
 </script>
 <!-- Bootstrap 3.3.7 -->
 <script src="{{url('bower_components/bootstrap/dist/js/bootstrap.min.js')}}"></script>
-<!-- Morris.js charts -->
-<script src="{{url('bower_components/raphael/raphael.min.js')}}"></script>
-<script src="{{url('bower_components/morris.js/morris.min.js')}}"></script>
 <!-- Sparkline -->
 <script src="{{url('bower_components/jquery-sparkline/dist/jquery.sparkline.min.js')}}"></script>
 <!-- jvectormap -->
@@ -541,11 +545,6 @@
 <script src="{{url('bower_components/fastclick/lib/fastclick.js')}}"></script>
 <!-- AdminLTE App -->
 <script src="{{url('dist/js/adminlte.min.js')}}"></script>
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="{{url('dist/js/pages/dashboard.js')}}"></script>
-<!-- AdminLTE for demo purposes -->
-<script src="{{url('dist/js/demo.js')}}"></script>
-<!-- Print File -->
 <script>
 function printDiv(divID) {
   //Get the HTML of div
@@ -566,6 +565,26 @@ function printDiv(divID) {
   //Restore orignal HTML
   document.body.innerHTML = oldPage;
 }
+
+/**
+* jQuery polyfill to handle beforeprint/afterprint on webkit-based browsers.
+*/
+(function ($) {
+  // TODO: for some reason events are coming twice, need to debounce them
+  if ((window.onbeforeprint === undefined || window.onafterprint === undefined)
+    && window.matchMedia
+  ) {
+    var mediaQueryList = window.matchMedia('print');
+    mediaQueryList.addListener(function (mql) {
+      if (mql.matches) {
+        $(window).trigger('beforeprint');
+      } else {
+        $(window).trigger('afterprint');
+      }
+    });
+  }
+})(jQuery);
+
 </script>
 @yield('scripts')
 </body>

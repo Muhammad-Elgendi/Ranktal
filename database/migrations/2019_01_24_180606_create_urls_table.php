@@ -20,6 +20,7 @@ class CreateUrlsTable extends Migration
             $table->foreign('site_id')
             ->references('id')->on('sites')
             ->onDelete('cascade');
+            $table->unsignedInteger('crawl_depth')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->primary('url');
         });

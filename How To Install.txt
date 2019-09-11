@@ -67,13 +67,16 @@ https://code.visualstudio.com/docs/?dv=linux64_deb
 cd Source Code/seo-saas/laradock/
 
 run containers 
-sudo docker-compose up workspace php-worker nginx postgres pgadmin
+sudo  docker-compose up workspace php-worker nginx postgres pgadmin tomcat
 
 8- update .env file configuration
 postgres container name usually is laradock_postgres_1 change the name in the following commands
 
 Check your postgres container IP Address:
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' laradock_postgres_1
+
+Check your Docker Host Machine IP so containers can reach the docker host (It's gateway):
+docker inspect <container-id-or-name> | grep Gateway
 
 and change .env with the ip of conatianer
 DB_HOST=<your ip here>
@@ -102,3 +105,26 @@ http://127.0.0.1/en/dashboard/backlinks-checker
 http://127.0.0.1:5050
 username : pgadmin4@pgadmin.org
 password : admin
+
+SIDE NOTES:-
+
+run containers 
+sudo  docker-compose up workspace php-worker nginx postgres pgadmin tomcat
+
+access php artisan or bash on workspace containers
+sudo docker-compose exec workspace bash
+
+list containers
+docker ps
+
+Network details of container
+docker inspect <container ID>
+
+At the bottom,under "NetworkSettings", you can find "IPAddress"
+
+Or Just do:
+
+docker inspect <container id> | grep "IPAddress"
+
+Or Check your container IP Address:
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container id>
