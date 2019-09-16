@@ -14,12 +14,13 @@ class CreateProxiesTable extends Migration
     public function up()
     {
         Schema::create('proxies', function (Blueprint $table) {
-            $table->increments('id');
             $table->string('proxy');
             $table->string('country');
             $table->boolean('google_pass');
             $table->boolean('is_working');
             $table->timestamps();
+            $table->primary('proxy');
+
         });
     }
 

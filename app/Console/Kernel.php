@@ -16,7 +16,10 @@ class Kernel extends ConsoleKernel
         Commands\GenerateReport::class
     ];
 
+
     /**
+     * For more info https://laradock.io/documentation/#run-laravel-scheduler
+     * Currently We use workspace container
      * Define the application's command schedule.
      *
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
@@ -26,6 +29,10 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
+
+        $schedule->call('App\Http\Controllers\ProxyController@saveSpysMeProxies')->hourly();
+        $schedule->call('App\Http\Controllers\ProxyController@savePubProxies')->everyThirtyMinutes();
+        
     }
 
     /**

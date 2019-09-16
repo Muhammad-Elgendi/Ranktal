@@ -44,6 +44,9 @@ $optionalLanguageRoutes = function () {
     Route::get('backlinks', 'backlinksController@handleBacklinks'); //Backlinks checker
     Route::get('crawl', 'CrawlingController@doSiteCrawl'); //Site Crawl
 
+    // Test
+    Route::get('browse', 'BrowserController@browse'); //Test chrome
+
  //------------------------------------------------------------------------------------------------------------
 
     /**

@@ -128,6 +128,35 @@ services:
         - frontend
         - backend
 
+### Chrome ##################################
+    chrome:
+      build:
+        context: ./chrome     
+      volumes:
+        - /dev/shm:/dev/shm selenium/standalone-chrome
+      extra_hosts:
+        - "dockerhost:${DOCKER_HOST_IP}"
+      ports:
+        - "${CHROME_PORT}:4444"
+      networks:
+        - frontend
+        - backend
+
+### Chrome-debug ##################################
+    chrome-debug:
+      build:
+        context: ./chrome-debug     
+      volumes:
+        - /dev/shm:/dev/shm selenium/standalone-chrome-debug
+      extra_hosts:
+        - "dockerhost:${DOCKER_HOST_IP}"
+      ports:
+        - "${CHROME_DEBUG_PORT}:4444"
+        - "${VNC_PORT}:5900"
+      networks:
+        - frontend
+        - backend
+
 ### PHP-FPM ##############################################
     php-fpm:
       build:

@@ -187,9 +187,10 @@ class CrawlingController extends Controller
             $job->save();
 
             // Send Request to SEO-crawler server
+            // For example
             // http://10.0.75.1:8888/audit?url=https://google.com/&pages=5000&crawlers=3&userId=1&siteId=73&match=1
-  
-            $requestUrl = 'http://172.22.0.1:8888/audit?url='.$site.'&pages=5000&crawlers=3&userId='.$userId.'&siteId='.$newSite->id.'&match='.$exact;
+            
+            $requestUrl = 'http://'.env('SEO_CRAWLER_HOST').':'.env('SEO_CRAWLER_PORT').'/audit?url='.$site.'&pages=5000&crawlers=3&userId='.$userId.'&siteId='.$newSite->id.'&match='.$exact;
             $connector =new PageConnector($requestUrl);
             $connector->connectPage();          
             $connector->setIsGoodStatus();
