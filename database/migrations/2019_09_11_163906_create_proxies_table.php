@@ -15,9 +15,14 @@ class CreateProxiesTable extends Migration
     {
         Schema::create('proxies', function (Blueprint $table) {
             $table->string('proxy');
-            $table->string('country');
-            $table->boolean('google_pass');
-            $table->boolean('is_working');
+            $table->string('country')->nullable();
+            $table->string('type')->nullable();
+            $table->string('anonymity')->nullable();
+            $table->integer('speed')->nullable();
+            $table->boolean('is_working')->nullable();    
+            $table->boolean('google_pass')->nullable();
+            $table->boolean('bing_pass')->nullable();
+            $table->timestamp('last_use')->nullable();
             $table->timestamps();
             $table->primary('proxy');
 

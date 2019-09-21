@@ -9,5 +9,6 @@ class Proxy extends Model
     //
     protected $primaryKey = 'proxy';
     public $incrementing = false;
+    protected $dates = ['last_use'];
 
 }

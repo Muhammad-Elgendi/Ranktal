@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Http\Controllers\ProxyController;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -27,12 +28,38 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        //proxy acquisition
+        $schedule->call(function(){
+            ProxyController::saveProxiesFrom('getParsedSpysMeProxy');
+        })->hourly();
 
-        $schedule->call('App\Http\Controllers\ProxyController@saveSpysMeProxies')->hourly();
-        $schedule->call('App\Http\Controllers\ProxyController@savePubProxies')->everyThirtyMinutes();
-        
+        $schedule->call(function(){
+            ProxyController::saveProxiesFrom('getParsedPubProxy');
+        })->everyThirtyMinutes();
+
+        $schedule->call(function(){
+            ProxyController::saveProxiesFrom('getParsedProxyScrape');
+        })->hourly();
+
+        $schedule->call(function(){
+            ProxyController::saveProxiesFrom('getParsedSpysMeProxy');
+            ProxyController::saveProxiesFrom('getParsedPubProxy');
+            ProxyController::saveProxiesFrom('getParsedProxyScrape');
+        })->name('grab-all-proxies')->withoutOverlapping()->at("00:29");
+
+        //proxy checking
+        $schedule->call(function(){
+            ProxyController::updateProxiesInfo();
+        })->name('update-proxies-info')->withoutOverlapping()->everyFiveMinutes();
+
+        $schedule->call(function(){     
+            ProxyController::updateProxiesPassEngines();
+        })->name('update-proxies-pass-engines')->withoutOverlapping()->everyFiveMinutes();
+
+        //update cache with real ip
+        $schedule->call('App\Http\Controllers\ProxyController@updateServerRealIP')->twiceDaily(1, 13); 
+
+
     }
 
     /**

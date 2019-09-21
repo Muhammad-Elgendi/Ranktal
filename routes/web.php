@@ -11,6 +11,9 @@
 |
 */
 
+use App\Http\Controllers\ProxyController;
+use App\Proxy;
+
 $optionalLanguageRoutes = function () {
 
     // Home الرئيسية
@@ -46,7 +49,12 @@ $optionalLanguageRoutes = function () {
 
     // Test
     Route::get('browse', 'BrowserController@browse'); //Test chrome
-
+    // Route::get('save', 'ProxyController@savefromProxyFile'); //Test proxy
+    // Route::get('update', 'ProxyController@updateProxiesInfo'); //update proxy
+    Route::get('getIp', 'ProxyController@getServerRealIP'); //get Real IP
+    // Route::get('getProxy', function(){
+    //     return ProxyController::getProxy();
+    // }); //get Proxy from rotator
  //------------------------------------------------------------------------------------------------------------
 
     /**
