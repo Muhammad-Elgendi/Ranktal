@@ -305,5 +305,13 @@
     "is_dofollow":"DoFollow",
     "created_at":"Seen On",
     "pages":"Pages",
-    "search-engine":"Search Engine"
+    "search-engine":"Search Engine",
+    "device-type":"Device Type",
+    "country-language":"Country/Language",
+    "search-location":"Search Location",
+    "show-map":"Show Map",
+    "desktop":"Desktop",
+    "mobile":"Mobile",
+    "keyword-research": "Keywords Research",
+    "latitude-longitude": "Latitude - Longitude"
 }

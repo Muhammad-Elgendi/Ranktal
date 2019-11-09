@@ -7,6 +7,11 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'vipnytt\\' => array($vendorDir . '/vipnytt/useragentparser/src'),
+    'Zend\\Diactoros\\' => array($vendorDir . '/zendframework/zend-diactoros/src'),
+    'Symfony\\Component\\CssSelector\\' => array($vendorDir . '/symfony/css-selector'),
+    'Serps\\SearchEngine\\Google\\' => array($vendorDir . '/serps/search-engine-google/src'),
+    'Serps\\' => array($vendorDir . '/serps/core/src'),
+    'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-factory/src', $vendorDir . '/psr/http-message/src'),
     'MaxMind\\WebService\\' => array($vendorDir . '/maxmind/web-service-common/src/WebService'),
     'MaxMind\\Exception\\' => array($vendorDir . '/maxmind/web-service-common/src/Exception'),
     'MaxMind\\Db\\' => array($vendorDir . '/maxmind-db/reader/src/MaxMind/Db'),

@@ -305,5 +305,13 @@
     "is_dofollow":"DoFollow",
     "created_at":"وقت رصد الرابط",
     "pages":"صفحة",
-    "search-engine":"محرك البحث"
+    "search-engine":"محرك البحث",
+    "device-type":"نوع الجهاز",
+    "country-language":"البلد/اللغة",
+    "search-location":"مكان البحث",
+    "show-map":"إعرض الخريطة",
+    "desktop":"كمبيوتر مكتب",
+    "mobile":"موبايل",
+    "keyword-research": "بحث الكلمات المفتاحية",
+    "latitude-longitude": "خط عرض/طول"
 }

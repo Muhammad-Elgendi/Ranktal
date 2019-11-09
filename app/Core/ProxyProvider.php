@@ -59,7 +59,7 @@ class ProxyProvider{
             $spaceSplited = explode(' ',$item);
             $proxy['proxy'] = trim($spaceSplited[0]);
             $proxy['country'] = explode('-',$spaceSplited[1])[0];
-            $proxy['google_pass'] = $spaceSplited[2] == "+";
+            // $proxy['google_pass'] = $spaceSplited[2] == "+";
 
             $parsedProxies[] = $proxy;
         }
@@ -89,7 +89,7 @@ class ProxyProvider{
             $proxy =[];
             $proxy['proxy'] = trim($item->ipPort);
             $proxy['country'] = $item->country;
-            $proxy['google_pass'] = $item->support->google == 1;
+            // $proxy['google_pass'] = $item->support->google == 1;
             $parsedProxies[] = $proxy;
         }
         return $parsedProxies;

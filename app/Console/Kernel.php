@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Http\Controllers\BrowserController;
 use App\Http\Controllers\ProxyController;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -28,6 +29,18 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        // clear bad proxies
+        $schedule->call(function(){
+            ProxyController::clearBadProxies();
+        })->everyMinute();  
+        
+        $schedule->call(function(){     
+            ProxyController::refreshProxiesStatus();
+        })->hourly();  
+
+        //update cache with real ip
+        $schedule->call('App\Http\Controllers\ProxyController@updateServerRealIP')->twiceDaily(1, 13);
+
         //proxy acquisition
         $schedule->call(function(){
             ProxyController::saveProxiesFrom('getParsedSpysMeProxy');
@@ -41,25 +54,19 @@ class Kernel extends ConsoleKernel
             ProxyController::saveProxiesFrom('getParsedProxyScrape');
         })->hourly();
 
-        $schedule->call(function(){
-            ProxyController::saveProxiesFrom('getParsedSpysMeProxy');
-            ProxyController::saveProxiesFrom('getParsedPubProxy');
-            ProxyController::saveProxiesFrom('getParsedProxyScrape');
-        })->name('grab-all-proxies')->withoutOverlapping()->at("00:29");
-
-        //proxy checking
-        $schedule->call(function(){
-            ProxyController::updateProxiesInfo();
-        })->name('update-proxies-info')->withoutOverlapping()->everyFiveMinutes();
+        //proxy checking 
 
         $schedule->call(function(){     
-            ProxyController::updateProxiesPassEngines();
-        })->name('update-proxies-pass-engines')->withoutOverlapping()->everyFiveMinutes();
+            ProxyController::updateProxiesPassEngines();         
+        })->name('update-old-proxies-pass-engines')->withoutOverlapping()->everyMinute()->appendOutputTo(storage_path().'/logs/scheduling.txt')->runInBackground();
 
-        //update cache with real ip
-        $schedule->call('App\Http\Controllers\ProxyController@updateServerRealIP')->twiceDaily(1, 13); 
-
-
+        $schedule->call(function(){
+            ProxyController::updateProxiesPassEngines('desc');
+        })->name('update-new-proxies-pass-engines')->withoutOverlapping()->everyMinute()->appendOutputTo(storage_path().'/logs/scheduling.txt')->runInBackground();   
+    
+        $schedule->call(function(){
+            ProxyController::updateProxiesInfo();
+        })->name('update-proxies-info')->withoutOverlapping()->everyMinute()->runInBackground();
     }
 
     /**

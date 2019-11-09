@@ -67,7 +67,7 @@ https://code.visualstudio.com/docs/?dv=linux64_deb
 cd Source Code/seo-saas/laradock/
 
 run containers 
-sudo  docker-compose up workspace php-worker nginx postgres pgadmin tomcat
+docker-compose up php-worker php-fpm workspace nginx postgres pgadmin tomcat chrome-debug
 
 8- update .env file configuration
 postgres container name usually is laradock_postgres_1 change the name in the following commands
@@ -128,3 +128,9 @@ docker inspect <container id> | grep "IPAddress"
 
 Or Check your container IP Address:
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <container id>
+
+
+Notes for upgrading laradock
+copy your softwares that not included in laradock (folders ,.env, docker-compose.yaml software discription)
+rebuild your services
+docker-compose build --no-cache php-worker php-fpm workspace nginx postgres pgadmin tomcat chrome-debug chrome

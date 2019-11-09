@@ -31,13 +31,15 @@ $optionalLanguageRoutes = function () {
     Route::get('dashboard/seo-audit', 'checkerController@index')->name('seo-audit'); //Seo audit view
     Route::get('dashboard/on-demand-crawl', 'CrawlingController@index')->name('on-demand-crawl'); // Site Crawl view
     Route::get('dashboard/keyword-tracker', 'KeywordTrackerController@index')->name('keyword-tracker'); // Keyword Tracker View
+    Route::get('dashboard/keyword-research', 'KeywordResearchController@index')->name('keyword-research'); // Keyword Research View
 
     //Ajax Views Routes
     Route::get('optimizer-view', 'optimizerController@viewChecksUsingAjax')->name('optimizerAjax');
     Route::get('backlinks-view', 'backlinksController@viewBacklinksUsingAjax')->name('backlinksAjax');
     Route::get('seo-audit-view', 'checkerController@viewChecksUsingAjax')->name('seoAuditAjax');
     Route::get('demand-crawl-view', 'CrawlingController@viewSiteCrawlUsingAjax')->name('demandCrawlAjax');
-    Route::get('keyword-tracker-view', 'KeywordTrackerController@vkeywordTrackerUsingAjax')->name('keywordTrackerAjax');
+    Route::get('keyword-tracker-view', 'KeywordTrackerController@viewkeywordTrackerUsingAjax')->name('keywordTrackerAjax');
+    Route::get('keyword-research-view', 'KeywordResearchController@viewkeywordResearchUsingAjax')->name('keywordResearchAjax');
 
     // Endpoints routes
     Route::get('checker', 'checkerController@findOrCreateCheck'); //Seo audit 
@@ -48,6 +50,7 @@ $optionalLanguageRoutes = function () {
     Route::get('crawl', 'CrawlingController@doSiteCrawl'); //Site Crawl
 
     // Test
+    Route::get('testProxy', 'ProxyController@testGooglePass'); //test google pass
     Route::get('browse', 'BrowserController@browse'); //Test chrome
     // Route::get('save', 'ProxyController@savefromProxyFile'); //Test proxy
     // Route::get('update', 'ProxyController@updateProxiesInfo'); //update proxy
@@ -55,6 +58,7 @@ $optionalLanguageRoutes = function () {
     // Route::get('getProxy', function(){
     //     return ProxyController::getProxy();
     // }); //get Proxy from rotator
+    Route::get('google/{country_code}', 'KeywordTrackerController@getGoogleDomain'); //get google localized domain
  //------------------------------------------------------------------------------------------------------------
 
     /**

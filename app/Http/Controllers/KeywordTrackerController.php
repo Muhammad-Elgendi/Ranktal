@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Core\GoogleParser;
 use Illuminate\Http\Request;
-use Auth;
-use App\Core\PageConnector;
-use Illuminate\Support\Facades\DB;
-
+use App\Core\simple_html_dom;
+use App\serp;
+use Carbon\Carbon;
+use Serps\SearchEngine\Google\Page\GoogleSerp;
 
 class KeywordTrackerController extends Controller
 {
@@ -23,10 +24,265 @@ class KeywordTrackerController extends Controller
         return view('dashboard.keywordTracker');
     }
 
-    public function vkeywordTrackerUsingAjax(Request $request)
+    public function viewkeywordTrackerUsingAjax(Request $request)
     {
-        if ($request->ajax()) { } else
-            return "This page isn't for you ! ^_^";
+        if (!$request->ajax()) {
+            return "This page is not for you";
+        }
+        // Twitter @VorticonCmdr.
+        // Thanks to a tweet from @Aleyda Solis about the Chrome Sensor option, which sparked a lot of replies, 
+        // I found out about the possibility to use the GET-parameters UULE (location), hl (language) and gl (region).
+        $url = $request->get('u');
+        $keyword = $request->get('k');
+        $engine = $request->get('e');
+        $device = $request->get('d');
+        $language = $request->get('l');
+        $country = strtolower($request->get('c'));
+        $latitude = $request->get('lat');
+        $longitude = $request->get('long');
+        $location = $request->get('uule');
+
+        // Validate keyword and parameters and trim them
+
+        if ($engine == 'google') {
+            $latest_serp = null;
+            // check if serps exist in DB
+            $serp = serp::where('keyword', $keyword)->where('engine', 'google')->where('created_at', '>=', Carbon::now()->subDay(1))
+                ->latest()->first();
+            // serp doesn't exist in DB
+            if ($serp == null) {
+                $serp = [];
+                while (empty($serp)) {
+                    $serp = $this->getparsedGoogleSerp($keyword, $device, $language, $country, $latitude, $longitude, $location);
+                }
+                // save serp
+                $newserp = new serp();
+                $newserp->keyword = $keyword;
+                $newserp->engine = 'google';
+                $newserp->serps = json_encode($serp);
+                $newserp->save();
+            }
+
+            // Get all old postions for that site in serps and show them in chart to user
+            $AllSerps = serp::where('keyword', $keyword)->where('engine', 'google')->latest()->get();
+            $postions = [];
+            // Timestamp : postion
+            if (!$AllSerps->isEmpty()) {
+                // get site postion from each serp
+                foreach ($AllSerps as $item) {
+                    $json =  json_decode($item);
+                    // loop over pages
+                    foreach($json as $page){
+                        // get organic results
+                        foreach ($json->results as $postion) {
+                            if (stripos($postion->site, $url) !== false) {
+                                if ($latest_serp == null) {
+                                    $latest_serp = $postion;
+                                }
+                                $date = Carbon::createFromFormat('Y-m-d H:i:s', $item->created_at)->format('Y-m-d');
+                                $postions[] = [$date, $postion->rank];
+                                break;
+                            }
+                        }
+                    }                 
+                }
+            }
+            return compact('latest_serp', 'postions');
+        } else if ($engine == 'bing') {
+            $latest_serp = null;
+            // check if serps exist in DB
+            $serp = serp::where('keyword', $keyword)->where('engine', 'bing')->where('created_at', '>=', Carbon::now()->subDay(1))
+                ->latest()->first();
+            // serp doesn't exist in DB
+            if ($serp == null) {
+                $serp = [];
+                while (empty($serp)) {
+                    $serp = $this->getparsedBingSerp($keyword, $device, $language, $country, $latitude, $longitude);
+                }
+                // save serp
+                $newserp = new serp();
+                $newserp->keyword = $keyword;
+                $newserp->engine = 'bing';
+                $newserp->serps = json_encode($serp);
+                $newserp->save();
+            }
+
+            // Get all old postions for that site in serps and show them in chart to user
+            $AllSerps = serp::where('keyword', $keyword)->where('engine', 'bing')->latest()->get();
+            $postions = [];
+            // Timestamp : postion
+            if (!$AllSerps->isEmpty()) {
+                // get site postion from each serp
+                foreach ($AllSerps as $item) {
+                    $json =  json_decode($item->serps);
+                    foreach ($json->results as $postion) {
+                        if (stripos($postion->site, $url) !== false) {
+                            if ($latest_serp == null) {
+                                $latest_serp = $postion;
+                            }
+                            $date = Carbon::createFromFormat('Y-m-d H:i:s', $item->created_at)->format('Y-m-d');
+                            $postions[] = [$date, $postion->rank];
+                            break;
+                        }
+                    }
+                }
+            }
+            return compact('latest_serp', 'postions');
+        }
+    }
+
+    private function getparsedGoogleSerp($keyword, $device, $language, $country, $latitude, $longitude, $location)
+    {
+
+        $htmlAndProxyAndUrl = BrowserController::getGoogleSerp($keyword, $device, $language, $country, $latitude, $longitude, $location);
+        $htmls = $htmlAndProxyAndUrl['html'];
+        $proxy = $htmlAndProxyAndUrl['proxy'];
+        $results = [];
+
+        // parse each html
+        foreach ($htmls as $key => $html) {
+
+            $parser = new GoogleParser($html);
+            $temp = $parser->getJson();
+            if (!empty($temp)) {
+                $results['Page '.$key + 1] = $temp;
+            }
+        }
+
+        // update proxy status
+        if (empty($results)) {
+            $proxy->google_pass = false;
+            $proxy->save();
+        } else {
+            $proxy->google_pass = true;
+            $proxy->save();
+        }
+        return $results;
+    }
+
+    private function getparsedBingSerp($keyword, $device, $language, $country, $latitude, $longitude)
+    {
+
+        //    result count <span class="sb_count" data-bm="4">18,400,000 results</span>
+        // results <ol id="b_results">
+        /**
+         * <li class="b_algo" data-bm="8">
+         *  <h2>
+         *      <a href="https://www.link-assistant.com/" h="ID=SERP,5104.1">
+         *          All-In-One SEO Software &amp; SEO Tools | SEO PowerSuite
+         *      </a>
+         *  </h2>
+         * <div class="b_caption">
+         *      <div class="b_attribution" u="0|5048|4549079082538227|ZnZvo-Cc2rcUruLdarnXG2J66tBX3RaA">
+         *          <cite>
+         *              https://www.link-assistant.com
+         *          </cite>
+         *      <a href="#" aria-label="Actions for this site" aria-haspopup="true" aria-expanded="false" role="button">
+         *          <span class="c_tlbxTrg">
+         *              <span class="c_tlbxTrgIcn sw_ddgn"></span>
+         *              <span class="c_tlbxH" h="BASE:CACHEDPAGEDEFAULT" k="SERP,5105.1"></span>
+         *          </span>
+         *      </a>
+         *      </div>
+         *      <p>
+         *          Get all <strong>SEO</strong> tools in one pack - download free edition of <strong>SEO</strong> PowerSuite and get top 10 rankings for your site on Google and other search engines!
+         *      </p>
+         * </div>
+         * </li>
+         * 
+         * Related searches
+         * <ul class="b_vList">
+         * <li>
+         * <a href="/search?q=top+seo+software&amp;FORM=R5FD" h="ID=SERP,5323.1">
+         * <strong>top</strong> seo software
+         * </a>
+         * </li>
+         * ....
+         * </ul>
+         * 
+         * Next Page 
+         *  <a class="sb_pagN sb_pagN_bp b_widePag sb_bp b_roths">
+         * sb_pagN sb_pagN_bp b_widePag sb_bp 
+         * sb_pagN sb_pagN_bp b_widePag sb_bp 
+         * 
+         * 
+         */
+
+        // Create a DOM object
+        $dom = new simple_html_dom();
+        $results = [];
+        $rank = 0;
+        $suggests = [];
+
+        $htmlAndProxy = BrowserController::getBingSerp($keyword, $device, $language, $country, $latitude, $longitude);
+        $htmls = $htmlAndProxy['html'];
+        $proxy = $htmlAndProxy['proxy'];
+
+        // parse each html
+        foreach ($htmls as $key => $html) {
+            // Load HTML from a string
+            $dom->load($html);
+
+            if ($key == 0) {
+
+                // get results count
+                $count_query = $dom->find('span[class=sb_count]', 0);
+                if ($count_query != null) {
+                    $count = $dom->find('span[class=sb_count]', 0)->plaintext;
+                    $count = explode(' ', $count)[0];
+                }
+
+                // Get Related searches
+                $related = $dom->find('ul[class=b_vList] li');
+
+                foreach ($related as $item) {
+                    $element_query = $item->find('a', 0);
+                    if ($element_query != null) {
+                        $suggests[] = $element_query->plaintext;
+                    }
+                }
+            }
+
+            // Get serps results
+            $serp = $dom->find('ol[id=b_results] li[class=b_algo]');
+
+            foreach ($serp as $postion) {
+                $rank++;
+                $title = $site = $description = null;
+                $element_query = $postion->find('h2 a', 0);
+                if ($element_query != null) {
+                    $title = $element_query->plaintext;
+                    $site = $element_query->href;
+                }
+                $description_query = $postion->find('div[class=b_caption] p', 0);
+                if ($description_query != null) {
+                    $description = $description_query->plaintext;
+                }
+                $results[] = ['rank' => $rank, 'title' => $title, 'site' => $site, 'description' => $description];
+            }
+        }
+
+        // generate bing array
+        $bing = [];
+        if (!empty($count)) {
+            $bing['count'] = $count;
+        }
+        if (!empty($results)) {
+            $bing['results'] = $results;
+        }
+        if (!empty($suggests)) {
+            $bing['suggests'] = $suggests;
+        }
+
+        // update proxy status
+        if (empty($bing)) {
+            $proxy->bing_pass = false;
+            $proxy->save();
+        } else {
+            $proxy->bing_pass = true;
+            $proxy->save();
+        }
+        return $bing;
     }
 
     private function prepareViewArray($catagory, &$json, &$response)
@@ -36,144 +292,246 @@ class KeywordTrackerController extends Controller
         return $array;
     }
 
-    public function getGoogleSerps()
+    public static function getGoogleDomain($country_code)
     {
-        // General configuration
-        $test_website_url = "http://www.website.com";                        // The URL, or a sub-string of it, of the indexed website. you can use a domain/hostname as well but including http:// is recommended to avoid false positives (like http://alexa.com/siteinfo/domain) !
-        $test_keywords = "some keyword,another keyword";    // comma separated keywords to test the rank for
-        $test_max_pages = 3;                                                             // The number of result pages to test until giving up per keyword. Each page contains up to 100 results or 10 results when using Google Instant
-        $test_100_resultpage = 0;                                                    // Warning: Google ranking results will become inaccurate! Set to 1 to receive 100 instead of 10 results and reduce the amount of proxies required. Mainly useful for scraping relevant websites.
-        //$test_safe_search="medium";										// {right now not supported by the script}. Google safe search configuration. Possible choices: off, medium (default), high  
+        $prefix = 'https://www.';
+        $domains = [
+            "ae" => "google.ae",
 
-        /* Local result configuration. Enter 'help' to receive a list of possible choices. use global and en for the default worldwide results in english 
-        * You need to define a country as well as the language. Visit the Google domain of the specific country to see the available languages.
-        * Only a correct combination of country and language will return the correct search engine result pages. */
-        $test_country = "global";                                                    // Country code. "global" is default. Use "help" to receive a list of available codes. [com,us,uk,fr,de,...]
-        $test_language = "en";                                                         // Language code. "EN" is default Use "help" to receive a list. Visit the local Google domain to find available langauges of that domain. [en,fr,de,...]
-        $filter = 1;                                                                             // 0 for no filter (recommended for maximizing content), 1 for normal filter (recommended for accuracy)
-        $force_cache = 0;                                                                    // set this to 1 if you wish to force the loading of cache files, even if the files are older than 24 hours. Set to -1 if you wish to force a new scrape.
-        $load_all_ranks = 1;                                                            /* set this to 0 if you wish to stop scraping once the $test_website_url has been found in the search engine results,
-																								 * if set to 1 all $test_max_pages will be downloaded. This might be useful for more detailed ranking analysis.*/
-        $portal = "int"; // int or us (must match your settings, int is default)
-        $show_html = 0;                                                                         // 1 means: output formated with HTML tags. 0 means output for console (recommended script usage)
-        $show_all_ranks = 1;                                                            // set to 1 to display a complete list of all ranks per keyword, set to 0 to only display the ranks for the specified website
-        // ***************************************************************************
+            "af" => "google.com.af",
 
-        if ($show_html) $NL = "<br>\n";
-        else $NL = "\n";
-        if ($show_html) $HR = "<hr>\n";
-        else $HR = "---------------------------------------------------------------------------------------------------\n";
-        if ($show_html) $B = "<b>";
-        else $B = "!";
-        if ($show_html) $B_ = "</b>";
-        else $B_ = "!";
+            "al" => "google.al",
 
-        /*
-        * This loop iterates through all keyword combinations
-        */
-        $ch = NULL;
-        $rotate_ip = 0; // variable that triggers an IP rotation (normally only during keyword changes)
-        $max_errors_total = 3; // abort script if there are 3 keywords that can not be scraped (something is going wrong and needs to be checked)
+            "am" => "google.am",
 
-        $rank_data = array();
-        $siterank_data = array();
-        $results=array();
-        $keywords = explode(",", $test_keywords);
+            "ao" => "google.co.ao",
 
-        foreach ($keywords as $keyword) {
-            $rank = 0;
-            $max_errors_page = 5; // abort script if there are 5 errors in a row, that should not happen
+            "ar" => "google.com.ar",
 
-            if ($test_max_pages <= 0) break;
-            $search_string = urlencode($keyword);
-            $rotate_ip = 1; // IP rotation for each new keyword
+            "at" => "google.at",
 
-            /*
- 	* This loop iterates through all result pages for the given keyword
- 	*/
-            for ($page = 0; $page < $test_max_pages; $page++) {
-                $serp_data = load_cache($search_string, $page, $country_data, $force_cache); // load results from local cache if available for today
-                $maxpages = 0;
+            "au" => "google.com.au",
 
-                if (!$serp_data) {
-                    $ip_ready = check_ip_usage(); // test if ip has not been used within the critical time
-                    while (!$ip_ready || $rotate_ip) {
-                        $ok = rotate_proxy(); // start/rotate to the IP that has not been started for the longest time, also tests if proxy connection is working
-                        if ($ok != 1)
-                            die("Fatal error: proxy rotation failed:$NL $ok$NL");
-                        $ip_ready = check_ip_usage(); // test if ip has not been used within the critical time
-                        if (!$ip_ready) die("ERROR: No fresh IPs left, try again later. $NL");
-                        else {
-                            $rotate_ip = 0; // ip rotated
-                            break; // continue
-                        }
-                    }
+            "az" => "google.az",
 
-                    delay_time(); // stop scraping based on the license size to spread scrapes best possible and avoid detection
-                    global $scrape_result; // contains metainformation from the scrape_serp_google() function
-                    $raw_data = scrape_serp_google($search_string, $page, $country_data); // scrape html from search engine
-                    if ($scrape_result != "SCRAPE_SUCCESS") {
-                        if ($max_errors_page--) {
-                            echo "There was an error scraping (Code: $scrape_result), trying again .. $NL";
-                            $page--;
-                            continue;
-                        } else {
-                            $page--;
-                            if ($max_errors_total--) {
-                                echo "Too many errors scraping keyword $search_string (at page $page). Skipping remaining pages of keyword $search_string .. $NL";
-                                break;
-                            } else {
-                                die("ERROR: Max keyword errors reached, something is going wrong. $NL");
-                            }
-                            break;
-                        }
-                    }
-                    mark_ip_usage(); // store IP usage, this is very important to avoid detection and gray/blacklistings
-                    global $process_result; // contains metainformation from the process_raw() function
-                    $serp_data = process_raw_v2($raw_data, $page); // process the html and put results into $serp_data
+            "ba" => "google.ba",
 
-                    if (($process_result == "PROCESS_SUCCESS_MORE") || ($process_result == "PROCESS_SUCCESS_LAST")) {
-                        $result_count = count($serp_data);
-                        $serp_data['page'] = $page;
-                        if ($process_result != "PROCESS_SUCCESS_LAST")
-                            $serp_data['lastpage'] = 1;
-                        else
-                            $serp_data['lastpage'] = 0;
-                        $serp_data['keyword'] = $keyword;
-                        $serp_data['cc'] = $country_data['cc'];
-                        $serp_data['lc'] = $country_data['lc'];
-                        $serp_data['result_count'] = $result_count;
-                        store_cache($serp_data, $search_string, $page, $country_data); // store results into local cache	
-                    }
+            "bd" => "google.com.bd",
 
-                    if ($process_result != "PROCESS_SUCCESS_MORE")
-                        break; // last page
-                    if (!$load_all_ranks) {
-                        for ($n = 0; $n < $result_count; $n++)
-                            if (strstr($results[$n]['url'], $test_website_url)) {
-                                verbose("Located $test_website_url within search results.$NL");
-                                break;
-                            }
-                    }
-                } // scrape clause
+            "be" => "google.be",
 
-                $result_count = $serp_data['result_count'];
+            "bg" => "google.bg",
 
-                for ($ref = 0; $ref < $result_count; $ref++) {
-                    $rank++;
-                    $rank_data[$keyword][$rank]['title'] = $serp_data[$ref]['title'];
-                    $rank_data[$keyword][$rank]['url'] = $serp_data[$ref]['url'];
-                    $rank_data[$keyword][$rank]['host'] = $serp_data[$ref]['host'];
-                    //$rank_data[$keyword][$rank]['desc']=$serp_data['desc'']; // not really required
-                    if (strstr($rank_data[$keyword][$rank]['url'], $test_website_url)) {
-                        $info = array();
-                        $info['rank'] = $rank;
-                        $info['url'] = $rank_data[$keyword][$rank]['url'];
-                        $siterank_data[$keyword][] = $info;
-                    }
-                }
-            } // page loop
-        } // keyword loop
+            "bh" => "google.com.bh",
 
+            "bn" => "google.com.bn",
+
+            "bo" => "google.com.bo",
+
+            "br" => "google.com.br",
+
+            "bs" => "google.bs",
+
+            "bw" => "google.co.bw",
+
+            "by" => "google.by",
+
+            "bz" => "google.com.bz",
+
+            "ca" => "google.ca",
+
+            "cd" => "google.cd",
+
+            "ch" => "google.ch",
+
+            "cl" => "google.cl",
+
+            "cm" => "google.cm",
+
+            "co" => "google.com.co",
+
+            "cr" => "google.co.cr",
+
+            "cv" => "google.cv",
+
+            "cy" => "google.com.cy",
+
+            "cz" => "google.cz",
+
+            "de" => "google.de",
+
+            "dk" => "google.dk",
+
+            "do" => "google.com.do",
+
+            "dz" => "google.dz",
+
+            "ec" => "google.com.ec",
+
+            "ee" => "google.ee",
+
+            "eg" => "google.com.eg",
+
+            "es" => "google.es",
+
+            "et" => "google.com.et",
+
+            "fi" => "google.fi",
+
+            "fr" => "google.fr",
+
+            "ge" => "google.ge",
+
+            "gh" => "google.com.gh",
+
+            "gr" => "google.gr",
+
+            "gt" => "google.com.gt",
+
+            "gy" => "google.gy",
+
+            "hk" => "google.com.hk",
+
+            "hn" => "google.hn",
+
+            "hr" => "google.hr",
+
+            "ht" => "google.ht",
+
+            "hu" => "google.hu",
+
+            "id" => "google.co.id",
+
+            "ie" => "google.ie",
+
+            "il" => "google.co.il",
+
+            "in" => "google.co.in",
+
+            "is" => "google.is",
+
+            "it" => "google.it",
+
+            "jm" => "google.com.jm",
+
+            "jo" => "google.jo",
+
+            "jp" => "google.co.jp",
+
+            "kh" => "google.com.kh",
+
+            "kr" => "google.co.kr",
+
+            "kw" => "google.com.kw",
+
+            "kz" => "google.kz",
+
+            "lb" => "google.com.lb",
+
+            "lk" => "google.lk",
+
+            "lt" => "google.lt",
+
+            "lu" => "google.lu",
+
+            "lv" => "google.lv",
+
+            "ly" => "google.com.ly",
+
+            "ma" => "google.co.ma",
+
+            "md" => "google.md",
+
+            "me" => "google.me",
+
+            "mg" => "google.mg",
+
+            "mn" => "google.mn",
+
+            "mt" => "google.com.mt",
+
+            "mu" => "google.mu",
+
+            "mx" => "google.com.mx",
+
+            "my" => "google.com.my",
+
+            "mz" => "google.co.mz",
+
+            "na" => "google.com.na",
+
+            "ng" => "google.com.ng",
+
+            "ni" => "google.com.ni",
+
+            "nl" => "google.nl",
+
+            "no" => "google.no",
+
+            "np" => "google.com.np",
+
+            "nz" => "google.co.nz",
+
+            "om" => "google.com.om",
+
+            "pe" => "google.com.pe",
+
+            "ph" => "google.com.ph",
+
+            "pk" => "google.com.pk",
+
+            "pl" => "google.pl",
+
+            "pt" => "google.pt",
+
+            "py" => "google.com.py",
+
+            "ro" => "google.ro",
+
+            "rs" => "google.rs",
+
+            "ru" => "google.ru",
+
+            "sa" => "google.com.sa",
+
+            "se" => "google.se",
+
+            "sg" => "google.com.sg",
+
+            "si" => "google.si",
+
+            "sk" => "google.sk",
+
+            "sn" => "google.sn",
+
+            "sv" => "google.com.sv",
+
+            "th" => "google.co.th",
+
+            "tn" => "google.tn",
+
+            "tr" => "google.com.tr",
+
+            "tt" => "google.tt",
+
+            "ua" => "google.com.ua",
+
+            "uk" => "google.co.uk",
+
+            "us" => "google.com",
+
+            "uy" => "google.com.uy",
+
+            "ve" => "google.co.ve",
+
+            "vn" => "google.com.vn",
+
+            "za" => "google.co.za",
+
+            "zm" => "google.co.zm",
+
+            "zw" => "google.co.zw"
+        ];
+        return $prefix . $domains[strtolower($country_code)];
     }
 }

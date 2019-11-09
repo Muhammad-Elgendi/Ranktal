@@ -10,6 +10,7 @@ use GeoIp2\Database\Reader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Carbon;
+use Illuminate\Http\Request;
 
 class ProxyController extends Controller
 {
@@ -25,31 +26,61 @@ class ProxyController extends Controller
         // $this->middleware('auth');
     }
 
+    public function testGooglePass(Request $request){
+        $proxySearch = $request->get('proxy');
+        $item = Proxy::where('proxy',$proxySearch)->first();
+        $type = empty($item->type) ? 'http' : $item->type;
+        $proxy_url = $type . '://' . $item->proxy;
+        $google_pass = BrowserController::isGooglePassedProxy($proxy_url);
+        $item->google_pass = $google_pass;
+        $item->save();
+        echo $google_pass;
+    }
+
+    public static function refreshProxiesStatus(){
+        Proxy::where('updated_at', '<', Carbon::now()->subDays(2))
+            ->update(['google_pass' => null ,
+                      'bing_pass'   => null ,
+                      'is_working'  => null]);
+    }
+
+    public static function clearBadProxies(){
+        Proxy::orWhere('is_working',false)->orWhere(function ($query) {
+            $query->where('google_pass',false)->where('bing_pass',false);
+        })->delete();
+    }
+
     /**
      * Get Proxy from rotator
      */
     public static function getProxy($site = null,$country =null){
-        if($site == 'google'){
-            if($country == null){
-                $proxy = Proxy::where('google_pass',true)->where('last_use', '<', Carbon::now()->subHour())
-                ->orderBy('last_use', 'asc')->orderBy('speed', 'asc')->first();
-            }else{
-                $proxy = Proxy::where('google_pass',true)->where('country',$country)
-                ->where('last_use', '<', Carbon::now()->subHour())
-                ->orderBy('last_use', 'asc')->orderBy('speed', 'asc')->first();
-            }
-        }else if($site == 'bing'){
-            $proxy = Proxy::where('bing_pass',true)->where('last_use', '<', Carbon::now()->subHour())
-                ->orderBy('last_use', 'asc')->orderBy('speed', 'asc')->first();
-        }else{
-            $proxy = Proxy::where('speed','<=',4000)->where('last_use', '<', Carbon::now()->subHour())
-                ->orderBy('last_use', 'asc')->orderBy('speed', 'asc')->first();
+        if($country != null){
+            $country = strtoupper($country);
         }
-        if($proxy == null){
-            $proxy = Proxy::orderBy('speed', 'asc')->orderBy('updated_at', 'asc')->orderBy('last_use', 'asc')->first();
-            if($proxy == null){
-               return; 
+        if($site != null){
+            $site = strtolower($site);
+            if($country != null){
+                $proxy = Proxy::where($site.'_pass',true)->where('country',$country)->where(function($query){
+                    $query->where('last_use', '<', Carbon::now()->subHour())->orWhereNull('last_use');
+                })->orderBy('updated_at', 'desc')->orderBy('last_use', 'asc')->orderBy('speed', 'asc')->first();
+            }if($country == null || $proxy = null){
+                $proxy = Proxy::where($site.'_pass',true)->where(function($query){
+                    $query->where('last_use', '<', Carbon::now()->subHour())->orWhereNull('last_use');
+                })->orderBy('updated_at', 'desc')->orderBy('last_use', 'asc')->orderBy('speed', 'asc')->first();
             }
+        }else{
+            if($country == null){
+                $proxy = Proxy::where('is_working',true)->where(function($query){
+                    $query->where('last_use', '<', Carbon::now()->subHour())->orWhereNull('last_use');
+                })->orderBy('updated_at', 'desc')->orderBy('last_use', 'asc')->orderBy('speed', 'asc')->first();
+            }else{
+                $proxy = Proxy::where('is_working',true)->where('country',$country)->where(function($query){
+                    $query->where('last_use', '<', Carbon::now()->subHour())->orWhereNull('last_use');
+                })->orderBy('updated_at', 'desc')->orderBy('last_use', 'asc')->orderBy('speed', 'asc')->first();
+            }
+        }
+        if($proxy == null){          
+            return null;             
         }
         $proxy->last_use = Carbon::now();
         $proxy->save();
@@ -79,18 +110,18 @@ class ProxyController extends Controller
      */
     public static function saveProxiesFrom($methodName){
         $proxies = ProxyProvider::$methodName();
-        $properties = array_keys($proxies[0]);
-        foreach ($proxies as $proxy) {
-            $newProxy = Proxy::where('proxy',$proxy['proxy'])->first();
-            if($newProxy == null){
-                $newProxy = new Proxy();
+        if(!empty($proxies)){
+            $properties = array_keys($proxies[0]);
+            foreach ($proxies as $proxy) {
+                $newProxy = Proxy::where('proxy',$proxy['proxy'])->first();
+                if($newProxy == null){
+                    $newProxy = new Proxy();
+                }
+                foreach($properties as $property){
+                    $newProxy->$property = $proxy[$property];
+                } 
+                $newProxy->save();
             }
-            foreach($properties as $property){
-                $newProxy->$property = $proxy[$property];
-            }     
-            $newProxy->is_working = true;
-
-            $newProxy->save();
         }
     }
 
@@ -115,24 +146,33 @@ class ProxyController extends Controller
         return $ip;
     }
 
-    public static function updateProxiesPassEngines(){
+    public static function updateProxiesPassEngines($order = 'asc'){
 
-        $proxies = Proxy::where('google_pass',null)->orWhere('bing_pass',null)
-        ->where('speed','<=',4000)->where('is_working',true)->get();
+        $proxies = Proxy::where(function ($query) {
+            $query->whereNull('google_pass')->orWhereNull('bing_pass');
+        })->whereNotNull('type')->orderBy('created_at', $order)->take(10)->get();
         
-        // Recheck proxies every 6 hours 
-        if($proxies->isEmpty()){
-            $proxies = Proxy::where('speed','<=',4000)->where('is_working',true)
-            ->where('updated_at', '<=', Carbon::now()->subHour(6))
-            ->orderBy('updated_at', 'asc')->get();
-        }
+        // echo "order : $order count of proxies is ".count($proxies)."\n";
+
+        // Recheck proxies every day
+        // if($proxies->isEmpty()){
+        //     $proxies = Proxy::where('updated_at', '<=', Carbon::now()->subDay())
+        //     ->orderBy('updated_at', 'asc')->get();
+        // }
+
+        // $proxies = DB::select('select * from proxies where is_working != false and (google_pass is null or bing_pass is null) and type is not null');
        
-        foreach($proxies as $item){       
-            $proxy_url = $item->type.'://'.$item->proxy;
+        foreach($proxies as $item){
+   
+            $type = empty($item->type) ? 'http' : $item->type;
+            $proxy_url = $type . '://' . $item->proxy;
+            // Google doesn't block proxies that hit their home pages so you can get suggests without pain
             $google_pass = BrowserController::isGooglePassedProxy($proxy_url);
             $bing_pass = BrowserController::isBingPassedProxy($proxy_url);
             $item->google_pass = $google_pass;
             $item->bing_pass = $bing_pass;
+            $item->is_working = ($bing_pass || $google_pass);
+            $item->last_use = Carbon::now();       
             $item->save();
         }
     }
@@ -162,14 +202,22 @@ class ProxyController extends Controller
         if($force_update){
             $proxies = Proxy::all();
         }else{
-            $proxies = Proxy::where('type',null)->orWhere('anonymity',null)->orWhere('speed',null)
-            ->orWhere('is_working',null)->orWhere('country',null)->get();
+            // update google,bing passed first
+            $proxies = Proxy::where(function ($query) {
+                $query->where('google_pass',true)->orWhere('bing_pass',true);
+            })->orWhere('type',null)->orWhere('anonymity',null)->orWhere('speed',null)
+            ->orWhere('is_working',null)->orWhere('country',null)->orderBy('updated_at', 'asc')->take(10)->get();
+    
+            if($proxies->isEmpty()){
+                $proxies = Proxy::where('type',null)->orWhere('anonymity',null)->orWhere('speed',null)
+                ->orWhere('is_working',null)->orWhere('country',null)->orderBy('updated_at', 'asc')->take(10)->get();
+            }
         }
 
         // recheck proxies every six hours
         if($proxies->isEmpty()){
             $proxies = Proxy::where('updated_at', '<', Carbon::now()->subHour(6))
-            ->orderBy('updated_at', 'asc')->get();
+            ->orderBy('updated_at', 'asc')->take(10)->get();
         }
        
         foreach($proxies as $item){
@@ -531,7 +579,7 @@ class ProxyController extends Controller
             'ZM' => 'Zambia',
             'ZW' => 'Zimbabwe'
         );
-        return array_search($country_name, $countries);
+        return array_search(strtoupper($country_name), $countries);
     }
 
     /**

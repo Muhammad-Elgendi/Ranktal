@@ -28,9 +28,9 @@ class MiniReportController extends Controller{
     /**
      * @return mixed
      */
-    public function makeBulkReports(){
+    public function makeBulkReports(Request $request){
 
-        $json=Request::get('urls');
+        $json=$request->get('urls');
         $report=new BulkReport();
         $report->arrayOfReports=$json;
         $report->save();
@@ -47,9 +47,9 @@ class MiniReportController extends Controller{
 
     }
 
-    public function makeReport(){
+    public function makeReport(Request $request){
 
-        $url=Request::get('url');
+        $url=$request->get('url');
 
         $report = MiniReport::where('inputURL', '=', $url)->first();
 

@@ -66,6 +66,27 @@
    
     @yield('styles')
 </head>
+    {{--
+         Skins
+    Skins can be found in the dist/css/skins folder.
+    Choose the skin file that you want and then add the appropriate class to the body tag 
+    to change the template's appearance.
+    Here is the list of available skins: 
+
+    skin-blue	
+    skin-blue-light	
+    skin-yellow	
+    skin-yellow-light	
+    skin-green	
+    skin-green-light	
+    skin-purple	
+    skin-purple-light	
+    skin-red	
+    skin-red-light	
+    skin-black	
+    skin-black-light
+    
+    --}}
 <body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
 
@@ -131,8 +152,14 @@
                         <span class="flag-icon flag-icon-{{config('app.flags')[app()->getLocale()]}}"></span>
                         {{-- <span class="caret"></span></a> --}}
                         <ul class="dropdown-menu">
-                          <li><a href="{{ route('lang.dashboard',"ar") }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
-                          <li><a href="{{ route('lang.dashboard',"en") }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
+                        {{-- Dynamic detect localization of current path --}}
+                          @if(in_array(substr(Request::path(),0,2),config('app.locales')))
+                            <li><a href="{{ url('ar/'.substr(Request::path(),3)) }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
+                            <li><a href="{{ url('en/'.substr(Request::path(),3))  }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
+                          @else
+                            <li><a href="{{ url('ar/'.Request::path()) }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
+                            <li><a href="{{ url('en/'.Request::path())  }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
+                          @endif
                         </ul>
                       </li>
                 </ul>
@@ -144,7 +171,7 @@
     <aside class="main-sidebar">
         <!-- sidebar: style can be found in sidebar.less -->
         <section class="sidebar">
-            <!-- Sidebar user panel -->
+            {{-- <!-- Sidebar user panel -->
             <div class="user-panel">
                 <div class="pull-right image">
                     <img src="@yield('user-image')" class="img-circle" alt="User Image">
@@ -166,7 +193,7 @@
               </span>
                 </div>
             </form>
-            <!-- /.search form -->
+            <!-- /.search form --> --}}
             <!-- sidebar menu: : style can be found in sidebar.less -->
             <ul class="sidebar-menu" data-widget="tree">
                 <li>
@@ -250,8 +277,8 @@
                      </ul> --> --}}
                 </li>
                 <li>
-                    <a href="#">
-                        <i class="fa fa-bolt"></i> <span>@lang('keywords-generator')</span>
+                    <a href="{{route('lang.keyword-research',app()->getLocale())}}">
+                        <i class="fa fa-bolt"></i> <span>@lang('keyword-research')</span>
                     </a>
                     {{-- <!--  <ul class="treeview-menu">
                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
@@ -317,198 +344,6 @@
       @lang('copyright-statement').
       <strong> &copy; 2019 </strong>
     </footer>
-    {{--
-    <!-- Control Sidebar -->
-     <aside class="control-sidebar control-sidebar-dark">
-        <!-- Create the tabs -->
-        <ul class="nav nav-tabs nav-justified control-sidebar-tabs">
-            <li><a href="#control-sidebar-home-tab" data-toggle="tab"><i class="fa fa-home"></i></a></li>
-            <li><a href="#control-sidebar-settings-tab" data-toggle="tab"><i class="fa fa-gears"></i></a></li>
-        </ul>
-        <!-- Tab panes -->
-        <div class="tab-content">
-            <!-- Home tab content -->
-            <div class="tab-pane" id="control-sidebar-home-tab">
-                <h3 class="control-sidebar-heading">الأنشطة الأخيرة</h3>
-                <ul class="control-sidebar-menu">
-                    <li>
-                        <a href="javascript:void(0)">
-                            <i class="menu-icon fa fa-birthday-cake bg-red"></i>
-
-                            <div class="menu-info">
-                                <h4 class="control-sidebar-subheading">خصم 50%</h4>
-
-                                <p>سيكون في الرابع من إبريل</p>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)">
-                            <i class="menu-icon fa fa-user bg-yellow"></i>
-
-                            <div class="menu-info">
-                                <h4 class="control-sidebar-subheading">Frodo Updated His Profile</h4>
-
-                                <p>New phone +1(800)555-1234</p>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)">
-                            <i class="menu-icon fa fa-envelope-o bg-light-blue"></i>
-
-                            <div class="menu-info">
-                                <h4 class="control-sidebar-subheading">Nora Joined Mailing List</h4>
-
-                                <p>nora@example.com</p>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)">
-                            <i class="menu-icon fa fa-file-code-o bg-green"></i>
-
-                            <div class="menu-info">
-                                <h4 class="control-sidebar-subheading">Cron Job 254 Executed</h4>
-
-                                <p>Execution time 5 seconds</p>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-                <!-- /.control-sidebar-menu -->
-
-                <h3 class="control-sidebar-heading">العمليات الجارية</h3>
-                <ul class="control-sidebar-menu">
-                    <li>
-                        <a href="javascript:void(0)">
-                            <h4 class="control-sidebar-subheading">
-                                تصميم قالب مخصوص
-                                <span class="label label-danger pull-right">70%</span>
-                            </h4>
-
-                            <div class="progress progress-xxs">
-                                <div class="progress-bar progress-bar-danger" style="width: 70%"></div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)">
-                            <h4 class="control-sidebar-subheading">
-                                Update Resume
-                                <span class="label label-success pull-right">95%</span>
-                            </h4>
-
-                            <div class="progress progress-xxs">
-                                <div class="progress-bar progress-bar-success" style="width: 95%"></div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)">
-                            <h4 class="control-sidebar-subheading">
-                                Laravel Integration
-                                <span class="label label-warning pull-right">50%</span>
-                            </h4>
-
-                            <div class="progress progress-xxs">
-                                <div class="progress-bar progress-bar-warning" style="width: 50%"></div>
-                            </div>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="javascript:void(0)">
-                            <h4 class="control-sidebar-subheading">
-                                Back End Framework
-                                <span class="label label-primary pull-right">68%</span>
-                            </h4>
-
-                            <div class="progress progress-xxs">
-                                <div class="progress-bar progress-bar-primary" style="width: 68%"></div>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
-                <!-- /.control-sidebar-menu -->
-
-            </div>
-            <!-- /.tab-pane -->
-            <!-- Stats tab content -->
-            <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div>
-            <!-- /.tab-pane -->
-            <!-- Settings tab content -->
-            <div class="tab-pane" id="control-sidebar-settings-tab">
-                <form method="post">
-                    <h3 class="control-sidebar-heading">الإعدادات العامة</h3>
-
-                    <div class="form-group">
-                        <label class="control-sidebar-subheading">
-                            إرسال تقارير الإستخدام
-                            <input type="checkbox" class="pull-right" checked>
-                        </label>
-
-                        <p>
-                            بعض المعلومات عن هذا الخيار
-                        </p>
-                    </div>
-                    <!-- /.form-group -->
-
-                    <div class="form-group">
-                        <label class="control-sidebar-subheading">
-                            تمكين إرسال الإيميلات
-                            <input type="checkbox" class="pull-right" checked>
-                        </label>
-
-                        <p>
-                            بعض المعلومات عن هذا الخيار
-                        </p>
-                    </div>
-                    <!-- /.form-group -->
-
-                    <div class="form-group">
-                        <label class="control-sidebar-subheading">
-                            خيار أخر
-                            <input type="checkbox" class="pull-right" checked>
-                        </label>
-
-                        <p>
-                            بعض المعلومات عن هذا الخيار
-                        </p>
-                    </div>
-                    <!-- /.form-group -->
-
-                    <h3 class="control-sidebar-heading">إعادات أخري</h3>
-
-                    <div class="form-group">
-                        <label class="control-sidebar-subheading">
-                            خيار أخر
-                            <input type="checkbox" class="pull-right" checked>
-                        </label>
-                    </div>
-                    <!-- /.form-group -->
-
-                    <div class="form-group">
-                        <label class="control-sidebar-subheading">
-                            تعطيل الإشعارات
-                            <input type="checkbox" class="pull-right">
-                        </label>
-                    </div>
-                    <!-- /.form-group -->
-
-                    <div class="form-group">
-                        <label class="control-sidebar-subheading">
-                            حذف السجلات
-                            <a href="javascript:void(0)" class="text-red pull-right"><i class="fa fa-trash-o"></i></a>
-                        </label>
-                    </div>
-                    <!-- /.form-group -->
-                </form>
-            </div>
-            <!-- /.tab-pane -->
-        </div>
-    </aside> 
-    <!-- /.control-sidebar -->
-    --}}
     {{-- <!-- Add the sidebar's background. This div must be placed
          immediately after the control sidebar --> --}}
     <div class="control-sidebar-bg"></div>
@@ -584,6 +419,21 @@ function printDiv(divID) {
     });
   }
 })(jQuery);
+
+$(document).ready(function () {
+    $('ul.sidebar-menu li a').each(function (index, value) {
+        if($(this).attr('href') == window.location.href){
+            $(this).parent().addClass('active');
+        }
+    });
+    $('li.treeview ul.treeview-menu li a').each(function (index, value) {
+        if($(this).attr('href') == window.location.href){
+            $(this).parent().addClass('active');
+            $(this).parent().parent().show();
+        }
+    });
+});
+
 
 </script>
 @yield('scripts')
