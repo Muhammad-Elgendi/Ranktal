@@ -9,7 +9,8 @@ use App\Core\PageConnector;
 use App\Core\PageChecker;
 use App\Page;
 use App\Html;
-use function PHPSTORM_META\type;
+use Illuminate\Support\Facades\Auth;
+
 
 class checkerController extends Controller
 {
@@ -27,11 +28,11 @@ class checkerController extends Controller
     // View Method
     public function index()
     {
-        return view('dashboard.seoAudit');
+        $pages = Page::where('user_id',Auth::id())->get();
+        return view('dashboard.seoAudit')->with('pages',$pages);
     }
 
-    public function findOrCreateCheck(Request $request){
-        $inputUrl = $request->get('u');
+    public function findOrCreateCheck($inputUrl){     
         $connector =new PageConnector($inputUrl);
         $connector->connectPage();
         if(!$connector->isGoodUrl){
@@ -41,7 +42,7 @@ class checkerController extends Controller
         // $connector->httpCodes;
         // $connector->urlRedirects;
 
-        $foundPage = Page::where('url', $connector->url)->first();
+        $foundPage = Page::where('url', $connector->url)->where('user_id',Auth::id())->first();
 
         if ($foundPage === null) {
             // page doesn't exist
@@ -62,7 +63,7 @@ class checkerController extends Controller
             }
 
             $page = new Page();
-
+            $page->user_id = Auth::id();
             foreach($scraper as $key => $value) {
                 $page->$key = $value;
             }
@@ -106,10 +107,14 @@ class checkerController extends Controller
         return json_encode($checker,JSON_PRETTY_PRINT |JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
-    public function viewChecksUsingAjax(Request $request)
-    {
-        if ($request->ajax()) {
-            $json = $this->findOrCreateCheck($request);
+    public function viewChecksUsingAjax(Request $request,$url = null)
+    {     
+        if ($request->ajax()) { 
+            if($url == null)
+                $json = $this->findOrCreateCheck($request->get('u'));
+            else
+                $json = $this->findOrCreateCheck($url);
+                
             $array = json_decode($json);
             $response = array();
 
@@ -216,4 +221,26 @@ class checkerController extends Controller
         }
         return $array;
     }
+
+    /**
+     * Delete Page and its html
+     */
+    public function destroy($id)
+    {
+        $page= Page::findOrFail($id);
+        $page->delete();
+
+        return redirect(app()->getLocale() . '/dashboard/seo-audit'); 
+    }    
+
+    /**
+     * Reaudit a page
+     */
+    public function reaudit(Request $request)
+    {
+        $page= Page::findOrFail($request->get('id'));
+        $url = $page->url;
+        $page->delete();
+        return $this->viewChecksUsingAjax($request,$url);
+    }   
 }

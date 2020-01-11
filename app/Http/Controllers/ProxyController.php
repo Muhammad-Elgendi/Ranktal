@@ -80,7 +80,7 @@ class ProxyController extends Controller
             }
         }
         if($proxy == null){          
-            return null;             
+            return;             
         }
         $proxy->last_use = Carbon::now();
         $proxy->save();
@@ -152,7 +152,7 @@ class ProxyController extends Controller
             $query->whereNull('google_pass')->orWhereNull('bing_pass');
         })->whereNotNull('type')->orderBy('created_at', $order)->take(10)->get();
         
-        // echo "order : $order count of proxies is ".count($proxies)."\n";
+        echo "order : $order count of proxies is ".count($proxies)."\n";
 
         // Recheck proxies every day
         // if($proxies->isEmpty()){

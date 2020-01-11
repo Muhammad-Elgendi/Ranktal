@@ -36,6 +36,11 @@ class User extends Authenticatable
         return $this->hasMany('App\Site');
     }
 
+    public function pages()
+    {
+        return $this->hasMany('App\Page');
+    }
+
     public function reports()
     {
         return $this->hasMany('App\Report');

@@ -31,7 +31,7 @@ class CrawlingController extends Controller
     }
 
     public function viewSiteCrawlUsingAjax(Request $request){
-        if ($request->ajax()) {
+        // if ($request->ajax()) {
             $json = $this->doSiteCrawl($request);
             $array = json_decode($json);
             $response = array();
@@ -81,9 +81,9 @@ class CrawlingController extends Controller
 
             return json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
-        } 
-        else
-            return "This page isn't for you ! ^_^";
+        // } 
+        // else
+        //     return "This page isn't for you ! ^_^";
     }
 
     private function prepareViewArray($catagory,&$json,&$response){
@@ -370,7 +370,7 @@ How to fix it:
 Britney says:“Try to use at least one topically relevant H1 tag on every content page.”
          */
 
-        $missingH1 = DB::select("select contents.url ,titles.title , urls.crawl_depth from contents INNER JOIN urls ON contents.url = urls.url INNER JOIN titles ON contents.url = titles.url where \"is_H1_exist\" = false AND urls.site_id = ".$siteId);
+        $missingH1 = DB::select("select contents.url ,titles.title , urls.crawl_depth from contents INNER JOIN urls ON contents.url = urls.url INNER JOIN titles ON contents.url = titles.url where contents.is_h1_exist = false AND urls.site_id = ".$siteId);
         $result['missingH1'] = $missingH1;
 
         //  Multiple Titles

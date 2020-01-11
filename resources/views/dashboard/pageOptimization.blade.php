@@ -57,7 +57,7 @@
                                 </div>                            
                 </div>
                 <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
-                           <button id="button" type="button" class="btn btn-primary form-control hidden-print" style="margin-top: 38px;"><i class="fa fa-search"></i></button>
+                           <button id="button" type="button" class="btn btn-primary form-control hidden-print" style="margin-top: 38px;">@lang('optimize') <i class="fa fa-cogs"></i></button>
                            <input type="submit" style="display:none;"/>
                 </div>
                 {!! Form::close() !!}

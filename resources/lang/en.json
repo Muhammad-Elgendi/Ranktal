@@ -27,6 +27,7 @@
     "version": "Version",
     "copyright-statement": "All copyrights reserved",
     "page-optimization":"Page Optimization",
+    "optimize":"Optimize",
     "arabic":"Arabic",
     "english":"English",
     "page-link":"Page Link",
@@ -313,5 +314,13 @@
     "desktop":"Desktop",
     "mobile":"Mobile",
     "keyword-research": "Keywords Research",
-    "latitude-longitude": "Latitude - Longitude"
+    "latitude-longitude": "Latitude - Longitude",
+    "no_entries_in_table":"No entries in the table",
+    "audit-time":"Audit Time",
+    "audit":"Audit",
+    "view":"View",
+    "actions":"Actions",
+    "delete":"Delete",
+    "sure-question":"Are you sure ?",
+    "reaudit" : "Reaudit"
 }

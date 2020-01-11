@@ -8,6 +8,7 @@ use App\Core\simple_html_dom;
 use App\serp;
 use Carbon\Carbon;
 use Serps\SearchEngine\Google\Page\GoogleSerp;
+use Serps\SearchEngine\Google\GoogleUrl;
 
 class KeywordTrackerController extends Controller
 {
@@ -26,9 +27,9 @@ class KeywordTrackerController extends Controller
 
     public function viewkeywordTrackerUsingAjax(Request $request)
     {
-        if (!$request->ajax()) {
-            return "This page is not for you";
-        }
+        // if (!$request->ajax()) {
+        //     return "This page is not for you";
+        // }
         // Twitter @VorticonCmdr.
         // Thanks to a tweet from @Aleyda Solis about the Chrome Sensor option, which sparked a lot of replies, 
         // I found out about the possibility to use the GET-parameters UULE (location), hl (language) and gl (region).
@@ -45,49 +46,50 @@ class KeywordTrackerController extends Controller
         // Validate keyword and parameters and trim them
 
         if ($engine == 'google') {
-            $latest_serp = null;
-            // check if serps exist in DB
-            $serp = serp::where('keyword', $keyword)->where('engine', 'google')->where('created_at', '>=', Carbon::now()->subDay(1))
-                ->latest()->first();
-            // serp doesn't exist in DB
-            if ($serp == null) {
-                $serp = [];
-                while (empty($serp)) {
-                    $serp = $this->getparsedGoogleSerp($keyword, $device, $language, $country, $latitude, $longitude, $location);
-                }
-                // save serp
-                $newserp = new serp();
-                $newserp->keyword = $keyword;
-                $newserp->engine = 'google';
-                $newserp->serps = json_encode($serp);
-                $newserp->save();
-            }
+            return $this->getparsedGoogleSerp($keyword, $device, $language, $country, $latitude, $longitude, $location);
+            // $latest_serp = null;
+            // // check if serps exist in DB
+            // $serp = serp::where('keyword', $keyword)->where('engine', 'google')->where('created_at', '>=', Carbon::now()->subDay(1))
+            //     ->latest()->first();
+            // // serp doesn't exist in DB
+            // if ($serp == null) {
+            //     $serp = [];
+            //     while (empty($serp)) {
+            //         $serp = $this->getparsedGoogleSerp($keyword, $device, $language, $country, $latitude, $longitude, $location);
+            //     }
+            //     // save serp
+            //     $newserp = new serp();
+            //     $newserp->keyword = $keyword;
+            //     $newserp->engine = 'google';
+            //     $newserp->serps = json_encode($serp);
+            //     $newserp->save();
+            // }
 
-            // Get all old postions for that site in serps and show them in chart to user
-            $AllSerps = serp::where('keyword', $keyword)->where('engine', 'google')->latest()->get();
-            $postions = [];
-            // Timestamp : postion
-            if (!$AllSerps->isEmpty()) {
-                // get site postion from each serp
-                foreach ($AllSerps as $item) {
-                    $json =  json_decode($item);
-                    // loop over pages
-                    foreach($json as $page){
-                        // get organic results
-                        foreach ($json->results as $postion) {
-                            if (stripos($postion->site, $url) !== false) {
-                                if ($latest_serp == null) {
-                                    $latest_serp = $postion;
-                                }
-                                $date = Carbon::createFromFormat('Y-m-d H:i:s', $item->created_at)->format('Y-m-d');
-                                $postions[] = [$date, $postion->rank];
-                                break;
-                            }
-                        }
-                    }                 
-                }
-            }
-            return compact('latest_serp', 'postions');
+            // // Get all old postions for that site in serps and show them in chart to user
+            // $AllSerps = serp::where('keyword', $keyword)->where('engine', 'google')->latest()->get();
+            // $postions = [];
+            // // Timestamp : postion
+            // if (!$AllSerps->isEmpty()) {
+            //     // get site postion from each serp
+            //     foreach ($AllSerps as $item) {
+            //         $json =  json_decode($item);
+            //         // loop over pages
+            //         foreach($json as $page){
+            //             // get organic results
+            //             foreach ($json->results as $postion) {
+            //                 if (stripos($postion->site, $url) !== false) {
+            //                     if ($latest_serp == null) {
+            //                         $latest_serp = $postion;
+            //                     }
+            //                     $date = Carbon::createFromFormat('Y-m-d H:i:s', $item->created_at)->format('Y-m-d');
+            //                     $postions[] = [$date, $postion->rank];
+            //                     break;
+            //                 }
+            //             }
+            //         }                 
+            //     }
+            // }
+            // return compact('latest_serp', 'postions');
         } else if ($engine == 'bing') {
             $latest_serp = null;
             // check if serps exist in DB
@@ -137,26 +139,34 @@ class KeywordTrackerController extends Controller
         $htmlAndProxyAndUrl = BrowserController::getGoogleSerp($keyword, $device, $language, $country, $latitude, $longitude, $location);
         $htmls = $htmlAndProxyAndUrl['html'];
         $proxy = $htmlAndProxyAndUrl['proxy'];
+        $url = $htmlAndProxyAndUrl['url'];
         $results = [];
 
         // parse each html
         foreach ($htmls as $key => $html) {
+            $html = file_get_contents("app/Core/googlePages/hosting.html");
+            $parser = new GoogleSerp($html,GoogleUrl::fromString($url));
+            $naturalResults = $parser->getNaturalResults();     
+            $adwordsResults = $parser->getAdwordsResults();
+            $numberOfResults = $parser->getNumberOfResults();
+            $relatedSearches = $parser->getRelatedSearches();
+            $results['Page '.$key + 1] = compact('naturalResults','adwordsResults','numberOfResults','relatedSearches');
 
-            $parser = new GoogleParser($html);
-            $temp = $parser->getJson();
-            if (!empty($temp)) {
-                $results['Page '.$key + 1] = $temp;
-            }
+            // $parser = new GoogleParser($html);
+            // $temp = $parser->getJson();
+            // if (!empty($temp)) {
+            //     $results['Page '.$key + 1] = $temp;
+            // }
         }
 
         // update proxy status
-        if (empty($results)) {
-            $proxy->google_pass = false;
-            $proxy->save();
-        } else {
-            $proxy->google_pass = true;
-            $proxy->save();
-        }
+        // if (empty($results)) {
+        //     $proxy->google_pass = false;
+        //     $proxy->save();
+        // } else {
+        //     $proxy->google_pass = true;
+        //     $proxy->save();
+        // }
         return $results;
     }
 

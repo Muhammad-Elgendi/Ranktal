@@ -30,43 +30,43 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // clear bad proxies
-        $schedule->call(function(){
-            ProxyController::clearBadProxies();
-        })->everyMinute();  
+        // $schedule->call(function(){
+        //     ProxyController::clearBadProxies();
+        // })->everyMinute();  
         
-        $schedule->call(function(){     
-            ProxyController::refreshProxiesStatus();
-        })->hourly();  
+        // $schedule->call(function(){     
+        //     ProxyController::refreshProxiesStatus();
+        // })->hourly();  
 
         //update cache with real ip
         $schedule->call('App\Http\Controllers\ProxyController@updateServerRealIP')->twiceDaily(1, 13);
 
         //proxy acquisition
-        $schedule->call(function(){
-            ProxyController::saveProxiesFrom('getParsedSpysMeProxy');
-        })->hourly();
+        // $schedule->call(function(){
+        //     ProxyController::saveProxiesFrom('getParsedSpysMeProxy');
+        // })->hourly()->runInBackground();
 
-        $schedule->call(function(){
-            ProxyController::saveProxiesFrom('getParsedPubProxy');
-        })->everyThirtyMinutes();
+        // $schedule->call(function(){
+        //     ProxyController::saveProxiesFrom('getParsedPubProxy');
+        // })->everyThirtyMinutes()->runInBackground();
 
-        $schedule->call(function(){
-            ProxyController::saveProxiesFrom('getParsedProxyScrape');
-        })->hourly();
+        // $schedule->call(function(){
+        //     ProxyController::saveProxiesFrom('getParsedProxyScrape');
+        // })->hourly()->runInBackground();
 
         //proxy checking 
 
-        $schedule->call(function(){     
-            ProxyController::updateProxiesPassEngines();         
-        })->name('update-old-proxies-pass-engines')->withoutOverlapping()->everyMinute()->appendOutputTo(storage_path().'/logs/scheduling.txt')->runInBackground();
+        // $schedule->call(function(){     
+        //     ProxyController::updateProxiesPassEngines();         
+        // })->name('update-old-proxies-pass-engines')->withoutOverlapping(5)->everyMinute()->appendOutputTo(storage_path().'/logs/scheduling.txt')->runInBackground();
 
-        $schedule->call(function(){
-            ProxyController::updateProxiesPassEngines('desc');
-        })->name('update-new-proxies-pass-engines')->withoutOverlapping()->everyMinute()->appendOutputTo(storage_path().'/logs/scheduling.txt')->runInBackground();   
+        // $schedule->call(function(){
+        //     ProxyController::updateProxiesPassEngines('desc');
+        // })->name('update-new-proxies-pass-engines')->withoutOverlapping(5)->everyMinute()->appendOutputTo(storage_path().'/logs/scheduling.txt')->runInBackground();   
     
-        $schedule->call(function(){
-            ProxyController::updateProxiesInfo();
-        })->name('update-proxies-info')->withoutOverlapping()->everyMinute()->runInBackground();
+        // $schedule->call(function(){
+        //     ProxyController::updateProxiesInfo();
+        // })->name('update-proxies-info')->withoutOverlapping(5)->everyMinute()->runInBackground();
     }
 
     /**

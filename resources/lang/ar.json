@@ -27,6 +27,7 @@
     "version": "الإصدار",
     "copyright-statement":"جميع الحقوق محفوظة",
     "page-optimization":"تحسين الصفحة",
+    "optimize":"تحسين",
     "arabic":"العربية",
     "english":"الإنجليزية",
     "page-link":"رابط الصفحة",
@@ -313,5 +314,13 @@
     "desktop":"كمبيوتر مكتب",
     "mobile":"موبايل",
     "keyword-research": "بحث الكلمات المفتاحية",
-    "latitude-longitude": "خط عرض/طول"
+    "latitude-longitude": "خط عرض/طول",
+    "no_entries_in_table":"لا يوجد مدخلات لعرضها بالجدول",
+    "audit-time":"وقت الفحص",
+    "audit":"تحليل",
+    "view":"عرض",
+    "actions":"الإجراءات",
+    "delete":"حذف",
+    "sure-question":"هل أنت متأكد ؟",
+    "reaudit" : "إعادة التحليل"
 }

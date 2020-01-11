@@ -174,7 +174,7 @@ class BrowserController extends Controller
         $html = [];
         if ($proxy == null) {
             // Get a proxy
-            $proxy = ProxyController::getProxy('google', $country);
+            $proxy = ProxyController::getProxy('google');
         }
 
         $type = empty($proxy->type) ? 'http' : $proxy->type;
@@ -195,7 +195,7 @@ class BrowserController extends Controller
 
         $driver = BrowserController::visitSiteWithProxyAndLatlngAndDevice($proxy_url, $url, $latitude, $longitude, $device);
         $html[] = $driver->getPageSource();
-        for ($i = 1; $i <= 2; $i++) {
+        for ($i = 1; $i <= 1; $i++) {
 
             try {
                 // click the next page
@@ -215,11 +215,12 @@ class BrowserController extends Controller
                 );
                 // add html to array
                 $html[] = $driver->getPageSource();
+                $url =  $driver->getCurrentURL();
             } catch (TimeOutException $e) { } catch (NoSuchElementException $expr) { } catch (WebDriverCurlException $ex) { } catch (WebDriverException $exp) { }
         }
 
         $driver->quit();
-        return compact('html', 'proxy');
+        return compact('html', 'proxy','url');
     }
 
     // Not used
@@ -421,7 +422,7 @@ class BrowserController extends Controller
         $html = [];
         if ($proxy == null) {
             // Get a proxy
-            $proxy = ProxyController::getProxy('bing', $country);
+            $proxy = ProxyController::getProxy('bing');
         }
         $type = empty($proxy->type) ? 'http' : $proxy->type;
         $proxy_url = $type . '://' . $proxy->proxy;

@@ -37,4 +37,9 @@ class Page extends Model
     {
         return $this->hasOne('App\Html');
     }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 }

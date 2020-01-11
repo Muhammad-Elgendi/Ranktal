@@ -16,6 +16,10 @@ class CreatePagesTable extends Migration
         Schema::create('pages', function (Blueprint $table) {
             $table->increments('id');
             $table->string('url',3000)->unique();
+            $table->unsignedInteger('user_id');
+            $table->foreign('user_id')
+            ->references('id')->on('users')
+            ->onDelete('cascade');
             $table->unsignedInteger('httpCode');
             $table->json('parsedUrl');
             $table->string('title')->nullable();

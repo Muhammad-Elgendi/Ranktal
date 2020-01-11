@@ -253,38 +253,40 @@
                        <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
                      </ul> --> --}}
                 </li>
-                <li class="treeview">
+                {{-- Old seo report tool --}}
+                {{-- <li class="treeview">
                         <a href="#">
                             <i class="fa fa-file-text"></i> <span>@lang("reports")</span>
                             {{--<span class="pull-right-container">--}}
                   {{--<i class="fa fa-angle-left pull-right"></i>--}}
                 {{--</span>--}}
-                        </a>
+                        {{-- </a> 
                         <ul class="treeview-menu">
                             <li><a href="{{url('reports')}}"><i class="fa fa-circle-o"></i>@lang("reports-management")</a></li>
                             <li><a href="{{url('comprehensive-reports')}}"><i class="fa fa-circle-o"></i>@lang('comprehensive-reports')</a></li>
                             <li><a href="{{url('on-page-reports')}}"><i class="fa fa-circle-o"></i>@lang('onpage-reports')</a></li>
                         </ul>
-                    </li>     
-                <li class="header">@lang("keywords")</li>
+                    </li>      --}}
+                    {{-- Keywords tools --}}
+                {{-- <li class="header">@lang("keywords")</li>
                 <li>
                     <a href="{{route('lang.keyword-tracker',app()->getLocale())}}">
                         <i class="fa fa-line-chart"></i> <span>@lang("keywords-tracker")</span>
-                    </a>
+                    </a> --}}
                     {{-- <!--  <ul class="treeview-menu">
                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
                        <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
                      </ul> --> --}}
-                </li>
+                {{-- </li>
                 <li>
                     <a href="{{route('lang.keyword-research',app()->getLocale())}}">
                         <i class="fa fa-bolt"></i> <span>@lang('keyword-research')</span>
-                    </a>
+                    </a> --}}
                     {{-- <!--  <ul class="treeview-menu">
                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
                        <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
                      </ul> --> --}}
-                </li>
+                {{-- </li> --}}
                 <li class="header">@lang("backlinks")</li>
                 <li>
                     <a href="{{route('lang.backlinks-checker',app()->getLocale())}}">

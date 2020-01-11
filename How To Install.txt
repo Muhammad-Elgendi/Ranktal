@@ -134,3 +134,6 @@ Notes for upgrading laradock
 copy your softwares that not included in laradock (folders ,.env, docker-compose.yaml software discription)
 rebuild your services
 docker-compose build --no-cache php-worker php-fpm workspace nginx postgres pgadmin tomcat chrome-debug chrome
+
+If scheduled tasks doesn't work check for mutex files and remove cache 
+php artisan cache:clear

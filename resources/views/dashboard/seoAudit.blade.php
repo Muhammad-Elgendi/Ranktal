@@ -52,13 +52,61 @@
                 </div>
     
                 <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
-                           <button id="button" type="button" class="btn btn-primary form-control hidden-print" style="margin-top: 38px;"><i class="fa fa-search"></i></button>
+                           <button id="button" type="button" class="btn btn-primary form-control hidden-print" style="margin-top: 38px;">@lang('audit') <i class="fa fa-calendar-check-o"></i></button>
                            <input type="submit" style="display:none;"/>
                 </div>
                 {!! Form::close() !!}
         </div>
 
-        
+        {{-- View Audit table --}}
+        <div class="panel-body table-responsive" id="view-table">
+            <table class="table table-bordered table-striped datatable">
+                <thead>
+                    <tr>
+                        <th>@lang('page-link')</th>
+                        <th>@lang('audit-time')</th>
+                        <th>@lang('actions')</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    @if (count($pages) > 0)
+                        @foreach ($pages as $page)
+                            <tr data-entry-id="{{ $page->id }}">
+                                <td field-key='link'><a href="#" onclick="view('{{ $page->url }}');return false;">{{ $page->url }}</a></td>
+                                <td field-key='create-date'>{{ $page->created_at }}</td>
+                                <td>
+                                  
+                                    <a href="#" onclick="view('{{ $page->url }}');return false;" id="page-view-{{$page->id}}" class="btn btn-xs btn-primary"><i class="fa fa-eye"></i> @lang('view')</a>
+                                                       
+                               
+                                    {!! Form::open(array(
+                                        'style' => 'display: inline-block;',
+                                        'method' => 'DELETE',
+                                        'onsubmit' => "return confirm('".__('sure-question')."');",
+                                        'route' => ['seoAuditDelete', $page->id]
+                                        )) !!}
+                      
+                                    <button type="submit" class="btn btn-xs btn-danger" id="page-delete-{{$page->id}}">
+                                        <i class="fa fa-trash"></i> @lang('delete')
+                                    </button>
+                                    {!! Form::close() !!}
+                      
+                                    <button class="btn btn-xs btn-success" onclick="reaudit({!! $page->id !!});return false;" >
+                                        <i class="fa fa-refresh"></i> @lang('reaudit')
+                                    </button>
+                               
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="8">@lang('no_entries_in_table')</td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+        </div>
 
             <div style="display:none; padding-bottom: 15px;" id="upper-board">
 
@@ -103,8 +151,6 @@
 @section('scripts')
 
 <script src="{{url('handlebars/handlebars-v4.1.1.js')}}" ></script>
-<script src="{{url('bower_components/progressbar.js/dist/progressbar.min.js')}}" ></script>
-
 <script>
   $( "#button" ).click(function() {
     if($("#the-form")[0].checkValidity()) {
@@ -112,17 +158,8 @@
         //disable button
         $("#button").attr("disabled", true);
 
-        $.get("{{route('lang.seoAuditAjax',app()->getLocale())}}",{ u: $("#urlInput").val() }, function (jsondata) {
-            $("#urlInput").attr("placeholder", $("#urlInput").val());
-
-                $.get("{{url('templates/panelComponent.hbs')}}", function (data) {
-                var template=Handlebars.compile(data);      
-                $("#checks").html(template(jsondata.checks));
-                    // update view
-                    updateView(jsondata);
-                }, 'html');
-                console.log(jsondata);
-        },'json');
+        // view data
+        view($("#urlInput").val());
 
         //Enable button
         setTimeout(function() {
@@ -134,6 +171,34 @@
         $("#the-form")[0].reportValidity();
     }
 });
+
+function view(url){
+    $.get("{{route('lang.seoAuditAjax',app()->getLocale())}}",{ u: url }, function (jsondata) {
+            $("#urlInput").attr("placeholder", $("#urlInput").val());
+
+                $.get("{{url('templates/panelComponent.hbs')}}", function (data) {
+                var template=Handlebars.compile(data);      
+                $("#checks").html(template(jsondata.checks));
+                    // update view
+                    updateView(jsondata);
+                }, 'html'); 
+        },'json');
+    $('#view-table').hide();
+}
+
+function reaudit(number){
+    $.get("{{ route('lang.seoAuditReaudit',app()->getLocale()) }}",{id: number}, function (jsondata) {
+            $("#urlInput").attr("placeholder", $("#urlInput").val());
+
+                $.get("{{url('templates/panelComponent.hbs')}}", function (data) {
+                var template=Handlebars.compile(data);      
+                $("#checks").html(template(jsondata.checks));
+                    // update view
+                    updateView(jsondata);
+                }, 'html');          
+        },'json');
+    $('#view-table').hide();
+}
 
 function updateView(jsondata){
     $('#upper-board').show();
