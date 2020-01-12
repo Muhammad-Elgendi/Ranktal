@@ -327,7 +327,7 @@
                     </ol> --> --}}
 
               {{-- Print --}}
-                <button type="button" onclick="printDiv('@yield('print-div')')" class="btn btn-primary {{in_array(app()->getLocale(),config('app.rtl')) ? "pull-left" : "pull-right"}}"> <span class="glyphicon glyphicon-save-file"></span> @lang('print')</button> 
+                <button type="button" onclick="printDiv('@yield('print-div')')" id="print-btn" style="display:none;" class="btn btn-primary {{in_array(app()->getLocale(),config('app.rtl')) ? "pull-left" : "pull-right"}}"> <span class="glyphicon glyphicon-save-file"></span> @lang('print')</button> 
    
             <div class="clearfix"></div>
         </section>
@@ -344,7 +344,7 @@
             <b>@lang("version")</b> 1.0
         </div>&nbsp;       
       @lang('copyright-statement').
-      <strong> &copy; 2019 </strong>
+      <strong> &copy; 2020 </strong>
     </footer>
     {{-- <!-- Add the sidebar's background. This div must be placed
          immediately after the control sidebar --> --}}

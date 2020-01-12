@@ -51,7 +51,11 @@ $optionalLanguageRoutes = function () {
 
     // Actions routes
     Route::delete('seo-audit-delete/{id}', 'checkerController@destroy')->name('seoAuditDelete');
-    Route::get('seo-audit-reaudit/', 'checkerController@reaudit')->name('seoAuditReaudit');
+    Route::get('seo-audit-reaudit', 'checkerController@reaudit')->name('seoAuditReaudit');
+
+    Route::delete('demand-crawl-delete/{id}', 'CrawlingController@destroy')->name('demandCrawlDelete');
+    Route::get('demand-crawl-recrawl', 'CrawlingController@recrawl')->name('demandCrawlRecrawl');
+
 
 
     // Test

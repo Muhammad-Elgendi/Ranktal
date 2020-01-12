@@ -225,11 +225,9 @@ class checkerController extends Controller
     /**
      * Delete Page and its html
      */
-    public function destroy($id)
-    {
+    public function destroy($id){
         $page= Page::findOrFail($id);
         $page->delete();
-
         return redirect(app()->getLocale() . '/dashboard/seo-audit'); 
     }    
 

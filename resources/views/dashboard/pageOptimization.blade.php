@@ -147,13 +147,14 @@
                     // update view
                     updateView(jsondata);
                     attachProcessPar(jsondata);
+                    $('#print-btn').show();
                 }, 'html')       
         },'json')
 
         //Enable button
         setTimeout(function() {
             $("#button").removeAttr("disabled");
-        },2500);   // enable after 2 seconds       
+        },2500);   // enable after 2.5 seconds       
         
     }
     else {

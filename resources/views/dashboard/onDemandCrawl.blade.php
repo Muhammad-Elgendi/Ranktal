@@ -73,14 +73,17 @@
         display: inline-block;
         max-width: 100%;
     }
-
+    .crawl-items{
+        margin-left: 15px;
+        margin-right: 15px;
+    }
 </style>
 @endsection
 
 @section('content')
-<div class="container-fluid" id="printable">    
+<div class="container-fluid">    
         
-                {!! Form::open(['url' => 'report','id'=>'the-form']) !!}
+                {!! Form::open(['id'=>'the-form']) !!}
         <div class="row">
                 <div class="col-xs-12">
                     <p class="title">@lang('site-url')</p>
@@ -99,7 +102,7 @@
                 </div>
     
                 <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
-                           <button id="button" type="button" class="btn btn-primary form-control hidden-print" style="margin :0;"><i class="fa fa-search"></i></button>
+                           <button id="button" type="button" class="btn btn-primary form-control hidden-print" style="margin :0;">@lang('crawl') <i class="fa fa-bug"></i></button>
                            <input type="submit" style="display:none;"/>
                 </div>
         </div>
@@ -114,13 +117,72 @@
         </div>
                 {!! Form::close() !!}                
 
-        
+        {{-- View Crawls table --}}
+        <div class="panel-body table-responsive" id="view-table">
+            <table class="table table-bordered table-striped datatable">
+                <thead>
+                    <tr>
+                        <th>@lang('site-url')</th>
+                        <th>{{ ucwords(__('crawl-subdomain')) }}</th>
+                        <th>@lang('crawling-status')</th>
+                        <th>@lang('last-crawling-time')</th>                        
+                        <th>@lang('actions')</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    @if (count($sites) > 0)
+                        @foreach ($sites as $site)
+                            <tr data-entry-id="{{ $site->id }}">
+                                <td field-key='link'><a href="#" onclick="view('{{ $site->host }}',{{ $site->exact_match }});return false;">{{ $site->host }}</a></td>
+                            
+                                @if($site->exact_match)
+                                <td><span class="glyphicon glyphicon-ok-sign text-success fa-lg"></span></td>
+                                @else
+                                <td><span class="glyphicon glyphicon-remove-sign text-danger fa-lg"></span></td>
+                                @endif
 
+                                <td field-key='crawling-status'> @lang($site->crawlingJob->status)</td>
+                                <td field-key='last-crawling-time'>{{ $site->crawlingJob->finished_at }}</td>
+                                <td>
+                                                           
+                                    <a href="#" onclick="view('{{ $site->host }}',{{ $site->exact_match }});return false;" id="crawl-view-{{$site->id}}" class="btn btn-xs btn-primary"><i class="fa fa-eye"></i> @lang('view')</a>
+                                                      
+                                    @if($site->crawlingJob->status != 'Crawling')
+                                    {!! Form::open(array(
+                                        'style' => 'display: inline-block;',
+                                        'method' => 'DELETE',
+                                        'onsubmit' => "return confirm('".__('sure-question')."');",
+                                        'route' => ['demandCrawlDelete', $site->id]
+                                        )) !!}
+                      
+                                    <button type="submit" class="btn btn-xs btn-danger" id="crawl-delete-{{$site->id}}">
+                                        <i class="fa fa-trash"></i> @lang('delete')
+                                    </button>
+                                    {!! Form::close() !!}                      
+                                    
+                                    <button class="btn btn-xs btn-success" onclick="recrawl({!! $site->id !!});return false;" >
+                                        <i class="fa fa-refresh"></i> @lang('recrawl')
+                                    </button>
+                                    @endif
+                               
+                                </td>
+                            </tr>
+                        @endforeach
+                    @else
+                        <tr>
+                            <td colspan="8">@lang('no_entries_in_table')</td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+        </div>
+        <div id="printable">
             <div style="display:none; padding-bottom: 15px;" id="upper-board">
                 <div class="row">
-                    <div class="crawl-research-url">
-                        <label class="crawl-research-url-label">
-                            @lang('site-url'):
+                    <div class="crawl-items">
+                        <label class="crawl-items-label">
+                            @lang('site-url') :
                         </label>                
                         <a id="domain" class="external-link" href="#" target="_blank" style="max-width: 100%;">
                             <span id="domain-inner">#</span>
@@ -129,6 +191,12 @@
                                 <path d="M9 0v2h3.586L7.293 7.293l1.414 1.414L14 3.414V7h2V0"></path>
                             </svg>
                         </a>                    
+                    </div>
+                    <div class="crawl-items">
+                        <label class="crawl-items-label">
+                            @lang('last-crawling-time') :
+                        </label>                
+                        <span id="last-crawl-time">#</span>                    
                     </div>
                 </div>
                 <div class="row">                    
@@ -173,6 +241,7 @@
             </div>
 
             <div id="checks"></div>
+        </div>
 </div>
 
 
@@ -193,32 +262,52 @@
         //disable button
         $("#button").attr("disabled", true);         
         let exact = ($("#exact").is(":checked") && $("#exact").is(":visible"))  || ($("#exact2").is(":checked") && $("#exact2").is(":visible"));
-          $.get("{{route('lang.demandCrawlAjax',app()->getLocale())}}",{ site: $("#urlInput").val(), exact: exact }, function (jsondata) {
-                $("#the-form").hide();
-
-                $.get("{{url('templates/NewTableComponent.hbs')}}", function (data) {
-                var template=Handlebars.compile(data);      
-                $("#checks").html(template(jsondata.catagories));
-                    // update view
-                    updateView(jsondata);
-                }, 'html');
-
-                //Enable button
-                $("#button").removeAttr("disabled");
- 
-        },'json');
+        view($("#urlInput").val(),exact);     
     }
     else {
         $("#the-form")[0].reportValidity();
     }
 });
 
+function view(host,exact){
+    $.get("{{route('lang.demandCrawlAjax',app()->getLocale())}}",{ site: host, exact: exact }, function (jsondata) {
+                $("#the-form").hide();
 
+                $.get("{{url('templates/NewTableComponent.hbs')}}", function (data) {
+                var template=Handlebars.compile(data);      
+                $("#checks").html(template(jsondata.catagories));
+                    // update view
+                    updateView(jsondata);                
+                }, 'html');
+                //Enable button
+                $("#button").removeAttr("disabled"); 
+        },'json');
+    $('#view-table').hide();
+    $('#print-btn').show();
+}
 
+function recrawl(number){
+    if(confirm("@lang('sure-question')")){
+        $.get("{{route('lang.demandCrawlRecrawl',app()->getLocale())}}",{ id: number }, function (jsondata) {
+                $("#the-form").hide();
+                $.get("{{url('templates/NewTableComponent.hbs')}}", function (data) {
+                var template=Handlebars.compile(data);      
+                $("#checks").html(template(jsondata.catagories));
+                    // update view
+                    updateView(jsondata);                
+                }, 'html');
+                //Enable button
+                $("#button").removeAttr("disabled"); 
+        },'json');
+        $('#view-table').hide();
+        $('#print-btn').show();
+    }
+}
 
 function updateView(jsondata){
     $('#upper-board').show();
     $('#domain-inner').text(jsondata.url);
+    $('#last-crawl-time').text(jsondata.lastCrawl);
     $('#domain').attr('href',jsondata.url);    
     $('#crawling-status').text( jsondata.status );
     $('#pages-crawled').text( jsondata.pagesCount );  
@@ -265,15 +354,20 @@ function updateView(jsondata){
     }
     $('#total-issues').text( totalCount );
 
-    // Generate charts 
-    $( "#overview" ).after( "<div id=\"statusChart\"></div><div  id=\"issuesChart\" ></div>" );
-    renderCharts(jsondata);
+    if(!jsondata.pagesCount > 0){
+        // show some things take some time
+        $( "#upper-board" ).after( "<div class='alert alert-info text-center' role='alert'><i class='fa fa-hourglass-half'></i> <strong> @lang('takes-time') </strong> @lang('come-back-later')</div>");
+    }else{
+        // Generate charts 
+        $( "#overview" ).after( "<div id=\"statusChart\"></div><div  id=\"issuesChart\" ></div>" );
+        renderCharts(jsondata);
+    }
+  
     $(window).on('beforeprint', function(){
         $('.selectRows').val("0");
-
         for(var key in jsondata.catagories ){  
             jsondata.catagories[key]['issues'].forEach(element => {    
-                paginateTable('#'+element['title'])
+                paginateTable('#'+element['title']);
                 $('#'+element['title']+"-content").before("<h3>"+element['loclizedTitle']+"</h3>");
             });
         }

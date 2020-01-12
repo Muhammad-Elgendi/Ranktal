@@ -75,7 +75,6 @@
 @section('scripts')
 
 <script src="{{url('handlebars/handlebars-v4.1.1.js')}}" ></script>
-<script src="{{url('bower_components/progressbar.js/dist/progressbar.min.js')}}" ></script>
 
 <script>
   $( "#button" ).click(function() {
@@ -96,7 +95,7 @@
         //Enable button
         setTimeout(function() {
             $("#button").removeAttr("disabled");
-        },2500);   // enable after 2 seconds       
+        },2500);   // enable after 2.5 seconds       
         
     }
     else {

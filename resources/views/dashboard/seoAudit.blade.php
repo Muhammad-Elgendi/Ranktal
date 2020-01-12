@@ -41,7 +41,7 @@
 @endsection
 
 @section('content')
-<div class="container-fluid" id="printable">    
+<div class="container-fluid">    
         <div class="row">
                 {!! Form::open(['url' => 'report','id'=>'the-form']) !!}
                 <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
@@ -107,41 +107,42 @@
                 </tbody>
             </table>
         </div>
+            <div id="printable">
+                <div style="display:none; padding-bottom: 15px;" id="upper-board">
 
-            <div style="display:none; padding-bottom: 15px;" id="upper-board">
+                    <div class="row">    
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="title">
+                                <p class="title">@lang('page-link')</p> 
+                                <a id="url-value" href=""></a>
+                                
+                                <p class="title">@lang('page-title')</p> 
+                                <p id="title-value"></p>
+                        </div>
 
-                <div class="row">    
-                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="title">
-                            <p class="title">@lang('page-link')</p> 
-                            <a id="url-value" href=""></a>
-                            
-                            <p class="title">@lang('page-title')</p> 
-                            <p id="title-value"></p>
-                    </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="desc">
+                                <p class="title">@lang('page-description')</p> 
+                                <p id="desc-value"></p> 
+                        </div>
+                    </div>           
 
-                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6" id="desc">
-                            <p class="title">@lang('page-description')</p> 
-                            <p id="desc-value"></p> 
-                    </div>
-                </div>           
-
-                <div class="row">
-                    <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 container-border text-center" id="hurting-block">
-                        <p class="title">@lang('hurt-score') <span class="glyphicon glyphicon-chevron-down" style="color:#ff4444;"></span></p>
-                        <p class="title" id="hurting"></p>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 container-border text-center" id="helping-block">
-                        <p class="title">@lang('help-score') <span class="glyphicon glyphicon-chevron-up" style="color:#00C851;"></span></p>
-                        <p class="title" id="helping"></p>
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 container-border text-center" id="issues-block">
-                        <p class="title">@lang('all-issues')</p>
-                        <p class="title"  id="all-issues"></p>
+                    <div class="row">
+                        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 container-border text-center" id="hurting-block">
+                            <p class="title">@lang('hurt-score') <span class="glyphicon glyphicon-chevron-down" style="color:#ff4444;"></span></p>
+                            <p class="title" id="hurting"></p>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 container-border text-center" id="helping-block">
+                            <p class="title">@lang('help-score') <span class="glyphicon glyphicon-chevron-up" style="color:#00C851;"></span></p>
+                            <p class="title" id="helping"></p>
+                        </div>
+                        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 container-border text-center" id="issues-block">
+                            <p class="title">@lang('all-issues')</p>
+                            <p class="title"  id="all-issues"></p>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row" id="checks"></div>    
+                <div class="row" id="checks"></div>    
+            </div>
     
 </div>
 
@@ -174,7 +175,7 @@
 
 function view(url){
     $.get("{{route('lang.seoAuditAjax',app()->getLocale())}}",{ u: url }, function (jsondata) {
-            $("#urlInput").attr("placeholder", $("#urlInput").val());
+            $("#urlInput").attr("placeholder", url);
 
                 $.get("{{url('templates/panelComponent.hbs')}}", function (data) {
                 var template=Handlebars.compile(data);      
@@ -184,10 +185,12 @@ function view(url){
                 }, 'html'); 
         },'json');
     $('#view-table').hide();
+    $('#print-btn').show();
 }
 
 function reaudit(number){
-    $.get("{{ route('lang.seoAuditReaudit',app()->getLocale()) }}",{id: number}, function (jsondata) {
+    if(confirm("@lang('sure-question')")){
+        $.get("{{ route('lang.seoAuditReaudit',app()->getLocale()) }}",{id: number}, function (jsondata) {
             $("#urlInput").attr("placeholder", $("#urlInput").val());
 
                 $.get("{{url('templates/panelComponent.hbs')}}", function (data) {
@@ -198,6 +201,7 @@ function reaudit(number){
                 }, 'html');          
         },'json');
     $('#view-table').hide();
+    }
 }
 
 function updateView(jsondata){

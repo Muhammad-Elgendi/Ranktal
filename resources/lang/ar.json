@@ -322,5 +322,10 @@
     "actions":"الإجراءات",
     "delete":"حذف",
     "sure-question":"هل أنت متأكد ؟",
-    "reaudit" : "إعادة التحليل"
+    "reaudit" : "إعادة التحليل",
+    "crawl":"إزحف",
+    "last-crawling-time":"ميعاد أخر زحف",
+    "recrawl":"إعادة الزحف",
+    "takes-time":"بعض الأشياء تستغرق وقتا !",
+    "come-back-later":"عد لاحقا :)"
 }

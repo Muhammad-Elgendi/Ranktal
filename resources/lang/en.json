@@ -322,5 +322,10 @@
     "actions":"Actions",
     "delete":"Delete",
     "sure-question":"Are you sure ?",
-    "reaudit" : "Reaudit"
+    "reaudit" : "Reaudit",
+    "crawl":"Crawl",
+    "last-crawling-time":"Last Crawling Time",
+    "recrawl":"Recrawl",
+    "takes-time":"Some things take time !",
+    "come-back-later":"Come back later :)"
 }

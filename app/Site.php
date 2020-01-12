@@ -22,7 +22,7 @@ class Site extends Model
     }
 
      /**
-     * Get the crawlingJobs for the site.
+     * Get the crawlingJob for the site.
      */
     public function crawlingJob()
     {
