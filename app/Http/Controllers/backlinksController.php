@@ -100,12 +100,12 @@ class backlinksController extends Controller
 
     public function viewBacklinksUsingAjax(Request $request)
     {
-        if ($request->ajax()) {
-            $json = $this->handleBacklinks($request);
-            $array = json_decode($json);
-      
-            return json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        } else
+        if (!$request->ajax()) {
             return "This page isn't for you ! ^_^";
+        }
+        $json = $this->handleBacklinks($request);
+        $array = json_decode($json);
+    
+        return json_encode($array, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);        
     }
 }

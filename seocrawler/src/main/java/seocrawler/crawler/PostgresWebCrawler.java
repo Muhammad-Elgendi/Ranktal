@@ -191,7 +191,32 @@ public class PostgresWebCrawler extends WebCrawler {
             if (url.endsWith("/")) {
                 url = url.substring(0, url.length() - 1);
             }
+            
+            Elements canonicalTags = doc.selectFirst("head").select("link[rel=canonical]");
+            boolean isCanonicalExist = true;
 
+            if (canonicalTags.isEmpty()) {
+                // Missing canonical Url Problem
+//                    ArrayList<String> canonical = new ArrayList<>();
+//                    canonical.add(0, page.getWebURL().getURL());
+//                    canonical.add(1, "Missing canonical Url");
+//                    problems.put("MissingCanonicalUrl", canonical);
+                isCanonicalExist =false;
+            }else{
+                String canonicalUrl = canonicalTags.first().attr("href");
+                
+                // remove trailing slash
+                if (canonicalUrl.endsWith("/")) {
+                    canonicalUrl = canonicalUrl.substring(0, canonicalUrl.length() - 1);
+                }
+                
+                // check if canonical is different than the url
+                if(!canonicalUrl.equalsIgnoreCase(url)){
+                    // The current page is probably a duplicate of another page                      
+                    return;
+                }
+            }
+            
             // store url
             try {
                 postgresDBService.storeUrl(url,page.getStatusCode(), SampleLauncher.siteId, (int) page.getWebURL().getDepth());
@@ -527,19 +552,6 @@ public class PostgresWebCrawler extends WebCrawler {
 //                    problems.put("DynamicURL", dynamicUrl);
 //                }
 
-            Elements canonicalTags = doc.selectFirst("head").select("link[rel=canonical]");
-
-            boolean isCanonicalExist = true;
-
-            if (canonicalTags.isEmpty()) {
-                // Missing canonical Url Problem
-//                    ArrayList<String> canonical = new ArrayList<>();
-//                    canonical.add(0, page.getWebURL().getURL());
-//                    canonical.add(1, "Missing canonical Url");
-//                    problems.put("MissingCanonicalUrl", canonical);
-                isCanonicalExist =false;
-            }
-
             // calculate hash of the page
             String hash = Similarities.calculateHash(htmlParseData.getHtml());
 
@@ -596,10 +608,11 @@ public class PostgresWebCrawler extends WebCrawler {
 
 
                     boolean isDoFollow = !link.attr("rel").contains("nofollow");
+                    
 
                     // store new backlinks
                     try {
-                        postgresDBService.storeBacklink(url,backlink,link.html(),isDoFollow);
+                        postgresDBService.storeBacklink(url,backlink,link.text(),isDoFollow);
                     } catch (RuntimeException e) {
                         logger.error("Storing backlinks failed", e);
                     }

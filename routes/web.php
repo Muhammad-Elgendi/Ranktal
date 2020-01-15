@@ -48,6 +48,7 @@ $optionalLanguageRoutes = function () {
     Route::get('pageInsights', 'pageInsightsController@getPageInsights');
     Route::get('backlinks', 'backlinksController@handleBacklinks'); //Backlinks checker
     Route::get('crawl', 'CrawlingController@doSiteCrawl'); //Site Crawl
+    Route::get('demand-crawl-sitemap', 'CrawlingController@generateSitemap')->name('demandCrawlsitemap'); // Generate an XML site map of a site 
 
     // Actions routes
     Route::delete('seo-audit-delete/{id}', 'checkerController@destroy')->name('seoAuditDelete');

@@ -300,7 +300,7 @@
             
                 <li class="header">@lang("support")</li>       
                 <li>
-                        <a href="{{route('lang.backlinks-checker',app()->getLocale())}}">
+                        <a href="#">
                             <i class="fa fa-life-ring"></i> <span>@lang("help-desk")</span>
                         </a>
                         {{-- <!--  <ul class="treeview-menu">
@@ -326,9 +326,11 @@
                       <li class="active">لوحة التحكم</li>
                     </ol> --> --}}
 
-              {{-- Print --}}
-                <button type="button" onclick="printDiv('@yield('print-div')')" id="print-btn" style="display:none;" class="btn btn-primary {{in_array(app()->getLocale(),config('app.rtl')) ? "pull-left" : "pull-right"}}"> <span class="glyphicon glyphicon-save-file"></span> @lang('print')</button> 
-   
+              {{-- Buttons Section --}}
+              <div id="btns-section" class="{{in_array(app()->getLocale(),config('app.rtl')) ? "pull-left" : "pull-right"}}">  
+                <button type="button" onclick="printDiv('@yield('print-div')')" id="print-btn" style="display:none;" class="btn btn-primary"> <i class="fa fa-print"></i> @lang('print')</button> 
+              </div>
+
             <div class="clearfix"></div>
         </section>
 

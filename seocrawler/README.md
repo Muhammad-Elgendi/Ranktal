@@ -3,6 +3,10 @@ A SEO Spider in Java
 How can I create an executable JAR with dependencies using Maven?
 mvn clean compile assembly:single
 
+maven war plugin assembling webapp
+mvn compile war:war
+
+
 run crawler
 java -jar SEO-crawler/target/SEO-crawler-1.0-SNAPSHOT-jar-with-dependencies.jar https://is.net.sa 10000 20 1 1 true
 

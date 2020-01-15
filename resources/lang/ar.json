@@ -327,5 +327,6 @@
     "last-crawling-time":"ميعاد أخر زحف",
     "recrawl":"إعادة الزحف",
     "takes-time":"بعض الأشياء تستغرق وقتا !",
-    "come-back-later":"عد لاحقا :)"
+    "come-back-later":"عد لاحقا :)",
+    "download-sitemap":"تنزيل خريطة الموقع"
 }

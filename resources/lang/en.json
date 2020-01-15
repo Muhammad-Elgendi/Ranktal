@@ -327,5 +327,7 @@
     "last-crawling-time":"Last Crawling Time",
     "recrawl":"Recrawl",
     "takes-time":"Some things take time !",
-    "come-back-later":"Come back later :)"
+    "come-back-later":"Come back later :)",
+    "download-sitemap":"Download Sitemap"
+
 }

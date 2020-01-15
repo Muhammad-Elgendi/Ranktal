@@ -52,15 +52,41 @@ class CrawlingController extends Controller
         return $this->viewSiteCrawlUsingAjax($request, $host, $exact);
     }
 
-
-    public function generateSitemap()
-    {
+    /**
+     * Currently we generate sitemaps without priorities since google doesn't use it
+     */
+    public function generateSitemap(Request $request){ 
+        $id = $request->get('id');     
+        // Check if this site is allowed to this user
+        $site = Site::where('user_id', Auth::user()->id)->where('id',$id)->first();
+        if($site == null){
+            return abort(404);
+        }
+        // set the header of the response to instruct the browser to download the body into sitemap.xml file
+        header('Content-disposition: attachment; filename="sitemap.xml"');
+        header('Content-type: "text/xml"; charset="utf8"');
+        // Get the maximum depth of the site
+        $max_depth = $site->urls->where('status',200)->max('crawl_depth');
+        // $levels = $max_depth+1;
+        // Valid values range from 0.0 to 1.0. 
+        // The default priority of a page is 0.5.
+        // Valid priority values have range interval [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0].
+        // $levelsPerPriority = ceil($levels/11);
+        $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
+        $urls = $site->urls->where('status',200);
+        foreach($urls as $url){
+            $xml.="<url>\n";
+            $xml.="<loc>".$url->url."</loc>\n";
+            $xml.="<lastmod>".$url->created_at->format('Y-m-d')."</lastmod>\n";
+            // $xml.="<priority>0.8</priority>";
+            $xml.="</url>\n";
+        }
+        $xml .="\n</urlset>";
         // return sitemap.xml file content
-
+        return $xml;
     }
 
-    public function viewSiteCrawlUsingAjax(Request $request, $site = null, $exact = null)
-    {
+    public function viewSiteCrawlUsingAjax(Request $request, $site = null, $exact = null){
         if (!$request->ajax()) {
             return redirect(app()->getLocale() . '/dashboard/on-demand-crawl');
         }
@@ -129,6 +155,7 @@ class CrawlingController extends Controller
         $response["status"] = $array->status;
         $response["pagesCount"] = $array->pagesCount;
         $response["lastCrawl"] = $array->lastCrawl;
+        $response["siteId"] = $array->siteId;
         $response['count2xx'] = $array->count2xx;
         $response['count3xx'] = $array->count3xx;
         $response['count4xx'] = $array->count4xx;
@@ -137,8 +164,7 @@ class CrawlingController extends Controller
         return json_encode($response, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
-    private function prepareViewArray($catagory, &$json, &$response)
-    {
+    private function prepareViewArray($catagory, &$json, &$response){
         $array = [];
         $array['header'] = $catagory[0];
         $array['id'] = $catagory[2];
@@ -189,8 +215,7 @@ class CrawlingController extends Controller
         return $array;
     }
 
-    public function doSiteCrawl(Request $request, $site = null, $exact = null)
-    {
+    public function doSiteCrawl(Request $request, $site = null, $exact = null){
         if ($site == null && $exact == null) {
             $site = $request->get('site');
             $exact = $request->get('exact');
@@ -216,8 +241,7 @@ class CrawlingController extends Controller
         }
     }
 
-    public function addSite($site, $exact)
-    {
+    public function addSite($site, $exact){
 
         $userId = Auth::user()->id;
         // Check if the site already exist       
@@ -250,8 +274,7 @@ class CrawlingController extends Controller
             return $this->showChecks($existedSite->id);
     }
 
-    private function showChecks($siteId)
-    {
+    private function showChecks($siteId){
         // prepare readable checks for user in json 
         $site = Site::find($siteId);
 
@@ -263,6 +286,7 @@ class CrawlingController extends Controller
         $result['status'] = __($status);
         $result['url'] = $site->host;
         $result['lastCrawl'] = $site->crawlingJob->finished_at;
+        $result['siteId'] = $siteId;
         $urls = DB::select('select url ,status , crawl_depth from urls where site_id = ?', [$siteId]);
 
         $pagesCrawled = count((array) $urls);
@@ -443,7 +467,7 @@ Google typically displays the first 50-60 characters of your title tag. Write ti
          */
 
 
-        $shortTitles = DB::select("select titles.url , titles.title , LENGTH(titles.title) ,crawl_depth from titles INNER JOIN urls ON urls.url = titles.url where LENGTH(titles.title) < 25 AND urls.site_id = " . $siteId);
+        $shortTitles = DB::select("select titles.url , titles.title , LENGTH(titles.title) ,crawl_depth from titles INNER JOIN urls ON urls.url = titles.url where LENGTH(titles.title) < 25 AND LENGTH(titles.title) > 0 AND urls.site_id = " . $siteId);
         $result['shortTitles'] = $shortTitles;
 
         // Thin content
@@ -568,7 +592,7 @@ If you determine that the links on this page should be indexed, remove “X-Robo
         $result['duplicateTitles'] = $duplicateTitles;
 
         // Description Too Short
-        $shortDescription =  DB::select("select descriptions.url,titles.title, LENGTH(descriptions.description) ,crawl_depth from urls INNER JOIN descriptions ON descriptions.url = urls.url INNER JOIN titles ON  titles.url = descriptions.url where  urls.site_id =  " . $siteId . " AND LENGTH(descriptions.description) < 55");
+        $shortDescription =  DB::select("select descriptions.url,titles.title, LENGTH(descriptions.description) ,crawl_depth from urls INNER JOIN descriptions ON descriptions.url = urls.url INNER JOIN titles ON  titles.url = descriptions.url where  urls.site_id =  ".$siteId." AND LENGTH(descriptions.description) < 55 AND LENGTH(descriptions.description) > 0");
         $result['shortDescription'] = $shortDescription;
 
         return json_encode($result, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);

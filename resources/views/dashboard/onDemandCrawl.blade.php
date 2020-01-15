@@ -283,7 +283,6 @@ function view(host,exact){
                 $("#button").removeAttr("disabled"); 
         },'json');
     $('#view-table').hide();
-    $('#print-btn').show();
 }
 
 function recrawl(number){
@@ -300,7 +299,6 @@ function recrawl(number){
                 $("#button").removeAttr("disabled"); 
         },'json');
         $('#view-table').hide();
-        $('#print-btn').show();
     }
 }
 
@@ -325,12 +323,17 @@ function updateView(jsondata){
         exportTableToCSV($(this).parent().parent().next("table").attr('id')+".csv",$(this).parent().parent().next("table").attr('id'));
     });
 
+    // Add sitemap btn
+    $('#btns-section').append("<a class=\"btn btn-primary\" href=\"{{route('demandCrawlsitemap')}}?id="+jsondata.siteId+"\"> <span class=\"glyphicon glyphicon-save-file\"></span> @lang('download-sitemap')</button>")
+
+    // Show print btn
+    $('#print-btn').show();
+
     // Apply Table pagination and update counters
     var totalCount = 0;
     for(var key in jsondata.catagories ){
         totalCount += jsondata.catagories[key]['issuesCount']; 
         switch(jsondata.catagories[key]['header']){
-            // Don't forget to localize
             case "@lang('critical-crawler')":
                 $('#critical').text( jsondata.catagories[key]['issuesCount'] );
                 break;
@@ -354,7 +357,7 @@ function updateView(jsondata){
     }
     $('#total-issues').text( totalCount );
 
-    if(!jsondata.pagesCount > 0){
+    if(!jsondata.pagesCount > 0 && jsondata.status != "@lang('Finished')" ){
         // show some things take some time
         $( "#upper-board" ).after( "<div class='alert alert-info text-center' role='alert'><i class='fa fa-hourglass-half'></i> <strong> @lang('takes-time') </strong> @lang('come-back-later')</div>");
     }else{
