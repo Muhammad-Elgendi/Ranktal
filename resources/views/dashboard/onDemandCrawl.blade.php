@@ -73,6 +73,11 @@
         display: inline-block;
         max-width: 100%;
     }
+    .table td.text{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
     .crawl-items{
         margin-left: 15px;
         margin-right: 15px;
