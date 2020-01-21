@@ -46,7 +46,7 @@
 @section('content')
 <div class="container-fluid" id="printable">    
         <div class="row">
-                {!! Form::open(['url' => 'report','id'=>'the-form']) !!}
+                {!! Form::open(['id'=>'the-form']) !!}
                 <div class="col-lg-5 col-md-5 col-sm-6 col-xs-12">
                                 <p class="title">Target URL</p>
                                 <div class="form-group" id="text-box">

@@ -16,11 +16,7 @@ class CreateSitesTable extends Migration
         // make primary key of host and user_id
         Schema::create('sites', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('host');
-            $table->unsignedInteger('user_id');
-            $table->foreign('user_id')
-            ->references('id')->on('users')
-            ->onDelete('cascade');
+            $table->string('host');       
             $table->boolean('exact_match');
             $table->timestamps();
         });

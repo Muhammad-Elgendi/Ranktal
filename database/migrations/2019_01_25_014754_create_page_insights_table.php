@@ -16,6 +16,12 @@ class CreatePageInsightsTable extends Migration
         Schema::create('page_insights', function (Blueprint $table) {
             $table->increments('id');
             $table->string('url',3000);
+
+            $table->unsignedInteger('site_id')->nullable();
+            $table->foreign('site_id')
+            ->references('id')->on('sites')
+            ->onDelete('cascade');
+
             $table->string('type');
             $table->json('pageInsight')->nullable();
             $table->longText('screenShotSrc')->nullable();

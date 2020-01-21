@@ -16,6 +16,10 @@ class CreateMetricsTable extends Migration
         Schema::create('metrics', function (Blueprint $table) {
             $table->increments('id');
             $table->string('url',3000)->unique();
+            $table->unsignedInteger('site_id')->nullable();
+            $table->foreign('site_id')
+            ->references('id')->on('sites')
+            ->onDelete('cascade');
             $table->unsignedInteger('pageRank')->nullable();
             $table->unsignedInteger('rankSignalsUniqueDomainLinksCount')->nullable();
             $table->unsignedInteger('rankSignalsTotalBackLinks')->nullable();

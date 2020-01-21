@@ -220,11 +220,7 @@
                 <li>
                     <a href="{{route('lang.seo-audit',app()->getLocale())}}">
                         <i class="fa fa-calendar-check-o"></i> <span>@lang('seo-audit')</span>
-                    </a>
-                    {{-- <!--  <ul class="treeview-menu">
-                       <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                       <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-                     </ul> --> --}}
+                    </a>            
                 </li>
                 {{--<li>--}}
                 {{--<a href="#">--}}
@@ -245,13 +241,12 @@
                      </ul> --> --}}
                 </li>
                 <li>
-                    <a href="#">
-                        <i class="fa fa-binoculars"></i> <span>@lang('seo-tracker')</span>
+                    <a href="{{route('lang.seo-campaigns',app()->getLocale())}}">
+                        <i class="fa fa-bullhorn"></i> <span>@lang('seo-campaigns')</span>
                     </a>
-                    {{-- <!--  <ul class="treeview-menu">
-                       <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                       <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-                     </ul> --> --}}
+                    <ul class="treeview-menu">
+                        <li><a href="{{route('lang.seo-campaign-create',app()->getLocale())}}"><i class="fa fa-plus"></i>@lang('create-campaign')</a></li>
+                     </ul>
                 </li>
                 {{-- Old seo report tool --}}
                 {{-- <li class="treeview">
@@ -430,7 +425,7 @@ $(document).ready(function () {
             $(this).parent().addClass('active');
         }
     });
-    $('li.treeview ul.treeview-menu li a').each(function (index, value) {
+    $('ul.sidebar-menu ul.treeview-menu li a').each(function (index, value) {
         if($(this).attr('href') == window.location.href){
             $(this).parent().addClass('active');
             $(this).parent().parent().show();

@@ -20,7 +20,7 @@
     "reports-management":"إدارة التقارير",
     "comprehensive-reports": "تقارير شاملة",
     "onpage-reports" : "تقارير سيو داخلي",
-    "seo-tracker" : "مراقب السيو",
+    "seo-campaigns" : "حملات السيو",
     "keywords": "الكلمات المفتاحية",
     "backlinks-checker":"فاحص الروابط الخارجية",
     "keyword": "الكلمة المفتاحية",
@@ -328,5 +328,18 @@
     "recrawl":"إعادة الزحف",
     "takes-time":"بعض الأشياء تستغرق وقتا !",
     "come-back-later":"عد لاحقا :)",
-    "download-sitemap":"تنزيل خريطة الموقع"
+    "download-sitemap":"تنزيل خريطة الموقع",
+    "create-campaign":"إنشاء حملة",
+    "campaign-name":"إسم الحملة",
+    "update-interval":"تحديث بيانات الحملة",
+    "every-7-days":"كل 7 أيام",
+    "every-10-days":"كل 10 أيام",
+    "every-15-days":"كل 15 يوم",
+    "every-30-days":"كل 30 يوم",
+    "updating":"جاري التحديث",
+    "last-track-time":"وقت أخر تحديث",
+    "campaign-status":"حالة الحملة",
+    "edit":"تعديل",
+    "edit-campaign":"تعديل إعدادات الحملة",
+    "save-changes":"حفظ التغيرات"
 }

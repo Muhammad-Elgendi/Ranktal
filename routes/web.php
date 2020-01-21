@@ -30,6 +30,8 @@ $optionalLanguageRoutes = function () {
     Route::get('dashboard/backlinks-checker', 'backlinksController@index')->name('backlinks-checker'); //Backlinks checker view
     Route::get('dashboard/seo-audit', 'checkerController@index')->name('seo-audit'); //Seo audit view
     Route::get('dashboard/on-demand-crawl', 'CrawlingController@index')->name('on-demand-crawl'); // Site Crawl view
+    Route::get('dashboard/seo-campaigns', 'CampaignsController@index')->name('seo-campaigns'); // SEO Campaigns view
+
     // Route::get('dashboard/keyword-tracker', 'KeywordTrackerController@index')->name('keyword-tracker'); // Keyword Tracker View
     // Route::get('dashboard/keyword-research', 'KeywordResearchController@index')->name('keyword-research'); // Keyword Research View
 
@@ -56,6 +58,12 @@ $optionalLanguageRoutes = function () {
 
     Route::delete('demand-crawl-delete/{id}', 'CrawlingController@destroy')->name('demandCrawlDelete');
     Route::get('demand-crawl-recrawl', 'CrawlingController@recrawl')->name('demandCrawlRecrawl');
+
+    Route::get('dashboard/seo-campaigns/create', 'CampaignsController@create')->name('seo-campaign-create'); // create SEO Campaign view
+    Route::post('dashboard/seo-campaigns/store', 'CampaignsController@store')->name('seo-campaign-store'); // store SEO Campaign
+    Route::delete('seo-campaigns-delete/{id}', 'CampaignsController@destroy')->name('seoCampaignDelete');
+    Route::get('dashboard/seo-campaigns/edit/{id}', 'CampaignsController@edit')->name('seo-campaign-edit'); // Edit SEO Campaign view
+    Route::post('dashboard/seo-campaigns/save', 'CampaignsController@saveEdit')->name('seo-campaign-saveEdit'); // save Edits SEO Campaign
 
 
 

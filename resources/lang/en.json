@@ -20,7 +20,7 @@
     "reports-management" : "Reports management",
     "comprehensive-reports": "Comprehensive reports",
     "onpage-reports" :"OnPage reports",
-    "seo-tracker" : "SEO Tracker",
+    "seo-campaigns" : "SEO Campaigns",
     "keywords": "Keywords",
     "backlinks-checker":"Backlinks Checker",
     "keyword": "Keyword",
@@ -328,6 +328,18 @@
     "recrawl":"Recrawl",
     "takes-time":"Some things take time !",
     "come-back-later":"Come back later :)",
-    "download-sitemap":"Download Sitemap"
-
+    "download-sitemap":"Download Sitemap",
+    "create-campaign":"Create Campaign",
+    "campaign-name":"Campaign Name",
+    "update-interval":"Update Campaign Data",
+    "every-7-days":"Every 7 Days",
+    "every-10-days":"Every 10 Days",
+    "every-15-days":"Every 15 Days",
+    "every-30-days":"Every 30 Days",
+    "updating":"Updating",
+    "last-track-time":"Last Update Time",
+    "campaign-status":"Campaign Status",
+    "edit":"Edit",
+    "edit-campaign":"Edit Campaign Settings",
+    "save-changes":"Save Changes"
 }

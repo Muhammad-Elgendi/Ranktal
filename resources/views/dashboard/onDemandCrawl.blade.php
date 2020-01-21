@@ -150,10 +150,9 @@
                                 <td field-key='crawling-status'> @lang($site->crawlingJob->status)</td>
                                 <td field-key='last-crawling-time'>{{ $site->crawlingJob->finished_at }}</td>
                                 <td>
-                                                           
+                                            
                                     <a href="#" onclick="view('{{ $site->host }}',{{ $site->exact_match }});return false;" id="crawl-view-{{$site->id}}" class="btn btn-xs btn-primary"><i class="fa fa-eye"></i> @lang('view')</a>
-                                                      
-                                    @if($site->crawlingJob->status != 'Crawling')
+                                                    
                                     {!! Form::open(array(
                                         'style' => 'display: inline-block;',
                                         'method' => 'DELETE',
@@ -164,8 +163,9 @@
                                     <button type="submit" class="btn btn-xs btn-danger" id="crawl-delete-{{$site->id}}">
                                         <i class="fa fa-trash"></i> @lang('delete')
                                     </button>
-                                    {!! Form::close() !!}                      
-                                    
+                                    {!! Form::close() !!}  
+
+                                    @if($site->crawlingJob->status != 'Crawling')
                                     <button class="btn btn-xs btn-success" onclick="recrawl({!! $site->id !!});return false;" >
                                         <i class="fa fa-refresh"></i> @lang('recrawl')
                                     </button>

@@ -52,7 +52,7 @@
 @section('content')
 <div class="container-fluid" id="printable">    
         <div class="row">
-                {!! Form::open(['url' => 'report','id'=>'the-form']) !!}
+                {!! Form::open(['id'=>'the-form']) !!}
                 <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12">
                                 <p class="title">@lang('page-link')</p>
                                 <div class="form-group" id="text-box">

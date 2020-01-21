@@ -44,7 +44,7 @@
 @section('content')
 <div class="container-fluid" id="printable">    
         <div class="row">
-                {!! Form::open(['url' => 'report','id'=>'the-form']) !!}
+                {!! Form::open(['id'=>'the-form']) !!}
  
                 <div>
                     <input id="hl" name="hl" class="form-control" value="" type="hidden" placeholder="language code" required />

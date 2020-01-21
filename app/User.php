@@ -28,12 +28,20 @@ class User extends Authenticatable
     ];
 
 
-    /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     /**
+     * The sites that belong to the user
      */
     public function sites()
     {
-        return $this->hasMany('App\Site');
+        return $this->belongsToMany('App\Site');
+    }
+
+       /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function campaigns()
+    {
+        return $this->hasMany('App\campaign');
     }
 
     public function pages()

@@ -22,7 +22,7 @@ class CrawlingController extends Controller
     // View Method
     public function index()
     {
-        $sites = Site::where('user_id', Auth::user()->id)->get();
+        $sites = Auth::user()->sites;
         return view('dashboard.onDemandCrawl')->with('sites', $sites);
     }
 
@@ -31,8 +31,7 @@ class CrawlingController extends Controller
      */
     public function destroy($id)
     {
-        $site = Site::findOrFail($id);
-        $site->delete();
+        Auth::user()->sites()->detach($id);
         return redirect(app()->getLocale() . '/dashboard/on-demand-crawl');
     }
 
@@ -45,11 +44,17 @@ class CrawlingController extends Controller
             return redirect(app()->getLocale() . '/dashboard/on-demand-crawl');
         }
 
-        $site = Site::findOrFail($request->get('id'));
-        $host = $site->host;
-        $exact = $site->exact_match;
-        $site->delete();
-        return $this->viewSiteCrawlUsingAjax($request, $host, $exact);
+        $id = $request->get('id');
+        // check if the user has an access to recrawl the site
+        $firstSite = Auth::user()->sites()->where('site_id',$id)->first();
+        if($firstSite !== null){
+            // has access to the site
+            $site = Site::findOrFail($id);
+            $host = $site->host;
+            $exact = $site->exact_match;
+            $site->delete();
+            return $this->viewSiteCrawlUsingAjax($request, $host, $exact);
+        }
     }
 
     /**
@@ -58,22 +63,24 @@ class CrawlingController extends Controller
     public function generateSitemap(Request $request){ 
         $id = $request->get('id');     
         // Check if this site is allowed to this user
-        $site = Site::where('user_id', Auth::user()->id)->where('id',$id)->first();
-        if($site == null){
+        $site = Auth::user()->sites()->where('site_id',$id)->first();
+        if($site === null){
+            // doesn't has access to the site
             return abort(404);
         }
+
         // set the header of the response to instruct the browser to download the body into sitemap.xml file
         header('Content-disposition: attachment; filename="sitemap.xml"');
         header('Content-type: "text/xml"; charset="utf8"');
         // Get the maximum depth of the site
-        $max_depth = $site->urls->where('status',200)->max('crawl_depth');
+        // $max_depth = $site->urls()->where('status',200)->max('crawl_depth');
         // $levels = $max_depth+1;
         // Valid values range from 0.0 to 1.0. 
         // The default priority of a page is 0.5.
         // Valid priority values have range interval [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0].
         // $levelsPerPriority = ceil($levels/11);
         $xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n";
-        $urls = $site->urls->where('status',200);
+        $urls = $site->urls()->where('status',200)->orderBy('crawl_depth','asc')->get();
         foreach($urls as $url){
             $xml.="<url>\n";
             $xml.="<loc>".$url->url."</loc>\n";
@@ -215,19 +222,21 @@ class CrawlingController extends Controller
         return $array;
     }
 
-    public function doSiteCrawl(Request $request, $site = null, $exact = null){
+    public function doSiteCrawl(Request $request, $site = null, $exact = null, $campaign_id = null){
         if ($site == null && $exact == null) {
             $site = $request->get('site');
             $exact = $request->get('exact');
         }
 
-        $exactText = strtolower($exact);
-        if ($exactText === "true") {
-            $exact = true;
-        } elseif ($exactText === "false") {
-            $exact = false;
-        } else {
-            $exact = boolval($exactText);
+        if(!is_bool($exact)){
+            $exactText = strtolower($exact);
+            if ($exactText === "true") {
+                $exact = true;
+            } elseif ($exactText === "false") {
+                $exact = false;
+            } else {
+                $exact = boolval($exactText);
+            }
         }
 
         // validate url parameter
@@ -237,41 +246,83 @@ class CrawlingController extends Controller
         if (!$isGoodUrl) {
             return;
         } else {
-            return $this->addSite($site, $exact);
+            return $this->addSite($site, $exact,$campaign_id);
         }
     }
 
-    public function addSite($site, $exact){
+    public function addSite($site, $exact, $campaign_id){
 
         $userId = Auth::user()->id;
-        // Check if the site already exist       
-        $existedSite = Site::where('host', $site)->where('user_id', $userId)->first();
+ 
+        // if this site exist and the user wants to create a campaign for it create a new one then
+        // check if campaign_id is provided and inclue it in the search
+        // if($campaign_id !== null)
+        //     $existedSite = Site::where('host', $site)->where('user_id', $userId)->where('campaign_id', $campaign_id)->first();
+        // else{
+        //     // Check if the site already exist       
+        //     $existedSite = Site::where('host', $site)->where('user_id', $userId)->where('campaign_id', null)->first();
+        // }
+
+        // check if site data is existed
+        $existedSite = Site::where('host', $site)->first();
+
         if ($existedSite === null) {
-            $newSite = new Site;
-            $newSite->user_id = $userId;
-            $newSite->host = $site;
-            $newSite->exact_match = $exact;
-            $newSite->save();
+                       
+            // Create new site
+            $newSiteId = $this->createNewSite($site,$exact);
+            // Add access to site's data to the user
+            Auth::user()->sites()->attach($newSiteId);
 
-            // Add crawling job to queue
-
-            $job = new CrawlingJob;
-            $job->site_id = $newSite->id;
-            $job->status = "Crawling";
-            $job->node = "default";
-            $job->save();
-
-            // Send Request to SEO-crawler server
-            // For example
-            // http://10.0.75.1:8888/audit?url=https://google.com/&pages=5000&crawlers=3&userId=1&siteId=73&match=1
-
-            $requestUrl = 'http://' . env('SEO_CRAWLER_HOST') . ':' . env('SEO_CRAWLER_PORT') . '/audit?url=' . $site . '&pages=5000&crawlers=3&userId=' . $userId . '&siteId=' . $newSite->id . '&match=' . $exact;
-            $connector = new PageConnector($requestUrl);
-            $connector->connectPage();
-            $connector->setIsGoodStatus();
-            return $this->showChecks($newSite->id);
-        } else
+            // send a request to the crawler
+            $this->sendCrawlingRequest($site,$userId,$newSiteId,$exact);
+ 
+            return $this->showChecks($newSiteId);
+        } else{
+            // Add access to site's data to the user
+            // if this user doesn't have access to it if not return checks            
+            if(Auth::user()->sites()->where('site_id',$existedSite->id)->first() === null)
+                Auth::user()->sites()->attach($existedSite->id);
             return $this->showChecks($existedSite->id);
+        }
+    }
+
+    /**
+     * Create New site in database along with its crawling job data
+     * crawling job could be accessed from the site model
+     * @return Id of the new site
+     */
+    public function createNewSite($site,$exact){
+        // Create new site
+
+        $newSite = new Site;
+        $newSite->host = $site;
+        $newSite->exact_match = $exact;
+        $newSite->save();
+
+        // Add crawling job to queue
+
+        $job = new CrawlingJob;
+        $job->site_id = $newSite->id;
+        $job->status = "Crawling";
+        $job->node = "default";
+        $job->save();
+        return $newSite->id;
+    }
+
+    /**
+     * This function is responsable for sending a new crawling request to the crawler endpoint
+     * @return status of response
+     */
+    public function sendCrawlingRequest($siteUrl,$userId,$siteId,$exact){
+        // Send Request to SEO-crawler server
+        // For example
+        // http://10.0.75.1:8888/audit?url=https://google.com/&pages=5000&crawlers=3&userId=1&siteId=73&match=1
+
+        $requestUrl = 'http://' . env('SEO_CRAWLER_HOST') . ':' . env('SEO_CRAWLER_PORT') . '/audit?url=' . $siteUrl . '&pages=5000&crawlers=3&userId=' . $userId . '&siteId=' . $siteId . '&match=' . $exact;
+        $connector = new PageConnector($requestUrl);
+        $connector->connectPage();
+        $connector->setIsGoodStatus();
+        return $connector->isGoodStatus;
     }
 
     private function showChecks($siteId){
