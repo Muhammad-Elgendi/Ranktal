@@ -29,9 +29,14 @@ class CampaignTrack implements ShouldQueue
      */
     public function handle()
     {
-        // Check if there is a Crawling request that sent before or not
+        // On-Demand crawl
+
+        // Check if there is a Crawling request that sent before dispatching or not
+        // if yes skip On-Demand crawl
+
         // if the interval days of the campaign passed than the updated_at time
         // Send Crawling request
+        
         // if No go to the next step
 
         // Update page optimizations score and reports

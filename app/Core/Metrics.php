@@ -30,9 +30,9 @@ class Metrics{
 	//holds the Domain name of site
 	private $domain;
 
-    public $pageRank;
-    public $rankSignalsUniqueDomainLinksCount;
-    public $rankSignalsTotalBackLinks;
+    // public $pageRank;
+    // public $rankSignalsUniqueDomainLinksCount;
+    // public $rankSignalsTotalBackLinks;
     public $globalAlexaRank;
     public $alexaReach;
     public $rankDelta;
@@ -72,21 +72,22 @@ class Metrics{
     }
 
     /**
+     * RankSignals stops its chrome Extension tested @ 22/01/2020
      * Sets RankSignals fields
      */
-    public function setRankSignals(){
-		$requestUrl='https://www.ranksignals.com/api/'.$this->domain;
-		$content=$this->makeConnection($requestUrl);
-        if($content) {
-            $data = json_decode($content, true);
-            if (empty($data))
-                return;
-            $this->pageRank = $data['pr'];
-            $this->rankSignalsUniqueDomainLinksCount = $data['linkdomain'];
-            $this->rankSignalsTotalBackLinks = $data['linktotal'];
-            $this->globalAlexaRank = $data['alexa'];
-        }
-    }
+    // public function setRankSignals(){
+	// 	$requestUrl='https://www.ranksignals.com/api/'.$this->domain;
+	// 	$content=$this->makeConnection($requestUrl);
+    //     if($content) {
+    //         $data = json_decode($content, true);
+    //         if (empty($data))
+    //             return;
+    //         $this->pageRank = $data['pr'];
+    //         $this->rankSignalsUniqueDomainLinksCount = $data['linkdomain'];
+    //         $this->rankSignalsTotalBackLinks = $data['linktotal'];
+    //         $this->globalAlexaRank = $data['alexa'];
+    //     }
+    // }
     
     /**
      * set alexa API fields if succeeded

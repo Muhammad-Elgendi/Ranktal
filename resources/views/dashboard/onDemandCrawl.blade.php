@@ -165,7 +165,7 @@
                                     </button>
                                     {!! Form::close() !!}  
 
-                                    @if($site->crawlingJob->status != 'Crawling')
+                                    @if($site->crawlingJob->status == 'Finished')
                                     <button class="btn btn-xs btn-success" onclick="recrawl({!! $site->id !!});return false;" >
                                         <i class="fa fa-refresh"></i> @lang('recrawl')
                                     </button>

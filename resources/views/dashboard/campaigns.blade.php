@@ -120,10 +120,9 @@
                                 @endif
                             </td>
                             <td field-key='last-track-time'>{{ $campaign->last_track_at }}</td>
-                            <td>   
-                                {{-- It creates a new dummy site for now --}}
+                            <td>
                                 {{-- View Button --}}
-                                {{-- <a href="#" onclick="view('{{ $campaign->id }}');return false;" id="campaign-view-{{$campaign->id}}" class="btn btn-xs btn-primary"><i class="fa fa-eye"></i> @lang('view')</a> --}}
+                                <a href="{{route('lang.seo-campaign-view',['lang'=> app()->getLocale(),'id'=> $campaign->id])}}" id="campaign-view-{{$campaign->id}}" class="btn btn-xs btn-primary"><i class="fa fa-eye"></i> @lang('view')</a>
                                                 
                                 <a class="btn btn-xs btn-success" href="{{route('lang.seo-campaign-edit',['lang'=>app()->getLocale(),'id'=> $campaign->id])}}">
                                     <i class="fa fa-edit"></i> @lang('edit')

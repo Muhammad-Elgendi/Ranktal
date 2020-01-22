@@ -26,18 +26,16 @@ public class SampleLauncher {
     private static final Logger logger = LoggerFactory.getLogger(SampleLauncher.class);
 
     public static  String mainUrl;
-    public static Integer userId;
     public static Integer siteId;
     public static String matchPattern;
     public static boolean exactMatch;
     public static void main(String[] args) throws Exception{
 
-        if (args.length != 6) {
+        if (args.length != 5) {
             logger.info("Needed parameters: ");
             logger.info("\t Seed URL (start crawling with this URL)");
             logger.info("\t maxPagesToFetch (number of pages to be fetched)");
             logger.info("\t nuberOfCrawlers (number of crawlers)");
-            logger.info("\t user id (id of user that request the crawling)");
             logger.info("\t site id (id of site that being crawled)");
             logger.info("\t Exact match (Crawling Exact match url or the same host)");
             return;
@@ -48,18 +46,15 @@ public class SampleLauncher {
         mainUrl= args[0];
         int maxPages = Integer.valueOf(args[1]);
         int numberOfCrawlers = Integer.valueOf(args[2]);
-        userId = Integer.valueOf(args[3]);
-        siteId = Integer.valueOf(args[4]);
-        exactMatch = Boolean.valueOf(args[5]);
+        siteId = Integer.valueOf(args[3]);
+        exactMatch = Boolean.valueOf(args[4]);
 
 //        URL url = new URL("http://7loll.net");
 //        mainUrl= url.toString();
-//        userId = 1;
 //        siteId = 2;
 //        int maxPages = 10000;
 //        int numberOfCrawlers = 4;
 //        exactMatch = false;
-
 
         matchPattern = exactMatch ? mainUrl : url.getHost();
 
@@ -67,7 +62,6 @@ public class SampleLauncher {
         logger.info("\t Seed URL : "+mainUrl);
         logger.info("\t maxPagesToFetch : "+maxPages);
         logger.info("\t nuberOfCrawlers : "+numberOfCrawlers);
-        logger.info("\t user id : "+userId);
         logger.info("\t site id : "+siteId);
 
         Dotenv dotenv = Dotenv.configure().directory("/usr/local/tomcat/webapps/").load();
@@ -112,14 +106,11 @@ public class SampleLauncher {
         comboPooledDataSource.setMaxPoolSize(numberOfCrawlers);
         comboPooledDataSource.setMinPoolSize(numberOfCrawlers);
 
-        logger.info("Delete Old URLS ... ");
-        /**
-         * Delete all old urls
-         */
-        deleteAllUrls(comboPooledDataSource);
-
         logger.info("Starting Crawling Process ... ");
 
+        // notify backend that crawling is started
+        notifyBackendofStart(comboPooledDataSource,"Crawling", getCurrentTimeStamp());
+        
         /*
          * Start the crawl. This is a blocking operation, meaning that your code
          * will reach the line after this only when crawling is finished.
@@ -139,12 +130,12 @@ public class SampleLauncher {
         checkForDuplicateContent(comboPooledDataSource);
 
 
-        logger.info("Inform backend Process Has Started ... ");
+        logger.info("Inform backend that crawling is finished ... ");
 
         /**
          * Inform backend
          */
-        notifyBackend(comboPooledDataSource,"Finished", getCurrentTimeStamp());
+        notifyBackendofFinish(comboPooledDataSource,"Finished", getCurrentTimeStamp());
 
         logger.info("Closing pool ... ");
 
@@ -161,22 +152,19 @@ public class SampleLauncher {
         Map similarities= UniformFuzzyHashes.computeAllHashesSimilarities(map);
         Similarities.saveAllHashesSimilarities(similarities,postgresDBService);
     }
-
-    private static void notifyBackend(ComboPooledDataSource comboPooledDataSource, String status, Timestamp finishTime) throws Exception{
+    
+        private static void notifyBackendofStart(ComboPooledDataSource comboPooledDataSource, String status, Timestamp startTime) throws Exception{
         PostgresDBService postgresDBService = new PostgresDBServiceImpl(comboPooledDataSource);
-        postgresDBService.updateJob(status,finishTime,siteId);
+        postgresDBService.startJob(status,startTime,siteId);
     }
 
-
-    private static void deleteAllUrls(ComboPooledDataSource comboPooledDataSource) throws Exception{
+    private static void notifyBackendofFinish(ComboPooledDataSource comboPooledDataSource, String status, Timestamp finishTime) throws Exception{
         PostgresDBService postgresDBService = new PostgresDBServiceImpl(comboPooledDataSource);
-        postgresDBService.removeSite(matchPattern);
+        postgresDBService.finishJob(status,finishTime,siteId);
     }
 
     public static java.sql.Timestamp getCurrentTimeStamp() {
-
         return new java.sql.Timestamp(new java.util.Date().getTime());
-
     }
 
 }

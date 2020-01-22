@@ -7,15 +7,20 @@ use \Carbon\Carbon;
 
 class CrawlingJob extends Model
 {
-    //   
+    protected $dates = [
+        'created_at'
+    ];
+
+    const UPDATED_AT = null;
 
     public function site()
     {
         return $this->belongsTo('App\Site');
     }
 
-    // set created_at only
-    public function setUpdatedAt($value){ ; }
-
+    // disable updated_at
+    public function setUpdatedAt($value){
+        ;
+    }
 
 }

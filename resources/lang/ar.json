@@ -216,6 +216,7 @@
     "crawl-subdomain":"زحف النطاق الفرعي فقط",
     "Finished":"إنتهي",
     "Crawling":"الزحف مستمر",
+    "Waiting":"قيد الإنتظار",
     "critical-crawler":"مشاكل الروابط المعطوبة",
     "crawler-warnings":"تخذيرات الزاحف",
     "metadata-issues":"مشاكل البيانات الوصفية",

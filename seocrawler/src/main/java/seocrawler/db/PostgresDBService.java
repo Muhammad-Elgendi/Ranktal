@@ -7,8 +7,6 @@ import java.util.Map;
 
 public interface PostgresDBService {
     void store(Page webPage);
-//    void close();
-
     void storeUrl(String url,Integer status, Integer siteId, Integer crawlDepth);
     void storeTitle(String url,String title);
     void storeRedirect(String url,String redirectTo);
@@ -20,6 +18,7 @@ public interface PostgresDBService {
     void storeBacklink(String srcUrl,String targetUrl,String anchor_text,Boolean is_dofollow);
     void removeBacklink(String url);
     Map<String,String> getHashes(String host);
-    void updateJob(String status, Timestamp finishTime, Integer siteId);
-    void removeSite(String url);
+    void startJob(String status, Timestamp startTime, Integer siteId);
+    void finishJob(String status, Timestamp finishTime, Integer siteId);
+    void removeUrl(String url);
 }

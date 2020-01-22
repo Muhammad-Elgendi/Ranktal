@@ -6,6 +6,12 @@ mvn clean compile assembly:single
 maven war plugin assembling webapp
 mvn compile war:war
 
+How to rebuild the crawler ?
+1- remove all files in production Except .env files
+2- remove target folder
+3- change directory to  seocrawler folder
+4- run    mvn compile war:war
+
 
 run crawler
 java -jar SEO-crawler/target/SEO-crawler-1.0-SNAPSHOT-jar-with-dependencies.jar https://is.net.sa 10000 20 1 1 true

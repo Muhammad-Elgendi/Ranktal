@@ -52,18 +52,21 @@ $optionalLanguageRoutes = function () {
     Route::get('crawl', 'CrawlingController@doSiteCrawl'); //Site Crawl
     Route::get('demand-crawl-sitemap', 'CrawlingController@generateSitemap')->name('demandCrawlsitemap'); // Generate an XML site map of a site 
 
-    // Actions routes
+    // Actions routes - seo-audit
     Route::delete('seo-audit-delete/{id}', 'checkerController@destroy')->name('seoAuditDelete');
     Route::get('seo-audit-reaudit', 'checkerController@reaudit')->name('seoAuditReaudit');
 
+    // Actions routes - demand-crawl
     Route::delete('demand-crawl-delete/{id}', 'CrawlingController@destroy')->name('demandCrawlDelete');
     Route::get('demand-crawl-recrawl', 'CrawlingController@recrawl')->name('demandCrawlRecrawl');
 
+    // Actions routes - seo-campaigns
     Route::get('dashboard/seo-campaigns/create', 'CampaignsController@create')->name('seo-campaign-create'); // create SEO Campaign view
     Route::post('dashboard/seo-campaigns/store', 'CampaignsController@store')->name('seo-campaign-store'); // store SEO Campaign
     Route::delete('seo-campaigns-delete/{id}', 'CampaignsController@destroy')->name('seoCampaignDelete');
     Route::get('dashboard/seo-campaigns/edit/{id}', 'CampaignsController@edit')->name('seo-campaign-edit'); // Edit SEO Campaign view
     Route::post('dashboard/seo-campaigns/save', 'CampaignsController@saveEdit')->name('seo-campaign-saveEdit'); // save Edits SEO Campaign
+    Route::get('dashboard/seo-campaigns/view/{id}', 'CampaignsController@view')->name('seo-campaign-view'); // View SEO Campaign
 
 
 

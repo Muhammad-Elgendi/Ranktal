@@ -22,7 +22,7 @@ public class PostgresDBServiceImpl implements PostgresDBService {
 
     private PreparedStatement insertKeyStatement,insertUrlStatement,insertTitleStatement,insertRedirectStatement,
             insertRobotStatement,insertRefreshStatement,insertDescriptionStatement,insertContentStatement,
-            insertSimilarityStatement,getHashesStatement,removeSiteStatement,updateJobStatement,
+            insertSimilarityStatement,getHashesStatement,removeUrlStatement,startJobStatement,finishJobStatement,
             removeBacklinkStatement,insertBacklinkStatement;
 
     public PostgresDBServiceImpl(ComboPooledDataSource comboPooledDataSource) throws SQLException {
@@ -32,25 +32,6 @@ public class PostgresDBServiceImpl implements PostgresDBService {
 
     private void init() throws SQLException {
 
-        ///XXX should be done via DDL script
-//        comboPooledDataSource.getConnection().createStatement().executeUpdate(
-//                "CREATE SEQUENCE id_master_seq" +
-//                        "  INCREMENT 1" +
-//                        "  MINVALUE 1 " +
-//                        "  MAXVALUE 9223372036854775807" +
-//                        "  START 6 " +
-//                        "  CACHE 1;")
-//        ;
-//        comboPooledDataSource.getConnection().createStatement().executeUpdate(
-//                "CREATE TABLE webpage" +
-//                        " ( " +
-//                        "  id bigint NOT NULL," +
-//                        "  html TEXT," +
-//                        "  text TEXT," +
-//                        "  url varchar(4096)," +
-//                        "  seen timestamp without time zone NOT NULL," +
-//                        "  primary key (id)" +
-//                        ")");
     }
 
     @Override
@@ -72,13 +53,7 @@ public class PostgresDBServiceImpl implements PostgresDBService {
                 logger.error("SQL Exception while storing webpage for url'{}'", page.getWebURL().getURL(), e);
                 throw new RuntimeException(e);
             }finally {
-//                if (insertKeyStatement != null) {
-//                    try {
-//                        insertKeyStatement.close();
-//                    } catch (SQLException e) {
-//                        logger.error("SQL Exception while closing insertKeyStatement'{}'", page.getWebURL().getURL(), e);
-//                    }
-//                }
+
                 try {
                     if (insertKeyStatement.getConnection() != null)
                         insertKeyStatement.getConnection().close();
@@ -89,13 +64,6 @@ public class PostgresDBServiceImpl implements PostgresDBService {
 
         }
     }
-
-//    @Override
-//    public void close() {
-//        if (comboPooledDataSource != null) {
-//            comboPooledDataSource.close();
-//        }
-//    }
 
     @Override
     public void storeUrl(String url,Integer status, Integer siteId, Integer crawlDepth) {
@@ -429,41 +397,34 @@ public class PostgresDBServiceImpl implements PostgresDBService {
     }
 
     @Override
-    public void removeSite(String url) {
+    public void removeUrl(String url) {
         try {
-            removeSiteStatement =  comboPooledDataSource.getConnection().prepareStatement("delete from urls where url like ?");
-            removeSiteStatement.setString(1,"%"+url+"%");
-            removeSiteStatement.executeUpdate();
+            removeUrlStatement =  comboPooledDataSource.getConnection().prepareStatement("delete from urls where url = ?");
+            removeUrlStatement.setString(1,url);
+            removeUrlStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("SQL Exception while removing old urls of the site", e);
+            logger.error("SQL Exception while removing old url of the site", e);
             throw new RuntimeException(e);
         }finally {
-//            if (removeSiteStatement != null) {
-//                try {
-//                    removeSiteStatement.close();
-//                } catch (SQLException e) {
-//                    logger.error("SQL Exception while closing removeSiteStatement'{}'", e);
-//                }
-//            }
             try {
-                if (removeSiteStatement.getConnection() != null)
-                    removeSiteStatement.getConnection().close();
+                if (removeUrlStatement.getConnection() != null)
+                    removeUrlStatement.getConnection().close();
             } catch (SQLException e) {
-                logger.error("SQL Exception while closing connection removeSiteStatement'{}'",e);
+                logger.error("SQL Exception while closing connection removeUrlStatement'{}'",e);
             }
         }
     }
 
     @Override
-    public void updateJob(String status,Timestamp finishTime,Integer siteId) {
+    public void finishJob(String status,Timestamp finishTime,Integer siteId) {
         try {
-            updateJobStatement = comboPooledDataSource.getConnection().prepareStatement("update crawling_jobs set status = ? , finished_at = ? where site_id = ?");
-            updateJobStatement.setString(1,status);
-            updateJobStatement.setTimestamp(2,finishTime);
-            updateJobStatement.setInt(3,siteId);
-            updateJobStatement.executeUpdate();
+            finishJobStatement = comboPooledDataSource.getConnection().prepareStatement("update crawling_jobs set status = ? , finished_at = ? where site_id = ?");
+            finishJobStatement.setString(1,status);
+            finishJobStatement.setTimestamp(2,finishTime);
+            finishJobStatement.setInt(3,siteId);
+            finishJobStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("SQL Exception while update job", e);
+            logger.error("SQL Exception while update job that finished", e);
             throw new RuntimeException(e);
         }finally {
 //            if (updateJobStatement != null) {
@@ -474,10 +435,38 @@ public class PostgresDBServiceImpl implements PostgresDBService {
 //                }
 //            }
             try {
-                if (updateJobStatement.getConnection() != null)
-                    updateJobStatement.getConnection().close();
+                if (finishJobStatement.getConnection() != null)
+                    finishJobStatement.getConnection().close();
             } catch (SQLException e) {
-                logger.error("SQL Exception while closing connection updateJobStatement'{}'",e);
+                logger.error("SQL Exception while closing connection finishJob'{}'",e);
+            }
+        }
+    }
+
+    @Override
+    public void startJob(String status,Timestamp startTime,Integer siteId) {        
+        try {
+            startJobStatement = comboPooledDataSource.getConnection().prepareStatement("update crawling_jobs set status = ? , started_at = ? where site_id = ?");
+            startJobStatement.setString(1,status);
+            startJobStatement.setTimestamp(2,startTime);
+            startJobStatement.setInt(3,siteId);
+            startJobStatement.executeUpdate();
+        } catch (SQLException e) {
+            logger.error("SQL Exception while update job that started", e);
+            throw new RuntimeException(e);
+        }finally {
+//            if (updateJobStatement != null) {
+//                try {
+//                    updateJobStatement.close();
+//                } catch (SQLException e) {
+//                    logger.error("SQL Exception while closing updateJobStatement'{}'", e);
+//                }
+//            }
+            try {
+                if (startJobStatement.getConnection() != null)
+                    startJobStatement.getConnection().close();
+            } catch (SQLException e) {
+                logger.error("SQL Exception while closing connection startJob'{}'",e);
             }
         }
     }

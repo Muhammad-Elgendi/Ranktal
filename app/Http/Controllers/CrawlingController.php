@@ -40,9 +40,9 @@ class CrawlingController extends Controller
      */
     public function recrawl(Request $request)
     {
-        if (!$request->ajax()) {
-            return redirect(app()->getLocale() . '/dashboard/on-demand-crawl');
-        }
+        // if (!$request->ajax()) {
+        //     return redirect(app()->getLocale() . '/dashboard/on-demand-crawl');
+        // }
 
         $id = $request->get('id');
         // check if the user has an access to recrawl the site
@@ -50,10 +50,17 @@ class CrawlingController extends Controller
         if($firstSite !== null){
             // has access to the site
             $site = Site::findOrFail($id);
-            $host = $site->host;
-            $exact = $site->exact_match;
-            $site->delete();
-            return $this->viewSiteCrawlUsingAjax($request, $host, $exact);
+            //  set the crawling job to waiting
+            $job = CrawlingJob::findOrFail($site->crawlingJob->id);
+            $job->status = "Waiting";
+            $job->save();
+
+            // TODO : set the remaining pages of the user account as a limit for the crawling request
+
+            // send recrawl request to the crawler
+            $this->sendCrawlingRequest($site->host,$site->id,$site->exact_match);
+            // view checks
+            return $this->viewSiteCrawlUsingAjax($request, $site->host, $site->exact_match);
         }
     }
 
@@ -252,16 +259,7 @@ class CrawlingController extends Controller
 
     public function addSite($site, $exact, $campaign_id){
 
-        $userId = Auth::user()->id;
- 
-        // if this site exist and the user wants to create a campaign for it create a new one then
-        // check if campaign_id is provided and inclue it in the search
-        // if($campaign_id !== null)
-        //     $existedSite = Site::where('host', $site)->where('user_id', $userId)->where('campaign_id', $campaign_id)->first();
-        // else{
-        //     // Check if the site already exist       
-        //     $existedSite = Site::where('host', $site)->where('user_id', $userId)->where('campaign_id', null)->first();
-        // }
+        $userId = Auth::user()->id; 
 
         // check if site data is existed
         $existedSite = Site::where('host', $site)->first();
@@ -273,8 +271,10 @@ class CrawlingController extends Controller
             // Add access to site's data to the user
             Auth::user()->sites()->attach($newSiteId);
 
+            // TODO : set the remaining pages of the user account as a limit for the crawling request
+
             // send a request to the crawler
-            $this->sendCrawlingRequest($site,$userId,$newSiteId,$exact);
+            $this->sendCrawlingRequest($site,$newSiteId,$exact);
  
             return $this->showChecks($newSiteId);
         } else{
@@ -303,7 +303,7 @@ class CrawlingController extends Controller
 
         $job = new CrawlingJob;
         $job->site_id = $newSite->id;
-        $job->status = "Crawling";
+        $job->status = "Waiting";
         $job->node = "default";
         $job->save();
         return $newSite->id;
@@ -313,12 +313,13 @@ class CrawlingController extends Controller
      * This function is responsable for sending a new crawling request to the crawler endpoint
      * @return status of response
      */
-    public function sendCrawlingRequest($siteUrl,$userId,$siteId,$exact){
+    public function sendCrawlingRequest($siteUrl,$siteId,$exact,$pages = 5000,$crawlers = 3){
         // Send Request to SEO-crawler server
         // For example
-        // http://10.0.75.1:8888/audit?url=https://google.com/&pages=5000&crawlers=3&userId=1&siteId=73&match=1
-
-        $requestUrl = 'http://' . env('SEO_CRAWLER_HOST') . ':' . env('SEO_CRAWLER_PORT') . '/audit?url=' . $siteUrl . '&pages=5000&crawlers=3&userId=' . $userId . '&siteId=' . $siteId . '&match=' . $exact;
+        // http://10.0.75.1:8888/audit?url=https://google.com/&pages=5000&crawlers=3&siteId=73&match=1
+        
+        $converted_exact = $exact ? 'true' : 'false';
+        $requestUrl = 'http://' . env('SEO_CRAWLER_HOST') . ':' . env('SEO_CRAWLER_PORT') . '/audit?url=' . $siteUrl . '&pages='.$pages.'&crawlers='.$crawlers.'&siteId=' . $siteId . '&match=' . $converted_exact;
         $connector = new PageConnector($requestUrl);
         $connector->connectPage();
         $connector->setIsGoodStatus();

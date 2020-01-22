@@ -16,11 +16,18 @@ class CampaignsController extends Controller
         $this->middleware('auth');
     }
 
-    // View Method
+    // View user campaigns Method
     public function index()
     {
         $campaigns = campaign::where('user_id', Auth::user()->id)->get();
         return view('dashboard.campaigns')->with('campaigns', $campaigns);
+    }
+
+    // View campaign Method
+    public function view($id)
+    {
+        $campaign = campaign::where('user_id', Auth::user()->id)->where('id',$id)->first();
+        return view('dashboard.campaigns.view')->with('campaign', $campaign);
     }
 
     // Return Create New Campaign View
@@ -89,6 +96,8 @@ class CampaignsController extends Controller
         $existedSite = Site::where('host', $site)->first();
 
         if ($existedSite === null) {
+            // if site isn't exist
+
             // create new site
             $siteId = $crawlingController->createNewSite($site,$exact);
             // assign campaign to the site
@@ -96,8 +105,10 @@ class CampaignsController extends Controller
             // save campaign data
             $campaign->save();
 
+            // TODO : set the remaining pages of the user account as a limit for the crawling request
+
             // send crawling request
-            $crawlingController->sendCrawlingRequest($site,Auth::user()->id,$siteId,$exact);
+            $crawlingController->sendCrawlingRequest($site,$siteId,$exact);
             
         }else{
             // site is existed

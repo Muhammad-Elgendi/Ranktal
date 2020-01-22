@@ -199,11 +199,7 @@
                 <li>
                     <a href="{{route('lang.dashboard',app()->getLocale())}}">
                         <i class="fa fa-dashboard"></i> <span>@lang("dashboard")</span>
-                    </a>
-                    {{-- <!--  <ul class="treeview-menu">
-                        <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                        <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-                        </ul> --> --}}
+                    </a>                   
                 </li>
 
                 <li class="header">@lang("on-page-tools")</li>
@@ -211,11 +207,7 @@
                 <li>
                     <a href="{{route('lang.page-optimization',app()->getLocale())}}">
                         <i class="fa fa-cogs"></i> <span>@lang("page-optimization")</span>
-                    </a>
-                    {{-- <!--  <ul class="treeview-menu">
-                       <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                       <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-                     </ul> --> --}}
+                    </a>                
                 </li>
                 <li>
                     <a href="{{route('lang.seo-audit',app()->getLocale())}}">
@@ -234,17 +226,16 @@
                 <li>
                     <a href="{{route('lang.on-demand-crawl',app()->getLocale())}}">
                         <i class="fa fa-bug"></i> <span>@lang('on-demand-crawl')</span>
-                    </a>
-                    {{-- <!--  <ul class="treeview-menu">
-                       <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                       <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-                     </ul> --> --}}
+                    </a>     
                 </li>
                 <li>
                     <a href="{{route('lang.seo-campaigns',app()->getLocale())}}">
                         <i class="fa fa-bullhorn"></i> <span>@lang('seo-campaigns')</span>
                     </a>
                     <ul class="treeview-menu">
+                        @foreach(Auth::user()->campaigns as $campaign)
+                            <li><a href="{{route('lang.seo-campaign-view',['lang'=> app()->getLocale(),'id'=> $campaign->id])}}"><i class="fa fa-bullhorn"></i>{{$campaign->name}}</a></li>
+                        @endforeach
                         <li><a href="{{route('lang.seo-campaign-create',app()->getLocale())}}"><i class="fa fa-plus"></i>@lang('create-campaign')</a></li>
                      </ul>
                 </li>
@@ -286,22 +277,14 @@
                 <li>
                     <a href="{{route('lang.backlinks-checker',app()->getLocale())}}">
                         <i class="fa fa-crosshairs"></i> <span>@lang("backlinks-checker")</span>
-                    </a>
-                    {{-- <!--  <ul class="treeview-menu">
-                       <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                       <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-                     </ul> --> --}}
+                    </a>              
                 </li>  
             
                 <li class="header">@lang("support")</li>       
                 <li>
                         <a href="#">
                             <i class="fa fa-life-ring"></i> <span>@lang("help-desk")</span>
-                        </a>
-                        {{-- <!--  <ul class="treeview-menu">
-                           <li class="active"><a href="index.html"><i class="fa fa-circle-o"></i> Dashboard v1</a></li>
-                           <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
-                         </ul> --> --}}
+                        </a>                     
                     </li>     
             </ul>
         </section>

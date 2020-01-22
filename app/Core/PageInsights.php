@@ -35,6 +35,10 @@ namespace App\Core;
 
      /**
      * PageInsights constructor.
+     * Allowed types :-
+     * mobile
+     * desktop
+     * 
      * @param $url
      */
 	function __construct($url,$type){

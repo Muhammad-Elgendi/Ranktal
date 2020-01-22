@@ -43,7 +43,7 @@ public class Audit extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         final String[] args = {request.getParameter("url"),request.getParameter("pages"),
-        request.getParameter("crawlers"),request.getParameter("userId"),
+        request.getParameter("crawlers"),
         request.getParameter("siteId"),request.getParameter("match")};
        
         // Make luncher calling non-blocking         

@@ -13,21 +13,18 @@ class optimizerController extends Controller{
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct(){
         $this->middleware('auth');
     }
 
     // View Method
-    public function index()
-    {
+    public function index(){
         return view('dashboard.pageOptimization');
     }
 
 
 
-    public function check(Request $request)
-    {
+    public function check(Request $request){
         $inputUrl = $request->get('u');
         $keyword = rawurldecode($request->get('k'));
         if (empty($keyword)) {
@@ -53,8 +50,7 @@ class optimizerController extends Controller{
         return json_encode($optimizer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
     }
 
-    public function viewChecksUsingAjax(Request $request)
-    {
+    public function viewChecksUsingAjax(Request $request){
         if ($request->ajax()) {
             $json = $this->check($request);
             $array = json_decode($json);
