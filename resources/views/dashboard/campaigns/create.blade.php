@@ -104,7 +104,7 @@
 
             <p class="title">@lang('campaign-name')</p>
 
-            {{ Form::text('name', null, ['class' => 'form-control','placeholder'=>__('campaign-name') ]) }}
+            {{ Form::text('name', null, ['class' => 'form-control','id'=>'campaign-name','placeholder'=>__('campaign-name') ]) }}
 
             <p class="title">@lang('update-interval')</p>
 
@@ -138,10 +138,10 @@
                                 {{ Form::text('page-link[]', null, ['class' => 'form-control','placeholder'=>__('page-link'),'pattern'=>'https?://.+','required','title'=>'Page Link begins with http:// Or https://' ]) }}
                             </td>
                             <td>
-                                <button class="btn btn-xs btn-success add-btn" onclick="addRow();return false;" >
+                                <button class="btn btn-xs btn-success add-btn" type="button" >
                                     <i class="fa fa-plus fa-2x"></i>
                                 </button>
-                                <button class="btn btn-xs btn-danger delete-btn" onclick="removeRow();return false;">
+                                <button class="btn btn-xs btn-danger delete-btn" type="button">
                                     <i class="fa fa-minus fa-2x"></i>
                                 </button>
                             </td>
@@ -161,33 +161,52 @@
 
 @section('scripts')
 <script>
-    function addRow(){        
+    $('#pages-table tbody').on("click",".add-btn",function(){
         if($('#pages-table tbody tr').length == 2 && !$('#pages-table tbody tr:first').is(':visible')){
             $('#pages-table tbody tr:first').show();
             $('#pages-table tbody tr:first td:nth-child(2) input').attr('required',true);
             $('#pages-table tbody tr:last').remove();
         }else{
-            $('#pages-table tbody').append('<tr>'+$('#pages-table tbody tr:first').html()+'</tr>');
+            $(this).parent().parent().after('<tr>'+$('#pages-table tbody tr:first').html()+'</tr>');
+            // clear input
+            $(this).parent().parent().next().find('td input').val('');
         }
-        $(".delete-btn,.add-btn").hide();
-        $(".delete-btn:last,.add-btn:last").show();
-    }
-    function removeRow(){    
+    });
+
+    $('#pages-table tbody').on( "click", ".delete-btn",function(){
         if($('#pages-table tbody tr').length == 1){
             $('#pages-table tbody tr:last').hide();
             $('#pages-table tbody tr:last td input').attr('required',false);
             $('#pages-table tbody tr:last td input').val('');
         }
         else{
-            $('#pages-table tbody tr:last').remove();
+            $(this).parent().parent().remove();
         }
         if($('#pages-table tbody tr').length == 1 && !$('#pages-table tbody tr:first').is(':visible')){
             $('#pages-table tbody').append("<tr><td colspan='2'>@lang('no_entries_in_table')</td>"+
-              "<td><button class=\"btn btn-xs btn-success\" onclick=\"addRow();return false;\">"+
+              "<td><button class=\"btn btn-xs btn-success add-btn\" type=\"button\">"+
               "<i class=\"fa fa-plus fa-2x\"></i></button></td></tr>");
         }
-        $(".delete-btn,.add-btn").hide();
-        $(".delete-btn:last,.add-btn:last").show();
+    });
+
+    function getHostName(url) {
+        var match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
+        if (match != null && match.length > 2 && typeof match[2] === 'string' && match[2].length > 0) {
+        return match[2];
+        }
+        else {
+            return null;
+        }
     }
+
+    function capitalize(s){
+        if (typeof s !== 'string')
+            return '';
+        return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+
+    $('#urlInput').focusout(function(){
+        $('#campaign-name').val(capitalize(getHostName($('#urlInput').val())));
+    });
 </script>
 @endsection

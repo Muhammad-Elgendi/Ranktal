@@ -70,15 +70,17 @@ class pageInsightsController extends Controller{
     /**
      * Get the pageInsight of URL
      * If url parameter is not provided get the url from the request
-
+     * type parameter could be "desktop" || "mobile"
      * interval = -1 --- Get stored metrics if available (Default)
      * interval = 0  --- Get the new metrics of the site now and update the database
      * interval > 0  --- Get the stored metrics of the site if interval(days) doesn't passed since last update 
      *               ---      Or update the metrics of the site         
      * 
-     * SiteId --- The Id of the site that these metrics belongs to       
+     * SiteId --- The Id of the site that these metrics belongs to      
+     * 
+     * * type Request before $request so it can be run as endpoint method  
      */
-    public function getPageInsightsForSite(Request $request,$url = null,$type = null,$interval = -1,$siteId = null){
+    public function getPageInsightsForSite($request,$url = null,$type = null,$interval = -1,$siteId = null){
 
         // if url parameter is not provided get the url from the request
         if($url === null){
@@ -97,7 +99,7 @@ class pageInsightsController extends Controller{
         }
 
         // override interval parameter if it's present in the request
-        if($request->has('interval')){
+        if($request !== null && $request->has('interval')){
             // update interval parameter
             $interval = $request->get('interval');
         }

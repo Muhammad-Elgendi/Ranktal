@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\campaign;
+use App\Jobs\CampaignTrack;
 use App\optimization;
 use App\Site;
 use Carbon\Carbon;
@@ -130,11 +131,11 @@ class CampaignsController extends Controller
             } // end for
         } // end if
     
-        // Add the job of geting metrics , pageInsights , page optimizations and sending email to queue
-        
-        // Simulate that campaign updating is done
-        $campaign->last_track_at = Carbon::now();
+        // save data
         $campaign->save();
+
+        // Add the job of geting metrics , pageInsights , page optimizations and sending email to queue
+        CampaignTrack::dispatch($campaign->id);
 
         // redirect to seo campaigns view
         return redirect(route('lang.seo-campaigns',app()->getLocale()));
@@ -173,20 +174,45 @@ class CampaignsController extends Controller
         $campaign->interval = $interval;
         // save changes
         $campaign->save();
-        // delete all previous optimization
-        $campaign->optimization()->delete();
-
+        // keep ids of optimizations that will not be deleted
+        $noDelete = [];
         // check if there are pages to optimize
         if(!empty($request->get('keyword')[0]) && !empty($request->get('page-link')[0])){
             // there are pages to optimize
             for($i = 0 ; $i < count($request->get('page-link')) ;$i++){
-                $optimization = new optimization();
-                $optimization->campaign_id = $campaign->id;
-                $optimization->url = $request->get('page-link')[$i];
-                $optimization->keyword = $request->get('keyword')[$i];
-                $optimization->save();
+                // check if this optimization is not existed in the db
+                $foundOptimization = $campaign->optimization()->where('url',$request->get('page-link')[$i])->where('keyword',$request->get('keyword')[$i])->first();
+                if($foundOptimization === null){
+                    $optimization = new optimization();
+                    $optimization->campaign_id = $campaign->id;
+                    $optimization->url = $request->get('page-link')[$i];
+                    $optimization->keyword = $request->get('keyword')[$i];
+                    $optimization->save();
+                    // add the id to noDelete
+                    $noDelete[] = $optimization->id;
+                }else{
+                    // add the id of foundOptimization to noDelete
+                    $noDelete[] = $foundOptimization->id;
+                }
+           
             } // end for
         } // end if
+
+        // delete all optimizations from database if the user delete them
+        if(empty($noDelete)){
+            // delete all previous optimization
+            $campaign->optimization()->delete();
+        }
+
+        // delete optimization from our database if the user delete it
+        foreach($campaign->optimization as $optimization){
+            if(!in_array($optimization->id, $noDelete)){
+                $optimization->delete();
+            }
+        }
+
+        // Add update optimization job to queue
+        CampaignTrack::dispatch($campaign->id,false,true,false,false);
 
         // redirect to seo campaigns view
         return redirect(route('lang.seo-campaigns',app()->getLocale()));

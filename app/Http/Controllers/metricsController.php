@@ -72,9 +72,10 @@ class metricsController extends Controller
      * interval > 0  --- Get the stored metrics of the site if interval(days) doesn't passed since last update 
      *               ---      Or update the metrics of the site         
      * 
-     * SiteId --- The Id of the site that these metrics belongs to       
+     * SiteId --- The Id of the site that these metrics belongs to  
+     * * type Request before $request so it can be run as endpoint method       
      */
-    public function getMetricsForSite(Request $request,$url = null,$interval = -1,$siteId = null){
+    public function getMetricsForSite($request,$url = null,$interval = -1,$siteId = null){
         
         // if url parameter is not provided get the url from the request
         if($url === null){
@@ -86,7 +87,7 @@ class metricsController extends Controller
         $url = rtrim($url,"/");
 
         // override interval parameter if it's present in the request
-        if($request->has('interval')){
+        if($request !== null && $request->has('interval')){
             // update interval parameter
             $interval = $request->get('interval');
         }

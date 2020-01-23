@@ -110,7 +110,7 @@
                 @if (count($campaigns) > 0)
                     @foreach ($campaigns as $campaign)
                         <tr data-entry-id="{{ $campaign->id }}">
-                            <td field-key='link'><a href="#" onclick="view('{{ $campaign->id }}');return false;"><p><strong>{{ $campaign->name }}</strong></p><p>{{ $campaign->site->host }}</p></a></td>
+                            <td field-key='link'><a href="{{route('lang.seo-campaign-view',['lang'=> app()->getLocale(),'id'=> $campaign->id])}}" ><p><strong>{{ $campaign->name }}</strong></p><p>{{ $campaign->site->host }}</p></a></td>
                             <td field-key='update-interval'> @lang('every-'.$campaign->interval.'-days')</td>                              
                             <td field-key='status'> 
                                 @if(empty($campaign->last_track_at))
@@ -160,38 +160,6 @@
 
 <script>
 
-function view(host,exact){
-    $.get("{{route('lang.demandCrawlAjax',app()->getLocale())}}",{ site: host, exact: exact }, function (jsondata) {
-                $("#the-form").hide();
-
-                $.get("{{url('templates/NewTableComponent.hbs')}}", function (data) {
-                var template=Handlebars.compile(data);      
-                $("#checks").html(template(jsondata.catagories));
-                    // update view
-                    updateView(jsondata);                
-                }, 'html');
-                //Enable button
-                $("#button").removeAttr("disabled"); 
-        },'json');
-    $('#view-table').hide();
-}
-
-function edit(number){
-    if(confirm("@lang('sure-question')")){
-        $.get("{{route('lang.demandCrawlRecrawl',app()->getLocale())}}",{ id: number }, function (jsondata) {
-                $("#the-form").hide();
-                $.get("{{url('templates/NewTableComponent.hbs')}}", function (data) {
-                var template=Handlebars.compile(data);      
-                $("#checks").html(template(jsondata.catagories));
-                    // update view
-                    updateView(jsondata);                
-                }, 'html');
-                //Enable button
-                $("#button").removeAttr("disabled"); 
-        },'json');
-        $('#view-table').hide();
-    }
-}
 </script>
 
 @endsection

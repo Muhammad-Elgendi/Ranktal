@@ -38,8 +38,7 @@ class CrawlingController extends Controller
     /**
      * recrawl the site
      */
-    public function recrawl(Request $request)
-    {
+    public function recrawl(Request $request){
         // if (!$request->ajax()) {
         //     return redirect(app()->getLocale() . '/dashboard/on-demand-crawl');
         // }
