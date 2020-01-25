@@ -29,6 +29,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        // schedule campaign that has to be updated
+        $schedule->call('App\Http\Controllers\CampaignsController@scheduleCampaign')->dailyAt("23:25")->runInBackground();
+        
         // clear bad proxies
         // $schedule->call(function(){
         //     ProxyController::clearBadProxies();
@@ -39,7 +42,7 @@ class Kernel extends ConsoleKernel
         // })->hourly();  
 
         //update cache with real ip
-        $schedule->call('App\Http\Controllers\ProxyController@updateServerRealIP')->twiceDaily(1, 13);
+        // $schedule->call('App\Http\Controllers\ProxyController@updateServerRealIP')->twiceDaily(1, 13);
 
         //proxy acquisition
         // $schedule->call(function(){

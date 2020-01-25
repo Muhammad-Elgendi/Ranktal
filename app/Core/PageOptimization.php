@@ -11,9 +11,9 @@ require 'vendor/autoload.php';
  * 
  **/
 
-// require './PageConnector.php';
-// $keyword = "شركة تصميم مواقع";
-// $connector = new PageConnector("https://is.net.sa");
+// require dirname(__FILE__) .'/PageConnector.php';
+// $keyword = "شركة تنظيف";
+// $connector = new PageConnector("http://example.com");
 // $connector->connectPage();
 // if (!$connector->isGoodUrl) {
 //     return "Not Valid URL";
@@ -161,8 +161,7 @@ class PageOptimization
         $this->doc = $body;
     }
 
-    private function makeConnection($url)
-    {
+    private function makeConnection($url){
         // Use Curl to send off your request.
         $options = array(
             CURLOPT_RETURNTRANSFER => true

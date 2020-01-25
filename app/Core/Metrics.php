@@ -131,6 +131,8 @@ class Metrics{
             libxml_use_internal_errors(false);
             try {
                 $slin = $doc->getElementsByTagName('a')->item(3)->nodeValue;
+                // remove comma from number e.g(21,657) if existed
+                $slin = str_replace(",", "", $slin);
             } catch (\Exception $e) {
                 return;
             }

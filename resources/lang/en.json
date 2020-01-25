@@ -342,5 +342,6 @@
     "campaign-status":"Campaign Status",
     "edit":"Edit",
     "edit-campaign":"Edit Campaign Settings",
-    "save-changes":"Save Changes"
+    "save-changes":"Save Changes",
+    "failed":"Failed"
 }

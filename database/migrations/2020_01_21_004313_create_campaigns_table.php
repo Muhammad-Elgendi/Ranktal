@@ -28,7 +28,10 @@ class CreateCampaignsTable extends Migration
 
             $table->string('name');
             $table->integer('interval');
+            $table->string('status')->nullable();
             $table->timestamp('last_track_at')->nullable();
+            $table->timestamp('last_email_at')->nullable();
+
             $table->timestamps();
         });
     }

@@ -342,5 +342,6 @@
     "campaign-status":"حالة الحملة",
     "edit":"تعديل",
     "edit-campaign":"تعديل إعدادات الحملة",
-    "save-changes":"حفظ التغيرات"
+    "save-changes":"حفظ التغيرات",
+    "failed":"فشل"
 }

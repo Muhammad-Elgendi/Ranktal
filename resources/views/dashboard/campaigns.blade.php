@@ -113,10 +113,8 @@
                             <td field-key='link'><a href="{{route('lang.seo-campaign-view',['lang'=> app()->getLocale(),'id'=> $campaign->id])}}" ><p><strong>{{ $campaign->name }}</strong></p><p>{{ $campaign->site->host }}</p></a></td>
                             <td field-key='update-interval'> @lang('every-'.$campaign->interval.'-days')</td>                              
                             <td field-key='status'> 
-                                @if(empty($campaign->last_track_at))
-                                @lang('updating')
-                                @else
-                                @lang('Finished')
+                                @if(!empty($campaign->status))
+                                    @lang($campaign->status)
                                 @endif
                             </td>
                             <td field-key='last-track-time'>{{ $campaign->last_track_at }}</td>
@@ -128,7 +126,7 @@
                                     <i class="fa fa-edit"></i> @lang('edit')
                                 </a>
 
-                                @if(!empty($campaign->last_track_at))
+                                @if($campaign->status == "Finished")
                                 {!! Form::open(array(
                                     'style' => 'display: inline-block;',
                                     'method' => 'DELETE',

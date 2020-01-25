@@ -125,12 +125,16 @@ class CampaignsController extends Controller
             for($i = 0 ; $i < count($request->get('page-link')) ;$i++){
                 $optimization = new optimization();
                 $optimization->campaign_id = $campaign->id;
-                $optimization->url = $request->get('page-link')[$i];
+                // remove trailing slashes in URL
+                $inputUrl = rtrim($request->get('page-link')[$i],"/");
+                $optimization->url = $inputUrl;
                 $optimization->keyword = $request->get('keyword')[$i];
                 $optimization->save();
             } // end for
         } // end if
     
+        // change the status of the campaign
+        $campaign->status = "Waiting";
         // save data
         $campaign->save();
 
@@ -172,6 +176,8 @@ class CampaignsController extends Controller
             $interval = 7;
 
         $campaign->interval = $interval;
+        // change the status of the campaign
+        $campaign->status = "Waiting";
         // save changes
         $campaign->save();
         // keep ids of optimizations that will not be deleted
@@ -185,7 +191,9 @@ class CampaignsController extends Controller
                 if($foundOptimization === null){
                     $optimization = new optimization();
                     $optimization->campaign_id = $campaign->id;
-                    $optimization->url = $request->get('page-link')[$i];
+                    // remove trailing slashes in URL
+                    $inputUrl = rtrim($request->get('page-link')[$i],"/");
+                    $optimization->url = $inputUrl;
                     $optimization->keyword = $request->get('keyword')[$i];
                     $optimization->save();
                     // add the id to noDelete
@@ -216,5 +224,18 @@ class CampaignsController extends Controller
 
         // redirect to seo campaigns view
         return redirect(route('lang.seo-campaigns',app()->getLocale()));
+    }
+
+    /**
+     * Add campaigns that has to be updated to queue
+     */
+    public static function scheduleCampaign(){
+        $campaigns = campaign::where('status','Finished')->oldest('last_track_at')->get();
+        foreach($campaigns as $campaign){
+            if($campaign->last_track_at <  Carbon::now()->subDay($campaign->interval)){
+                // this campaign has to be updated
+                CampaignTrack::dispatch($campaign->id);
+            }
+        }
     }
 }

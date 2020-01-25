@@ -2,11 +2,13 @@
 
 namespace App\Jobs;
 
+use Exception;
 use App\campaign;
 use App\Http\Controllers\CrawlingController;
 use App\Http\Controllers\metricsController;
 use App\Http\Controllers\optimizerController;
 use App\Http\Controllers\pageInsightsController;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -23,6 +25,21 @@ class CampaignTrack implements ShouldQueue
     protected $pageInsight;
     protected $metrics;
     protected $campaignId;
+    // protected $campaign;
+
+    /**
+     * The number of seconds to wait before retrying the job.
+     *
+     * @var int
+     */
+    public $retryAfter = 3;
+
+    /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 1;
 
     /**
      * Create a new job instance.
@@ -36,7 +53,7 @@ class CampaignTrack implements ShouldQueue
         $this->onDemandCrawl = $onDemandCrawl;
         $this->optimization  = $optimization;
         $this->pageInsight   = $pageInsight;
-        $this->metrics       = $metrics;
+        $this->metrics       = $metrics;  
     }
 
     /**
@@ -54,7 +71,11 @@ class CampaignTrack implements ShouldQueue
     public function handle()
     {
         // Get the campaign that this job for
-        $campaign = campaign::findOrFail($this->campaignId);        
+        $campaign = campaign::findOrFail($this->campaignId);
+        // change the status of the campaign
+        $campaign->status = "updating";
+        // save changes
+        $campaign->save();
 
         // On-Demand crawl
         if($this->onDemandCrawl){
@@ -104,6 +125,26 @@ class CampaignTrack implements ShouldQueue
 
         // notify that campaign updating is done
         $campaign->last_track_at = Carbon::now();
+
+        // change the status of the campaign
+        $campaign->status = "Finished";
+
+        // save changes
+        $campaign->save();
+    }
+
+    /**
+     * The job failed to process.
+     *
+     * @param  Exception  $exception
+     * @return void
+     */
+    public function failed(Exception $exception)
+    {
+        // Get the campaign that this job for
+        $campaign = campaign::findOrFail($this->campaignId);
+        // change the status of the campaign
+        $campaign->status = "failed";
         // save changes
         $campaign->save();
     }
