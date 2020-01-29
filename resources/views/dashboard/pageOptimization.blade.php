@@ -42,6 +42,8 @@
 
 @section('content')
 <div class="container-fluid" id="printable">    
+    {{-- if data is passed to this blade don't show the form --}}
+    @if(empty($report))
         <div class="row">
                 {!! Form::open(['id'=>'the-form']) !!}
                 <div class="col-lg-5 col-md-5 col-sm-6 col-xs-12">
@@ -62,6 +64,7 @@
                 </div>
                 {!! Form::close() !!}
         </div>
+        @endif
 
         
 
@@ -128,6 +131,8 @@
 <script src="{{url('bower_components/progressbar.js/dist/progressbar.min.js')}}" ></script>
 
 <script>
+@if(empty($report))
+
   $( "#button" ).click(function() {
     if($("#the-form")[0].checkValidity()) {
   
@@ -161,6 +166,17 @@
         $("#the-form")[0].reportValidity();
     }
 });
+@else
+var jsondata = @json($report, JSON_PRETTY_PRINT);
+$.get("{{url('templates/panelComponent.hbs')}}", function (data) {
+                var template=Handlebars.compile(data);      
+                $("#checks").html(template(jsondata.checks));
+                    // update view
+                    updateView(jsondata);
+                    attachProcessPar(jsondata);
+                    $('#print-btn').show();
+                }, 'html');  
+@endif
 
 function updateView(jsondata){
     $('#upper-board').show();

@@ -185,7 +185,7 @@
         <div id="printable">
             <div style="display:none; padding-bottom: 15px;" id="upper-board">
                 <div class="row">
-                    <div class="crawl-items">
+                    <div>
                         <label class="crawl-items-label">
                             @lang('site-url') :
                         </label>                
@@ -197,7 +197,7 @@
                             </svg>
                         </a>                    
                     </div>
-                    <div class="crawl-items">
+                    <div>
                         <label class="crawl-items-label">
                             @lang('last-crawling-time') :
                         </label>                

@@ -343,5 +343,64 @@
     "edit":"Edit",
     "edit-campaign":"Edit Campaign Settings",
     "save-changes":"Save Changes",
-    "failed":"Failed"
+    "failed":"Failed",
+    "campaign":"Campaign",
+    "site-metrics":"Site Metrics",
+
+    "globalAlexaRank":"Alexa Global Rank",
+    "alexaReach":"Alexa Reach",
+    "rankDelta":"Change In Rank",
+    "countryName":"Top Country",
+    "countryRank":"Top Country Rank",
+    "alexaBackLinksCount":"Alexa Backlinks",
+    "PageAuthority":"Page Authority",
+    "DomainAuthority":"Domain Authority",
+    "MozTotalLinks":"Total Backlinks",
+    "MozExternalEquityLinks":"Dofollow Backlinks",
+
+    "globalAlexaRankSubtitle":"Global Alexa rank in global internet traffic and engagement over the past 90 days.",
+    "alexaReachSubtitle":"Estimated reach to the site according to Alexa statics.",
+    "rankDeltaSubtitle":"The amount of change in gobal Alexa rank for this site.",
+    "countryNameSubtitle":"Top country that visitors to this site came from.",
+    "countryRankSubtitle":"Rank of the site in this country",
+    "alexaBackLinksCountSubtitle":"Backlinks that are indexed by Alexa",
+    "PageAuthoritySubtitle":"Page Authority (PA) is a score developed by Moz that predicts how well a specific page will rank on search engine result pages (This score for the home page of the site).",
+    "DomainAuthoritySubtitle":"Domain Authority (DA) is a search engine ranking score developed by Moz that predicts how well a website will rank on search engine result pages (SERPs).",
+    "MozTotalLinksSubtitle":"Backlinks are incoming links to a webpage. When a webpage links to any other page, it's called a backlink.",
+    "MozExternalEquityLinksSubtitle":"Dofollow backlinks allow search engines to follow them and reach your website. Basically, these are links that will pass on the SEO benefits (link juice) of the website where it is built from to the hyperlinked website.",
+    "page-spead-analysis":"Website Load Speed",
+
+    "pageStats":"Page Stats",
+    "pageStatsSubtitle":"Page stats show you the number of resources on the page in addition to the size of requests, the number of hosts for these resources, and the type and number of resources",
+    "stats":"Stats",
+    "values":"Values",
+    "numberResources":"Resources number",
+    "numberHosts":"Hosts number",
+    "totalRequestBytes":"Request size (Bytes)",
+    "numberStaticResources":"Static resources number",
+    "htmlResponseBytes":"HTML file size (Bytes)",
+    "cssResponseBytes":"CSS files size (Bytes)",
+    "imageResponseBytes":"Image files size (Bytes)",
+    "javascriptResponseBytes":"JavaScript files size (Bytes)",
+    "otherResponseBytes":"Other files size (Bytes)",
+    "numberJsResources":"JavaScript resources number",
+    "numberCssResources":"CSS resources number",
+    "speed-score":"Page Speed Score",
+    "speed-scoreSubtitle":"The score indicate the performance of the page score ranges:  0 to 49 (slow): Red, 50 to 89 (average): Orange and  90 to 100 (fast): Green",
+    "speed-optimization":"Speed Optimization",
+    "speed-optimizationSubtitle":"These suggestions can help your page load faster.",
+    "optimization-suggestions":"Optimization Suggestions",
+    "impact-percent":"Impact Percent On Page Speed",
+
+
+
+
+
+
+
+
+    "site-crawl":"Site Crawl",
+    "top-problems":"Top Issues",
+    "problems":"Issues",
+    "problem":"Issue"
 }

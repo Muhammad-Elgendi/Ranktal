@@ -371,8 +371,8 @@ function printDiv(divID) {
 
   //Reset the page's HTML with div's HTML only
   document.body.innerHTML =
-      "<html><head><title>@yield('title')</title></head><body>" +
-      divElements + "</body>";
+      "<html><head><title>@yield('title')</title></head><body><div style=\"margin: 0 15px 0 15px;\">" +
+      divElements + "</div></body>";
 
   //Print Page
   window.print();

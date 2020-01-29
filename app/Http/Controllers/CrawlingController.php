@@ -219,7 +219,8 @@ class CrawlingController extends Controller
 
                 $array['issues'][] = $issueArray;
             } else {
-                $response['count'][] = [__($issue), 0];
+                // comment this to not add labels for non existed problems
+                // $response['count'][] = [__($issue), 0];
             }
         }
         if (empty($array['issues'])) {

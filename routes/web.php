@@ -67,6 +67,8 @@ $optionalLanguageRoutes = function () {
     Route::get('dashboard/seo-campaigns/edit/{id}', 'CampaignsController@edit')->name('seo-campaign-edit'); // Edit SEO Campaign view
     Route::post('dashboard/seo-campaigns/save', 'CampaignsController@saveEdit')->name('seo-campaign-saveEdit'); // save Edits SEO Campaign
     Route::get('dashboard/seo-campaigns/view/{id}', 'CampaignsController@view')->name('seo-campaign-view'); // View SEO Campaign
+    Route::get('dashboard/seo-campaigns/view/{campaign_id}/optimization/{page_id}', 'CampaignsController@viewOptimization')->name('seo-campaign-view-optimization'); // View optimization of page in Campaign
+
 
 
 

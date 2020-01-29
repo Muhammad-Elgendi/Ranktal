@@ -53,6 +53,6 @@ class Site extends Model
      */
     public function pageInsight()
     {
-        return $this->hasOne('App\PageInsight');
+        return $this->hasMany('App\PageInsight');
     }
 }
