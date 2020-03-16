@@ -452,7 +452,7 @@ $allowedMetrics = [
                             {{-- check if the report is ready --}}
                             @if(isset($optimization->report))
                                     <tr>                                    
-                                        <td><a href="#">{{ $optimization->url }}</a></td>
+                                        <td><a href="{{$optimization->url}}" target="_blank"> {{ $optimization->url }} </a></td>
                                         <td> {{ $optimization->keyword }}</td>
                                         <td>{{ $optimization->report['score'] }}</td>
                                         <td>

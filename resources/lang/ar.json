@@ -345,7 +345,7 @@
     "save-changes":"حفظ التغيرات",
     "failed":"فشل",
     "campaign":"حملة",
-    "site-metrics":"مقايس الموقع",
+    "site-metrics":"مقاييس الموقع",
 
     "globalAlexaRank":"الترتيب العالمي في اليكسا",
     "alexaReach":"عدد الزوار المتوقع",
@@ -402,5 +402,8 @@
     "site-crawl":"زحف الموقع",
     "top-problems":"أهم المشاكل",
     "problems":"المشاكل",
-    "problem":"مشكلة"
+    "problem":"مشكلة",
+    "toggle-panels":"فرد/طي التفاصيل",
+    "num":"رقم الصورة",
+    "src":"مصدر الصورة"
 }

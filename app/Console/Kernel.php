@@ -29,8 +29,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        // disable updating campaigns for now
         // schedule campaign that has to be updated
-        $schedule->call('App\Http\Controllers\CampaignsController@scheduleCampaign')->dailyAt("23:25")->runInBackground();
+        // $schedule->call('App\Http\Controllers\CampaignsController@scheduleCampaign')->dailyAt("23:25")->runInBackground();
         
         // clear bad proxies
         // $schedule->call(function(){

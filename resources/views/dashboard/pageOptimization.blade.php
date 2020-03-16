@@ -179,6 +179,8 @@ $.get("{{url('templates/panelComponent.hbs')}}", function (data) {
 @endif
 
 function updateView(jsondata){
+    // Add expand/shrink btn
+    $('#btns-section').append("<button class=\"btn btn-primary\" onclick=\"toggle()\"\"> <i class=\"fa fa-bullseye\"></i> @lang('toggle-panels')</button>")
     $('#upper-board').show();
     $('#url-value').text(jsondata.url).attr('href',jsondata.url);
     $('#title-value').text(jsondata.pageTitle);
@@ -216,6 +218,10 @@ function updateView(jsondata){
         $( "#issues-block" ).addClass( "active-issue" );
         $('#helping-block,#hurting-block').removeClass( "active-issue" );
     });
+}
+
+function toggle(){
+    $('.panel-heading').click();
 }
 
 function attachProcessPar(jsondata){

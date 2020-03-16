@@ -18,7 +18,7 @@ $optionalLanguageRoutes = function () {
 
     // Home الرئيسية
     Route::get('/', function () {
-        return view('welcome');
+        return redirect()->route('dashboard');
     })->name('home');
 
     // Membership system routes
@@ -44,7 +44,7 @@ $optionalLanguageRoutes = function () {
     // Route::get('keyword-research-view', 'KeywordResearchController@viewkeywordResearchUsingAjax')->name('keywordResearchAjax');
 
     // Endpoints routes
-    Route::get('checker', 'checkerController@findOrCreateCheck'); //Seo audit 
+    Route::get('checker', 'checkerController@viewChecksUsingAjax'); //Seo audit 
     Route::get('optimizer', 'optimizerController@check')->name('optimizer');  //Page optimization
     Route::get('metrics', 'metricsController@getMetrics');
     Route::get('pageInsights', 'pageInsightsController@getPageInsights');

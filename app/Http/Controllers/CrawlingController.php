@@ -313,7 +313,7 @@ class CrawlingController extends Controller
      * This function is responsable for sending a new crawling request to the crawler endpoint
      * @return status of response
      */
-    public function sendCrawlingRequest($siteUrl,$siteId,$exact,$pages = 5000,$crawlers = 3){
+    public function sendCrawlingRequest($siteUrl,$siteId,$exact,$pages = 600,$crawlers = 3){
         // Send Request to SEO-crawler server
         // For example
         // http://10.0.75.1:8888/audit?url=https://google.com/&pages=5000&crawlers=3&siteId=73&match=1
@@ -640,7 +640,7 @@ If you determine that the links on this page should be indexed, remove “X-Robo
         $result['metaNofollow'] = $metaNofollow;
 
         // Duplicate Titles
-        $duplicateTitles = DB::select("select a.url as src_url , a.title as src_title, b.url as dest_url , b.title as dest_title ,urls.crawl_depth from titles a INNER JOIN titles b ON a.title = b.title AND a.url != b.url INNER JOIN urls ON urls.url = a.url where urls.site_id =  " . $siteId);
+        $duplicateTitles = DB::select("select a.url as src_url , a.title as src_title, b.url as dest_url , b.title as dest_title ,urls.crawl_depth from titles a INNER JOIN titles b ON a.title = b.title AND a.url < b.url INNER JOIN urls ON urls.url = a.url where urls.site_id =  " . $siteId);
         $result['duplicateTitles'] = $duplicateTitles;
 
         // Description Too Short

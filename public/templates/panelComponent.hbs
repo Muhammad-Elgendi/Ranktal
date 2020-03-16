@@ -50,7 +50,15 @@
                     {{#each attributes}}
                     <tr>
                         <th>{{this.[0]}}</th>
-                        <td>{{{this.[1]}}}</td>
+                        <td>
+                                {{#each this.[1]}}
+                                    <p>
+                                        {{this}}
+                                    </p>
+                                {{else}}
+                                    {{{this.[1]}}}
+                                {{/each}}                          
+                        </td>
                     </tr>
                     {{/each}}
                 </tbody>

@@ -96,8 +96,14 @@
                             <span class="flag-icon flag-icon-{{config('app.flags')[app()->getLocale()]}}"></span>
                             {{-- <span class="caret"></span></a> --}}
                             <ul class="dropdown-menu">
-                            <li><a href="{{ route('lang.home',"ar") }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
-                            <li><a href="{{ route('lang.home',"en") }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
+                                {{-- Dynamic detect localization of current path --}}
+                                @if(in_array(substr(Request::path(),0,2),config('app.locales')))
+                                <li><a href="{{ url('ar/'.substr(Request::path(),3)) }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
+                                <li><a href="{{ url('en/'.substr(Request::path(),3))  }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
+                                @else
+                                <li><a href="{{ url('ar/'.Request::path()) }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
+                                <li><a href="{{ url('en/'.Request::path())  }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
+                                @endif
                             </ul>
                         </li>
                     </ul>

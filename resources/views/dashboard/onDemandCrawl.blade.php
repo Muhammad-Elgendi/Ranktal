@@ -329,7 +329,7 @@ function updateView(jsondata){
     });
 
     // Add sitemap btn
-    $('#btns-section').append("<a class=\"btn btn-primary\" href=\"{{route('demandCrawlsitemap')}}?id="+jsondata.siteId+"\"> <span class=\"glyphicon glyphicon-save-file\"></span> @lang('download-sitemap')</button>")
+    $('#btns-section').append("<a class=\"btn btn-primary\" href=\"{{route('demandCrawlsitemap')}}?id="+jsondata.siteId+"\"> <span class=\"glyphicon glyphicon-save-file\"></span> @lang('download-sitemap')</a>")
 
     // Show print btn
     $('#print-btn').show();

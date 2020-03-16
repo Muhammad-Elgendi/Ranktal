@@ -14,10 +14,9 @@ class Localize
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle($request, Closure $next)
-    {
+    public function handle($request, Closure $next){
         $requestLocale = $request->segment(1);
-        if (!in_array($requestLocale,config("app.locales"))) {
+        if (in_array($requestLocale,config("app.locales"))) {
             if (Auth::check()) { // first check if there is a logged in user
 
                 $userLanguage = Auth::user()->language; // get user language
@@ -25,10 +24,18 @@ class Localize
                 if (!empty($userLanguage)) {
                     app()->setLocale($userLanguage);
                 }
-            } else
+            }
+            else if(!empty($requestLocale)){
+                // set localization to the requested one
+                app()->setLocale($requestLocale);                
+            }
+            else{
+                /**
+                * Get the browser local code and lang code.
+                */
                 app()->setLocale($request->getPreferredLanguage(config('app.locales')));
+            }             
         }
-
         return $next($request);
     }
 }

@@ -402,5 +402,8 @@
     "site-crawl":"Site Crawl",
     "top-problems":"Top Issues",
     "problems":"Issues",
-    "problem":"Issue"
+    "problem":"Issue",
+    "toggle-panels":"Expand/Shrink details",
+    "num":"Photo No.",
+    "src":"Photo Source"
 }

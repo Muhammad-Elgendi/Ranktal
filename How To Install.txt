@@ -67,7 +67,7 @@ https://code.visualstudio.com/docs/?dv=linux64_deb
 cd Source Code/seo-saas/laradock/
 
 run containers 
-docker-compose up php-worker php-fpm workspace nginx postgres pgadmin tomcat chrome-debug
+docker-compose up php-worker php-fpm workspace nginx postgres mariadb pgadmin tomcat chrome-debug
 
 8- update .env file configuration
 postgres container name usually is laradock_postgres_1 change the name in the following commands
@@ -109,7 +109,7 @@ password : admin
 SIDE NOTES:-
 
 run containers 
-sudo  docker-compose up workspace php-worker nginx postgres pgadmin tomcat
+sudo  docker-compose up workspace php-worker nginx postgres mariadb pgadmin tomcat
 
 access php artisan or bash on workspace containers
 sudo docker-compose exec workspace bash
@@ -133,7 +133,7 @@ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' <co
 Notes for upgrading laradock
 copy your softwares that not included in laradock (folders ,.env, docker-compose.yaml software discription)
 rebuild your services
-docker-compose build --no-cache php-worker php-fpm workspace nginx postgres pgadmin tomcat chrome-debug chrome
+docker-compose build --no-cache php-worker php-fpm workspace nginx postgres mariadb pgadmin tomcat chrome-debug chrome
 
 If scheduled tasks doesn't work check for mutex files and remove cache 
 php artisan cache:clear

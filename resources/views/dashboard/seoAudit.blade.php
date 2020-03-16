@@ -205,6 +205,8 @@ function reaudit(number){
 }
 
 function updateView(jsondata){
+    // Add expand/shrink btn
+    $('#btns-section').append("<button class=\"btn btn-primary\" onclick=\"toggle()\"\"> <i class=\"fa fa-bullseye\"></i> @lang('toggle-panels')</button>")
     $('#upper-board').show();
     $('#url-value').text(jsondata.url).attr('href',jsondata.url);
     $('#title-value').text(jsondata.pageTitle);
@@ -238,7 +240,9 @@ function updateView(jsondata){
     });
 }
 
-
+function toggle(){
+    $('.panel-heading').click();
+}
 </script>
 
 @endsection
