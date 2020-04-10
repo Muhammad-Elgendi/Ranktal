@@ -1,7 +1,7 @@
 //  Tools features section
 
 // override click event for Carousel controls
-var $tabs = $('#carouselExampleIndicators>ul.nav-tabs>li>a');
+var $tabs = $('#featuresTabs>li>a');
 $('[data-slide="next"]').on('click', function () {
     if ($tabs.filter('.active').parent().next('li').length) {
         $tabs.filter('.active').parent().next('li').find('a[data-toggle="tab"]').tab('show');
@@ -27,4 +27,4 @@ $(document).bind('keyup', function (e) {
     }
 });
 
-// //  Tools features section
+//!!! Tools features section
