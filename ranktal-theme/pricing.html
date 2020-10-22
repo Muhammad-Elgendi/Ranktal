@@ -473,35 +473,37 @@
         <div class="container pb-3">
             <div class="row">
                 <div class="col-10 mx-auto">
-                    <div class="accordion" id="faqExample">
+
+                    <!-- Start of accordion -->
+                    <div id="accordion">
                         <div class="card">
-                            <div class="card-header p-2" id="headingOne">
+                            <div class="card-header" id="headingOne">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-toggle="collapse"
-                                        data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne"
+                                        aria-expanded="true" aria-controls="collapseOne">
                                         Q: What currency is this in?
                                     </button>
                                 </h5>
                             </div>
 
                             <div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
-                                data-parent="#faqExample">
+                                data-parent="#accordion">
                                 <div class="card-body">
                                     <b>Answer:</b> It's in US dollars.
                                 </div>
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-header p-2" id="headingTwo">
+                            <div class="card-header" id="headingTwo">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                    <button class="btn btn-link collapsed" data-toggle="collapse"
                                         data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                         Q: Can I change plans or cancel my account later?
                                     </button>
                                 </h5>
                             </div>
                             <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
-                                data-parent="#faqExample">
+                                data-parent="#accordion">
                                 <div class="card-body">
                                     You can upgrade, downgrade, or cancel your account at any time. Upgrade action will
                                     take effect immediately, while downgrade and cancellation actions become effective
@@ -510,9 +512,9 @@
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-header p-2" id="headingThree">
+                            <div class="card-header" id="headingThree">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                    <button class="btn btn-link collapsed" data-toggle="collapse"
                                         data-target="#collapseThree" aria-expanded="false"
                                         aria-controls="collapseThree">
                                         Q: If I cancel now, will I be able to use my account?
@@ -520,7 +522,7 @@
                                 </h5>
                             </div>
                             <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
-                                data-parent="#faqExample">
+                                data-parent="#accordion">
                                 <div class="card-body">
                                     Cancellation of the subscription does not limit account functionality instantly, as
                                     you have already purchased the subscription. When you cancel, you will still have
@@ -529,16 +531,16 @@
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-header p-2" id="headingFour">
+                            <div class="card-header" id="headingFour">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                    <button class="btn btn-link collapsed" data-toggle="collapse"
                                         data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
                                         Q: What types of payment do you accept?
                                     </button>
                                 </h5>
                             </div>
                             <div id="collapseFour" class="collapse" aria-labelledby="headingFour"
-                                data-parent="#faqExample">
+                                data-parent="#accordion">
                                 <div class="card-body">
                                     We accept all major credit cards, including Visa, Mastercard, Discover, American
                                     Express and UnionPay. We also accept PayPal.
@@ -546,16 +548,16 @@
                             </div>
                         </div>
                         <div class="card">
-                            <div class="card-header p-2" id="headingFive">
+                            <div class="card-header" id="headingFive">
                                 <h5 class="mb-0">
-                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                    <button class="btn btn-link collapsed" data-toggle="collapse"
                                         data-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
                                         Q: Are there any contracts, hidden charges or setup fees?
                                     </button>
                                 </h5>
                             </div>
                             <div id="collapseFive" class="collapse" aria-labelledby="headingFive"
-                                data-parent="#faqExample">
+                                data-parent="#accordion">
                                 <div class="card-body">
                                     No contracts, no hidden charges, no setup fees. There is no long-term commitment and
                                     you can cancel your subscription at any time.
@@ -563,7 +565,7 @@
                             </div>
                         </div>
                     </div>
-
+                    <!-- End of accordion -->
                 </div>
             </div>
             <!--/row-->
@@ -719,9 +721,8 @@
     ================================================== -->
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
         integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
         crossorigin="anonymous"></script>
