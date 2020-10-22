@@ -1,6 +1,6 @@
 <!-- Tools features section
     ================================================== -->
-    <section class="mb-3">
+    <section id="features" class="mb-3">
         <div class="container">
             <div class="text-center mt-2 mb-2">
                 <h2 class="my-3">
@@ -19,7 +19,7 @@
                     <?php $loop->the_post(); ?>
                     <li class="nav-item">
                         <a class="nav-link <?php echo ( $loop->current_post == 0 ) ? 'active' : ''; ?>" id="<?php echo str_replace(" ","",get_the_title()); ?>-tab" data-toggle="tab" role="tab" aria-controls="<?php echo str_replace(" ","",get_the_title()); ?>"
-                            aria-selected="true" href="#<?php echo str_replace(" ","",get_the_title()); ?>" data-target="#carouselExampleIndicators" data-slide-to="0">
+                            aria-selected="true" href="#<?php echo str_replace(" ","",get_the_title()); ?>" data-target="#carouselExampleIndicators" data-slide-to="<?php echo $loop->current_post; ?>">
                             <div class="text-center p-2">
                                 <?php the_field('feature_icon');?>
                                 <h5><?php the_title(); ?></h5>

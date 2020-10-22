@@ -87,16 +87,24 @@
     <div class="position-relative overflow-hidden p-3 p-md-5 text-center">
       <div class="col-md-6 p-lg-5 mx-auto my-5">
         <h1 class="display-4 font-weight-normal">
+        <?php if ( is_archive() ) : ?>
+          <?php the_archive_title(); ?>
+          <?php else :?>
           <?php single_post_title(); ?>
+          <?php endif; ?>
          </h1>
         <p class="lead font-weight-normal">
           <?php        
-            if ( !is_home() ) {   
-              // if not inside the posts page 
-              the_excerpt();
-            }else{
+            if ( is_single() ) {   
+              // if inside the single post page 
+              echo get_the_excerpt();
+            }
+            if ( is_home() ){
               // inside the posts page
               echo get_the_excerpt( get_option('page_for_posts') );
+            }
+            if (is_archive()){
+              echo get_the_archive_description();
             }
           ?>
            </p>

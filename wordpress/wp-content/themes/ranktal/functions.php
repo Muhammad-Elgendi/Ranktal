@@ -95,6 +95,17 @@ function ranktal_wpbs_pagination($pages = '', $range = 2){
 
 function ranktal_widget_areas(){
 
+      // Above Footer Area
+      register_sidebar(array(
+        'before_title' => '',
+        'after_title' => '',
+        'before_widget' => '',
+        'after_widget' => '',
+        'name' => 'Above Footer Area',
+        'id' => 'before_footer',
+        'description' => 'Above Footer Area (Included in search, single post, blog, 404, tags and catagories pages)'
+    ));
+
     // Social Links Area Above Footer
     register_sidebar(array(
         'before_title' => '<div class="col-md-6 col-lg-5 text-center text-md-left mb-4 mb-md-0"> <h6 class="mb-0">',

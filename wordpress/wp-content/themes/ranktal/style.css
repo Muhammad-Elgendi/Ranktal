@@ -546,7 +546,6 @@ background: white;
 vertical-align: baseline;
 border-radius: 3px;
 -moz-border-radius: 3px;
-cursor: pointer;
 overflow: hidden;
 }
 
@@ -570,10 +569,6 @@ padding: 18px 0 15px;
 margin: 0 0 30px;
 background: #4392F1;
 color: white;
-}
-
-.plan-tier {
-cursor: pointer;
 }
 
 .plan-tier sup {
@@ -635,13 +630,12 @@ padding-bottom: 96px;
 
 /* Most popular */
 
-/* .plan-tier.callout h6 {
+.plan-tier.callout h6 {
 width: 100%;
 padding: 15px 0 14px;
-background: #8dcf3f;
-color: rgba(39,65,90,.5);
+color: white;
 font-size: 1.25em;
-} */
+}
 
 .plan-tier.callout h4 {
 background-color: #DC493A;
