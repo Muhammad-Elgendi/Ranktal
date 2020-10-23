@@ -196,8 +196,14 @@ $allowedMetrics = [
         @endif
         @endforeach
     </div>
+
     {{-- Page Insights --}}
-    <div class="row">
+
+    {{-- ! Note We are getting nothing from page Insights API for now so we will disable this feature
+        for now
+    --}}
+
+    {{-- <div class="row">
         <p class="title margin-ver">@lang('page-spead-analysis')</p>
     </div>
 
@@ -217,9 +223,9 @@ $allowedMetrics = [
                                 <div class="card-body">
                                 @if(!empty($insight->pageInsight['pageStats']))
                                   <h4 class="card-title">@lang('pageStats')</h4>
-                                    <h6 class="card-subtitle mb-2 text-muted">@lang('pageStatsSubtitle')</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">@lang('pageStatsSubtitle')</h6> --}}
                                       {{-- View stats table --}}
-                                    <div class="panel-body table-responsive" id="stats-table">
+                                    {{-- <div class="panel-body table-responsive" id="stats-table">
                                         <table class="table table-hover table-bordered margin-ver">
                                             <thead>
                                                 <tr>
@@ -244,9 +250,9 @@ $allowedMetrics = [
                                     @endif
                                     @if(!empty($insight->pageInsight['formattedResults']['ruleResults']))
                                     <h4 class="card-title">@lang('speed-optimization')</h4>
-                                    <h6 class="card-subtitle mb-2 text-muted">@lang('speed-optimizationSubtitle')</h6>
+                                    <h6 class="card-subtitle mb-2 text-muted">@lang('speed-optimizationSubtitle')</h6> --}}
                                       {{-- View optimization table --}}
-                                      <div class="panel-body table-responsive" id="optimization-table">
+                                      {{-- <div class="panel-body table-responsive" id="optimization-table">
                                         <table class="table table-hover table-bordered margin-ver">
                                             <thead>
                                                 <tr>
@@ -273,9 +279,9 @@ $allowedMetrics = [
                                   <h4 class="card-title">
                                       @lang('speed-score')
                                       <i class="fa fa-question-circle-o" data-toggle="tooltip" data-placement="bottom" title="@lang('speed-scoreSubtitle')"></i>
-                                  </h4>
-                                  {{-- <h6 class="card-subtitle mb-2 text-muted">@lang('speed-scoreSubtitle')</h6> --}}
-                                  <p class="card-text speed-score" style="font-size: 40px;">{{$insight->pageInsight['speed']}}</p>
+                                  </h4> --}}
+                                  {{-- disable this for now <h6 class="card-subtitle mb-2 text-muted">@lang('speed-scoreSubtitle')</h6> --}}
+                                  {{-- <p class="card-text speed-score" style="font-size: 40px;">{{$insight->pageInsight['speed']}}</p>
                                   @if($insight->type == "mobile")
                                   <!-- phone container -->
                                     <div class="iphone">
@@ -299,7 +305,7 @@ $allowedMetrics = [
                 </div>
             @endforeach
           </div>    
-    </div>
+    </div> --}}
 
     {{-- Site Crawl--}}
     <div class="row">

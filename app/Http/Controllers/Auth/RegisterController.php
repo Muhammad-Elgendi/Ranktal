@@ -6,6 +6,7 @@ use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Carbon;
 
 class RegisterController extends Controller
 {
@@ -29,6 +30,9 @@ class RegisterController extends Controller
      */
     protected $redirectTo = '/dashboard';
 
+    // Register new users with trial period (In days)
+    public $trial_period = 3;
+    //
     /**
      * Create a new controller instance.
      *
@@ -66,6 +70,7 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
+            'subscribed_until' => Carbon::now()->addDay($this->trial_period)
         ]);
     }
 

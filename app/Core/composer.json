@@ -4,6 +4,7 @@
         "t1gor/robots-txt-parser": "dev-master",
         "vlucas/phpdotenv": "^2.5",
         "serps/search-engine-google": "^0.4.8",
-        "zendframework/zend-diactoros": "^2.1"
+        "zendframework/zend-diactoros": "^2.1",
+        "paypal/paypal-checkout-sdk": "1.0.1"
     }
 }

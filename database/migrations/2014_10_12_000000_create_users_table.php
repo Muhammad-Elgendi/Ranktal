@@ -20,6 +20,9 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->string('language')->nullable();
+            $table->string('plan')->nullable();
+            $table->timestamp('subscribed_until');
+            $table->string('subscription_id')->nullable();
             $table->timestamps();
         });
     }

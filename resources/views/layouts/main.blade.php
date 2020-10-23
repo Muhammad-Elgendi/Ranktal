@@ -18,9 +18,21 @@
     <link rel="stylesheet" href="{{url('bower_components/Ionicons/css/ionicons.min.css')}}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{url('dist/css/AdminLTE.min.css')}}">
-    <!-- AdminLTE Skins. Choose a skin from the css/skins
-         folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="{{url('dist/css/skins/_all-skins.min.css')}}">
+
+    {{-- 
+
+        ! Note
+
+        <!-- AdminLTE Skins. Choose a skin from the css/skins
+        folder instead of downloading all of them to reduce the load. 
+        To load all skins load _all-skins.min.css from skins folder
+        But I am using skin-blue-light.css--> 
+        
+    --}}
+    <!-- AdminLTE blue-light skin -->
+    <link rel="stylesheet" href="{{url('dist/css/skins/skin-blue-light.css')}}">
+
+
     <!-- jvectormap -->
     <link rel="stylesheet" href="{{url('bower_components/jvectormap/jquery-jvectormap.css')}}">
     <!-- Date Picker -->
@@ -44,7 +56,8 @@
     <link href="https://fonts.googleapis.com/css?family=Cairo" rel="stylesheet">
 
     @if (in_array(app()->getLocale(),config('app.rtl')))
-    {{-- <!-- Load Bootstrap3.3.7-rtl -->
+
+    {{-- <!-- Load Bootstrap3.3.7-rtl (bootstrap rtl older version) -->
     <link rel="stylesheet" href="{{url('bower_components/bootstrap-3.3.7-rtl/css/bootstrap.min.css')}}"> --}}
 
       <!-- Bootstrap 3.3.7 -->
@@ -63,11 +76,18 @@
     <!-- flag-icon -->
     <link rel="stylesheet" href="{{url('bower_components/flag-icon-css/css/flag-icon.min.css')}}">
 
-   
+   <!-- App stylesheet -->
+   <link rel="stylesheet" href="{{url('css/main.css')}}">
+
+    <!-- favicon -->
+    <link rel="icon" href="{{url('img/favicon.ico')}}">
+    
     @yield('styles')
 </head>
+
     {{--
-         Skins
+    Skins
+
     Skins can be found in the dist/css/skins folder.
     Choose the skin file that you want and then add the appropriate class to the body tag 
     to change the template's appearance.
@@ -87,16 +107,21 @@
     skin-black-light
     
     --}}
-<body class="hold-transition skin-blue sidebar-mini">
+
+<body class="hold-transition skin-blue-light sidebar-mini">
 <div class="wrapper">
 
     <header class="main-header">
         <!-- Logo -->
         <a href="{{url('/')}}" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
-            <span class="logo-mini"><b>S</b>AR</span>
+            <span class="logo-mini">
+                <i class="fa fa-location-arrow"></i>
+            </span>
             <!-- logo for regular state and mobile devices -->
-            <span class="logo-lg"><b>Seo</b>AR</span>
+            <span class="logo-lg">
+                {{ucfirst(config('app.name'))}}
+            </span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top">
@@ -126,9 +151,12 @@
                             </li>                         
                             <!-- Menu Footer-->
                             <li class="user-footer">
-                                <div class="pull-right">
+
+                                {{-- profile button --}}
+                                {{-- <div class="pull-right">
                                     <a href="#" class="btn btn-default btn-flat">@lang('profile')</a>
-                                </div>
+                                </div> --}}
+                                
                                 <div class="pull-left">
                                     <a href="{{ route('lang.logout', app()->getLocale()) }}"
                                        onclick="event.preventDefault();
@@ -239,6 +267,7 @@
                         <li><a href="{{route('lang.seo-campaign-create',app()->getLocale())}}"><i class="fa fa-plus"></i>@lang('create-campaign')</a></li>
                      </ul>
                 </li>
+
                 {{-- Old seo report tool --}}
                 {{-- <li class="treeview">
                         <a href="#">
@@ -253,7 +282,8 @@
                             <li><a href="{{url('on-page-reports')}}"><i class="fa fa-circle-o"></i>@lang('onpage-reports')</a></li>
                         </ul>
                     </li>      --}}
-                    {{-- Keywords tools --}}
+
+                {{-- Keywords tools --}}
                 {{-- <li class="header">@lang("keywords")</li>
                 <li>
                     <a href="{{route('lang.keyword-tracker',app()->getLocale())}}">
@@ -273,12 +303,14 @@
                        <li><a href="index2.html"><i class="fa fa-circle-o"></i> Dashboard v2</a></li>
                      </ul> --> --}}
                 {{-- </li> --}}
-                <li class="header">@lang("backlinks")</li>
+
+                {{-- Backlinks  --}}
+                {{-- <li class="header">@lang("backlinks")</li>
                 <li>
                     <a href="{{route('lang.backlinks-checker',app()->getLocale())}}">
                         <i class="fa fa-crosshairs"></i> <span>@lang("backlinks-checker")</span>
                     </a>              
-                </li>  
+                </li>   --}}
             
                 <li class="header">@lang("support")</li>       
                 <li>

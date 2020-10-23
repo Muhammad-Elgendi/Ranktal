@@ -8,39 +8,44 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ucfirst(config('app.name'))}}</title>
+    <title>{{ucfirst(config('app.name'))}}</title>  
 
-    <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{url('bower_components/font-awesome/css/font-awesome.min.css')}}">
 
     <!-- flag-icon -->
     <link rel="stylesheet" href="{{url('bower_components/flag-icon-css/css/flag-icon.min.css')}}">
 
     @if(in_array(app()->getLocale(),config('app.rtl')))
   
-   {{-- <!-- Load Bootstrap3.3.7-rtl -->
+   {{-- <!-- Load Bootstrap3.3.7-rtl (Bootstrap rtl older version) -->
     <link rel="stylesheet" href="{{url('bower_components/bootstrap-3.3.7-rtl/css/bootstrap.min.css')}}"> --}}
 
-      <!-- Bootstrap 3.3.7 -->
-      <link rel="stylesheet" href="{{url('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="{{url('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
       
     <!-- Load bootstrap-rtl-ondemand -->
     <link rel="stylesheet" href="{{url('bower_components/bootstrap-rtl-ondemand/dist/css/bootstrap-rtl-ondemand.min.css')}}">
 
-  
     @else
     <!-- Bootstrap 3.3.7 -->
     <link rel="stylesheet" href="{{url('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
     @endif
+
+    <!-- App stylesheet -->
+    <link rel="stylesheet" href="{{url('css/app.css')}}">
+
+    <!-- favicon -->
+    <link rel="icon" href="{{url('img/favicon.ico')}}">
     
-    <link href="{{ asset('css/membership.css') }}" rel="stylesheet">
 </head>
-<body>
+<body class="bcolor-3">
     <div id="app">
-        <nav class="navbar navbar-default navbar-static-top">
+        <nav class="navbar navbar-static-top navbar-default">
             <div class="container">
                 <!-- Branding Image -->
                 <a class="{{ in_array(app()->getLocale(),config('app.rtl')) ? "navbar-brand navbar-right" : "navbar-brand" }}" href="{{ url('/') }}">
+                    <i class="fa fa-lg fa-location-arrow logo"></i>
                     {{ucfirst(config('app.name'))}}
                 </a>
 
@@ -67,8 +72,8 @@
                     <ul class="nav navbar-nav navbar-right">
                         <!-- Authentication Links -->
                         @guest
-                            <li><a href="{{ route('lang.login', app()->getLocale()) }}">@lang('signin')</a></li>
-                            <li><a href="{{ route('lang.register', app()->getLocale()) }}">@lang('signup')</a></li>
+                            <li><a  href="{{ route('lang.login', app()->getLocale()) }}">@lang('signin')</a></li>
+                            <li><a  href="{{ route('lang.register', app()->getLocale()) }}">@lang('signup')</a></li>
                         @else
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true">

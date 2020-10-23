@@ -27,11 +27,13 @@ $optionalLanguageRoutes = function () {
     //Views
     Route::get('dashboard', 'HomeController@index')->name('dashboard'); //Dashboard
     Route::get('dashboard/page-optimization', 'optimizerController@index')->name('page-optimization'); //Page optimization view    
-    Route::get('dashboard/backlinks-checker', 'backlinksController@index')->name('backlinks-checker'); //Backlinks checker view
     Route::get('dashboard/seo-audit', 'checkerController@index')->name('seo-audit'); //Seo audit view
     Route::get('dashboard/on-demand-crawl', 'CrawlingController@index')->name('on-demand-crawl'); // Site Crawl view
     Route::get('dashboard/seo-campaigns', 'CampaignsController@index')->name('seo-campaigns'); // SEO Campaigns view
+    Route::get('dashboard/plans', 'CheckoutController@plans')->name('plans'); // plans view
 
+
+    // Route::get('dashboard/backlinks-checker', 'backlinksController@index')->name('backlinks-checker'); //Backlinks checker view
     // Route::get('dashboard/keyword-tracker', 'KeywordTrackerController@index')->name('keyword-tracker'); // Keyword Tracker View
     // Route::get('dashboard/keyword-research', 'KeywordResearchController@index')->name('keyword-research'); // Keyword Research View
 
@@ -51,6 +53,9 @@ $optionalLanguageRoutes = function () {
     Route::get('backlinks', 'backlinksController@handleBacklinks'); //Backlinks checker
     Route::get('crawl', 'CrawlingController@doSiteCrawl'); //Site Crawl
     Route::get('demand-crawl-sitemap', 'CrawlingController@generateSitemap')->name('demandCrawlsitemap'); // Generate an XML site map of a site 
+
+    // Actions routes - plans
+    Route::post('dashboard/checkout', 'CheckoutController@updatePlan')->name('checkout'); // Update User Plan
 
     // Actions routes - seo-audit
     Route::delete('seo-audit-delete/{id}', 'checkerController@destroy')->name('seoAuditDelete');

@@ -31,10 +31,13 @@ class ComposerStaticInit4032716df9866901fcfd1c11337d57e8
             'Symfony\\Component\\CssSelector\\' => 30,
             'Serps\\SearchEngine\\Google\\' => 26,
             'Serps\\' => 6,
+            'Sample\\' => 7,
         ),
         'P' => 
         array (
             'Psr\\Http\\Message\\' => 17,
+            'PayPalHttp\\' => 11,
+            'PayPalCheckoutSdk\\' => 18,
         ),
         'M' => 
         array (
@@ -77,10 +80,22 @@ class ComposerStaticInit4032716df9866901fcfd1c11337d57e8
         array (
             0 => __DIR__ . '/..' . '/serps/core/src',
         ),
+        'Sample\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/paypal/paypal-checkout-sdk/samples',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-factory/src',
             1 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'PayPalHttp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/paypal/paypalhttp/lib/PayPalHttp',
+        ),
+        'PayPalCheckoutSdk\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/paypal/paypal-checkout-sdk/lib/PayPalCheckoutSdk',
         ),
         'MaxMind\\WebService\\' => 
         array (

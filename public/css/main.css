@@ -1,0 +1,80 @@
+/* 
+This file is to customize main layout
+Also overriding AdminLTE theme styling
+Especially blue-light skin
+*/
+
+/* colors */
+.color-1 {
+    color : #4392F1;
+}
+.color-2{
+    color: #DC493A;
+}
+.color-3{
+    color: #E7F0FF;
+}
+.color-4{
+    color: #E3EBFF;
+}
+.color-5{
+    color: #ECE8EF;
+}
+
+/* background colors */
+.bcolor-1 {
+    background-color: #4392F1;
+}
+.bcolor-2{
+    background-color: #DC493A;
+}
+.bcolor-3{
+    background-color: #E7F0FF;
+}
+.bcolor-4{
+    background-color: #E3EBFF;
+}
+.bcolor-5{
+    background-color: #ECE8EF;
+}
+
+/* Navbar section  */
+.skin-blue-light .main-header .navbar {
+    background-color: #4392F1;
+}
+.skin-blue-light .main-header .logo {
+    background-color: #4392F1;
+}
+.skin-blue-light .main-header .logo:hover{
+    background-color: #3C83D9;
+    text-decoration: none;
+}
+.skin-blue-light .main-header .navbar .sidebar-toggle:hover {
+    background-color: #3C83D9;
+    text-decoration: none;
+}
+.skin-blue-light .main-header li.user-header {
+    background-color: #4392F1;
+}
+.skin-blue-light .logo{
+    color: #fff;
+}
+/*!!! Navbar section  */
+
+/* Content Section */
+.skin-blue-light .content-wrapper {
+    background-color: #E7F0FF;
+}
+.skin-blue-light .btn-primary {
+    background-color: #4392F1;
+    border-color: #4392F1;
+}
+.skin-blue-light .nav-pills>li.active>a,
+.skin-blue-light .nav-pills>li.active>a:hover,
+.skin-blue-light .nav-pills>li.active>a:focus {
+    border-top-color: #4392F1;
+    background-color: #4392F1;
+}
+/*!!! Content Section */
+
+
