@@ -145,96 +145,179 @@ background-color: #DC493A;
 
 /*!!! Pricing */
 
+/* Loader Section */
+.container {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  min-height: 100vh;
+}
+
+.loader {
+  max-width: 15rem;
+  width: 100%;
+  height: auto;
+  stroke-linecap: round;
+}
+
+circle {
+  fill: none;
+  stroke-width: 3.5;
+  -webkit-animation-name: preloader;
+          animation-name: preloader;
+  -webkit-animation-duration: 3s;
+          animation-duration: 3s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-transform-origin: 170px 170px;
+          transform-origin: 170px 170px;
+  will-change: transform;
+}
+circle:nth-of-type(1) {
+  stroke-dasharray: 550;
+}
+circle:nth-of-type(2) {
+  stroke-dasharray: 500;
+}
+circle:nth-of-type(3) {
+  stroke-dasharray: 450;
+}
+circle:nth-of-type(4) {
+  stroke-dasharray: 300;
+}
+circle:nth-of-type(1) {
+  -webkit-animation-delay: -0.15s;
+          animation-delay: -0.15s;
+}
+circle:nth-of-type(2) {
+  -webkit-animation-delay: -0.3s;
+          animation-delay: -0.3s;
+}
+circle:nth-of-type(3) {
+  -webkit-animation-delay: -0.45s;
+  -moz-animation-delay:  -0.45s;
+          animation-delay: -0.45s;
+}
+circle:nth-of-type(4) {
+  -webkit-animation-delay: -0.6s;
+  -moz-animation-delay: -0.6s;
+          animation-delay: -0.6s;
+}
+
+@-webkit-keyframes preloader {
+  50% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+
+@keyframes preloader {
+  50% {
+    -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+  }
+}
+
+/*!!! Loader Section */
+
 </style>
 @endsection
 
 
 @section('content')
 
-
+<meta name="csrf-token" content="{{csrf_token()}}">
+<div id="plans">
 {!! $plan_html !!}
+</div>
+
+<div class="container" id="loader" style="display: none;">
+	
+	<svg class="loader" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 340">
+		 <circle cx="170" cy="170" r="160" stroke="#4392F1"/>
+		 <circle cx="170" cy="170" r="135" stroke="#DC493A"/>
+		 <circle cx="170" cy="170" r="110" stroke="#E7F0FF"/>
+     <circle cx="170" cy="170" r="85" stroke="#E3EBFF"/>
+	</svg>
+	
+</div>
 
 @endsection
 
 @section('scripts')
+
 <script src="https://www.paypal.com/sdk/js?client-id=AXa8kAmW6osPvSCXl_ClAaM2KkGsKXNJks3ttRxySwoAwTG5TfKF_NGs-a9Zz7l60mR9-K9DEqRTm0qu&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+
 <script>
+
+function notifyBackend(subscription,plan){
+
+// show loader on screen whilst wating backend reply
+$('#plans').hide();
+$('#loader').show();
+
+// notify the backend
+$.post("{{route('lang.checkout',app()->getLocale())}}", {
+    _token: "{{ csrf_token() }}",
+    subscriptionID     : subscription,
+    planID : plan
+}, function( html ) {
+  
+// show thank you page to the user
+$('#loader').hide();
+$( "#plans" ).html(html);
+$('.content-header h1').text('')
+$('#plans').show();
+},'html');
+
+}
+
 paypal.Buttons({
-  style: {
-    shape: 'rect',
-    color: 'gold',
-    layout: 'vertical',
-    label: 'subscribe'
-  },
-  createSubscription: function(data, actions) {
-    return actions.subscription.create({
+    style: {
+        shape: 'rect',
+        color: 'gold',
+        layout: 'vertical',
+        label: 'subscribe'
+    },
+    createSubscription: function(data, actions) {
+      return actions.subscription.create({
         'plan_id': 'P-5M7067117B8503722L6I5B2Q'
-    });
-    },  
+      });
+    },
     onApprove: function(data, actions) {
-   
-            // show loader on screen whilst wating to redirect
-            // $('.checkout-loader').addClass('active');
-            
-            // excute php script
-            var EXECUTE_URL = "{{route('checkout')}}";
-            // Authorize the transaction
-            actions.order.capture().then(function(details) {
-                // Call your server to validate and capture the transaction               
-                return $.post(EXECUTE_URL, JSON.stringify({
-                        subscriptionID     : data.orderID,
-                        planID : 'P-5M7067117B8503722L6I5B2Q'
-                    }), function( data ) {
-
-                    $( "#pricing" ).html('<h1>'+ data + '</h1>');
-
-                });     
-            });
-        }
+      notifyBackend(data.subscriptionID,'P-5M7067117B8503722L6I5B2Q');
+    }
 }).render('#plan0');
 
 paypal.Buttons({
-  style: {
-    shape: 'rect',
-    color: 'gold',
-    layout: 'vertical',
-    label: 'subscribe'
-  },
-  createSubscription: function(data, actions) {
-    return actions.subscription.create({
+    style: {
+        shape: 'rect',
+        color: 'gold',
+        layout: 'vertical',
+        label: 'subscribe'
+    },
+    createSubscription: function(data, actions) {
+      return actions.subscription.create({
         'plan_id': 'P-8HM887005N024444DL6I5HPY'
-    });
+      });
     },
     onApprove: function(data, actions) {
-   
-   // show loader on screen whilst wating to redirect
-   // $('.checkout-loader').addClass('active');
-   
-   // excute php script
-   var EXECUTE_URL = "{{route('checkout')}}";
-   // Authorize the transaction
-   actions.order.capture().then(function(details) {
-       // Call your server to validate and capture the transaction               
-       return $.post(EXECUTE_URL, JSON.stringify({
-               subscriptionID     : data.orderID,
-               planID : 'P-8HM887005N024444DL6I5HPY'
-           }), function( data ) {
-
-           $( "#pricing" ).html('<h1>'+ data + '</h1>');
-
-       });     
-   });
-}
+      notifyBackend(data.subscriptionID,'P-8HM887005N024444DL6I5HPY');
+    }
 }).render('#plan1');
-
-
 
 </script>
 
 @endsection
 
-
 @section('user-image',url('/img/user.png'))
-
 
 @section('user-type',__('pro-plan'))

@@ -77,4 +77,15 @@ Especially blue-light skin
 }
 /*!!! Content Section */
 
+/* Custom styles for specific pages */
 
+/* Thank you Page */
+.jumbotron {
+    background-color: #E7F0FF;
+}
+.jumbotron>hr {
+    border-top-color: #4392F1;
+}
+/*!!! Thank you Page */
+
+/*!!! Custom styles for specific pages */

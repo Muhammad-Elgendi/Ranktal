@@ -92,6 +92,8 @@ return [
 
     'rtl' =>['ar'],
 
+    'homepage' => env('HOME_PAGE', 'http://localhost'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Fallback Locale

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+
 
 class CheckoutController extends Controller
 {
@@ -26,17 +28,24 @@ class CheckoutController extends Controller
         $planID = $request->get('planID');
         $subscriptionID = $request->get('subscriptionID');
 
+        $user = Auth::user();
         // Check if vaild subscribtion was made
         if(!empty($planID) && !empty($subscriptionID) && isset($plans[$planID]) ){
-            Auth::user()->plan = $plans[$planID];
-            Auth::user()->subscription_id = $subscriptionID;
-            Auth::user()->subscribed_until = Carbon::now()->addDay(30);
-            Auth::user()->save();
-            return "Successful payment :)";
+            
+            $user->plan = $plans[$planID];
+            $user->subscription_id = $subscriptionID;
+            $user->subscribed_until = Carbon::now()->addDay(30);
+            $user->save();
+            return view('thankyou')
+            ->with('name',$user->name)
+            ->with('plan',$user->plan)
+            ->with('end_date',$user->subscribed_until->toDayDateTimeString());
+             
+        }else{
+            // Failed Payment
+            return view('failedpayment')
+            ->with('name',$user->name);
         }
-
-        return "Failed payment :(";
-
     }
 
     // View current plans to user

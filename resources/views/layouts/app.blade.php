@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ucfirst(config('app.name'))}}</title>  
+    <title>@yield('title') &#8211; {{ucfirst(config('app.name'))}}</title>  
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{url('bower_components/font-awesome/css/font-awesome.min.css')}}">

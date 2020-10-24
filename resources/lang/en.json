@@ -330,7 +330,7 @@
     "takes-time":"Some things take time !",
     "come-back-later":"Come back later :)",
     "download-sitemap":"Download Sitemap",
-    "create-campaign":"Create Campaign",
+    "create-campaign":"Create a Campaign",
     "campaign-name":"Campaign Name",
     "update-interval":"Update Campaign Data",
     "every-7-days":"Every 7 Days",
@@ -406,5 +406,10 @@
     "toggle-panels":"Expand/Shrink details",
     "num":"Photo No.",
     "src":"Photo Source",
-    "plans":"Choose your subscription"
+    "plans":"Choose your subscription",
+    "page-not-found":"Page Not Found",
+    "have-nothing":"Have Nothing ?",
+    "warning":"Warning",
+    "no-subscribtion-message":"You are not currently subscribed, the trial period will expire on",
+    "subscribe-now":"Subscribe Now"
 }

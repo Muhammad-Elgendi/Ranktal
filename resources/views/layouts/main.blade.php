@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title')</title>
+    <title>@yield('title') &#8211; {{ucfirst(config('app.name'))}}</title>
 
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -113,7 +113,7 @@
 
     <header class="main-header">
         <!-- Logo -->
-        <a href="{{url('/')}}" class="logo">
+        <a href="{{route('lang.dashboard', app()->getLocale())}}" class="logo">
             <!-- mini logo for sidebar mini 50x50 pixels -->
             <span class="logo-mini">
                 <i class="fa fa-location-arrow"></i>
@@ -133,6 +133,7 @@
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
               
+                    @auth
                 <!-- User Account: style can be found in dropdown.less -->
                     <li class="dropdown user user-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -170,6 +171,7 @@
                             </li>
                         </ul>
                     </li>
+                    @endauth
                     <!-- Control Sidebar Toggle Button -->
                     {{-- <li>
                         <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
@@ -256,17 +258,21 @@
                         <i class="fa fa-bug"></i> <span>@lang('on-demand-crawl')</span>
                     </a>     
                 </li>
+                
                 <li>
                     <a href="{{route('lang.seo-campaigns',app()->getLocale())}}">
                         <i class="fa fa-bullhorn"></i> <span>@lang('seo-campaigns')</span>
                     </a>
+                    @auth
                     <ul class="treeview-menu">
                         @foreach(Auth::user()->campaigns as $campaign)
                             <li><a href="{{route('lang.seo-campaign-view',['lang'=> app()->getLocale(),'id'=> $campaign->id])}}"><i class="fa fa-bullhorn"></i>{{$campaign->name}}</a></li>
                         @endforeach
                         <li><a href="{{route('lang.seo-campaign-create',app()->getLocale())}}"><i class="fa fa-plus"></i>@lang('create-campaign')</a></li>
                      </ul>
+                     @endauth
                 </li>
+              
 
                 {{-- Old seo report tool --}}
                 {{-- <li class="treeview">
@@ -314,7 +320,7 @@
             
                 <li class="header">@lang("support")</li>       
                 <li>
-                        <a href="#">
+                        <a href="{{config('app.homepage')}}/help" target="_blank">
                             <i class="fa fa-life-ring"></i> <span>@lang("help-desk")</span>
                         </a>                     
                     </li>     

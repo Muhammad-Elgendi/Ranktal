@@ -89,7 +89,9 @@
 <div class="container-fluid">
     <div class="row">           
         <div class="col-lg-2 col-md-2 col-sm-3 col-xs-12">
-            <a href="{{route('lang.seo-campaign-create',app()->getLocale())}}" class="btn btn-primary form-control hidden-print" style="margin :0;">@lang('create-campaign') <i class="fa fa-plus"></i></a>
+            <a href="{{route('lang.seo-campaign-create',app()->getLocale())}}" class="btn btn-primary form-control hidden-print" style="margin :0;">
+                @lang('create-campaign') <i class="fa fa-plus"></i>
+            </a>
         </div>
     </div>              
 
