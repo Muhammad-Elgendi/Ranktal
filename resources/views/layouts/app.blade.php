@@ -10,6 +10,14 @@
 
     <title>@yield('title') &#8211; {{ucfirst(config('app.name'))}}</title>  
 
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TRPFQH5');</script>
+    <!-- End Google Tag Manager -->
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{url('bower_components/font-awesome/css/font-awesome.min.css')}}">
 
@@ -40,6 +48,12 @@
     
 </head>
 <body class="bcolor-3">
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TRPFQH5"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <div id="app">
         <nav class="navbar navbar-static-top navbar-default">
             <div class="container">

@@ -12,6 +12,15 @@
 
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TRPFQH5');</script>
+    <!-- End Google Tag Manager -->
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="{{url('bower_components/font-awesome/css/font-awesome.min.css')}}">
     <!-- Ionicons -->
@@ -60,8 +69,8 @@
     {{-- <!-- Load Bootstrap3.3.7-rtl (bootstrap rtl older version) -->
     <link rel="stylesheet" href="{{url('bower_components/bootstrap-3.3.7-rtl/css/bootstrap.min.css')}}"> --}}
 
-      <!-- Bootstrap 3.3.7 -->
-      <link rel="stylesheet" href="{{url('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="{{url('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
       
     <!-- Load bootstrap-rtl-ondemand -->
     <link rel="stylesheet" href="{{url('bower_components/bootstrap-rtl-ondemand/dist/css/bootstrap-rtl-ondemand.min.css')}}">
@@ -109,6 +118,12 @@
     --}}
 
 <body class="hold-transition skin-blue-light sidebar-mini">
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TRPFQH5"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
 <div class="wrapper">
 
     <header class="main-header">
