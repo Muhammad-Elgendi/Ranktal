@@ -8,6 +8,9 @@
 .alert a {
     text-decoration: none;
 }
+.alert .close {
+    opacity: 9.2;
+}
 /*!!! Warning section*/
 
 /* Campaigns section*/
@@ -36,7 +39,7 @@
 
 {{-- Show alerts for non-subscribed users after their login --}}
 @if(empty(Auth::user()->plan))
-    <div class="alert alert-warning alert-dismissible" role="alert">
+    <div class="alert alert-warning alert-dismissible fade in" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <strong>@lang('warning') !</strong> : 
         @lang('no-subscribtion-message')        

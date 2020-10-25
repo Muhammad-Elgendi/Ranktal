@@ -120,6 +120,7 @@
             </span>
             <!-- logo for regular state and mobile devices -->
             <span class="logo-lg">
+                <i class="fa fa-location-arrow"></i>
                 {{ucfirst(config('app.name'))}}
             </span>
         </a>
@@ -132,9 +133,25 @@
 
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
-              
-                    @auth
+                {{-- <!-- Languages Switcher --> --}}
+                <li class="dropdown" style="direction:ltr;">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                    <span class="flag-icon flag-icon-{{config('app.flags')[app()->getLocale()]}}"></span>
+                    {{-- <span class="caret"></span></a> --}}
+                    <ul class="dropdown-menu">
+                    {{-- Dynamic detect localization of current path --}}
+                      @if(in_array(substr(Request::path(),0,2),config('app.locales')))
+                        <li><a href="{{ url('ar/'.substr(Request::path(),3)) }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
+                        <li><a href="{{ url('en/'.substr(Request::path(),3))  }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
+                      @else
+                        <li><a href="{{ url('ar/'.Request::path()) }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
+                        <li><a href="{{ url('en/'.Request::path())  }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
+                      @endif
+                    </ul>
+                </li>
+                                   
                 <!-- User Account: style can be found in dropdown.less -->
+                @auth
                     <li class="dropdown user user-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             <img src="@yield('user-image')" class="user-image" alt="User Image">
@@ -176,22 +193,7 @@
                     {{-- <li>
                         <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
                     </li> --}}
-                    {{-- <!-- Languages Switcher --> --}}
-                  <li class="dropdown" style="direction:ltr;">
-                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                        <span class="flag-icon flag-icon-{{config('app.flags')[app()->getLocale()]}}"></span>
-                        {{-- <span class="caret"></span></a> --}}
-                        <ul class="dropdown-menu">
-                        {{-- Dynamic detect localization of current path --}}
-                          @if(in_array(substr(Request::path(),0,2),config('app.locales')))
-                            <li><a href="{{ url('ar/'.substr(Request::path(),3)) }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
-                            <li><a href="{{ url('en/'.substr(Request::path(),3))  }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
-                          @else
-                            <li><a href="{{ url('ar/'.Request::path()) }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
-                            <li><a href="{{ url('en/'.Request::path())  }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
-                          @endif
-                        </ul>
-                      </li>
+                   
                 </ul>
             
             </div>

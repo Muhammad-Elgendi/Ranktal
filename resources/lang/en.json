@@ -408,8 +408,8 @@
     "src":"Photo Source",
     "plans":"Choose your subscription",
     "page-not-found":"Page Not Found",
-    "have-nothing":"Have Nothing ?",
+    "have-nothing":"Have Nothing?",
     "warning":"Warning",
-    "no-subscribtion-message":"You are not currently subscribed, the trial period will expire on",
+    "no-subscribtion-message":"You are not subscribed currently, the trial period will expire on",
     "subscribe-now":"Subscribe Now"
 }
