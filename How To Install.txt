@@ -1,3 +1,9 @@
+Notes :-
+files to be placed in each environment
+laravel .env file
+laradock .env file
+wp-config.php file in wordpress folder
+
 1-Install Linux mint KDE 18.3 or any equivalant distribution that built upon ubuntu 
 My Operating System --- Linux mint KDE 18.3
 Install it from https://linuxmint.com/edition.php?id=251
@@ -70,6 +76,9 @@ cd Source Code/seo-saas/laradock/
 
 run containers 
 docker-compose up php-worker php-fpm workspace nginx postgres mariadb pgadmin tomcat chrome-debug
+
+in production environment run the following
+docker-compose -f production-docker-compose.yml up -d php-worker php-fpm workspace nginx postgres mariadb pgadmin tomcat
 
 8- update .env file configuration
 postgres container name usually is laradock_postgres_1 change the name in the following commands

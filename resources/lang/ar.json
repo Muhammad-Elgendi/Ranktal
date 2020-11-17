@@ -411,5 +411,6 @@
     "have-nothing":"ليس لديك شيء؟",
     "warning":"تنبيه",
     "no-subscribtion-message":"أنت غير مشترك حالياً ، ستنتهي الفتره التجريبيه في",
-    "subscribe-now":"إشترك الأن"
+    "subscribe-now":"إشترك الأن",
+    "trial-plan":"الفترة التجريبية"
 }

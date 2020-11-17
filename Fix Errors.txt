@@ -1,6 +1,6 @@
 ==============================================================================================
 pgadmin exit code 3 PermissionError: [Errno 13] Permission denied: '/var/lib/pgadmin/sessions'
 ==============================================================================================
-sudo chmod -R 777 ~/.laradock/data/pgadmin
+chown -R 5050:5050 ~/.laradock/data/pgadmin
 https://github.com/laradock/laradock/issues/2552
 

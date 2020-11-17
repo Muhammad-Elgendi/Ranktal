@@ -313,7 +313,7 @@ class CrawlingController extends Controller
      * This function is responsable for sending a new crawling request to the crawler endpoint
      * @return status of response
      */
-    public function sendCrawlingRequest($siteUrl,$siteId,$exact,$pages = 3000,$crawlers = 3){
+    public function sendCrawlingRequest($siteUrl,$siteId,$exact,$pages = 100,$crawlers = 3){
         // Send Request to SEO-crawler server
         // For example
         // http://10.0.75.1:8888/audit?url=https://google.com/&pages=5000&crawlers=3&siteId=73&match=1

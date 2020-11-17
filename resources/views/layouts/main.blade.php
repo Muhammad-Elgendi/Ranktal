@@ -178,8 +178,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                                 <img src="@yield('user-image')" class="img-circle" alt="User Image">
 
                                 <p>
-                                    {{ Auth::user()->name }}
-                                    <small>@yield('user-type')</small>
+                                    {{ Auth::user()->name }}                                    
+                                    <small>
+                                        @if(empty(Auth::user()->plan))
+                                        @lang('trial-plan')
+                                        @else
+                                        {{ Auth::user()->plan }}
+                                        @endif
+                                    </small>
                                 </p>
                             </li>                         
                             <!-- Menu Footer-->

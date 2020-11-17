@@ -1,5 +1,4 @@
 <?php
-
 function ranktal_register_styles(){
     // Bootstrap CSS
     wp_enqueue_style( 'ranktal-bootstrap', "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css",array(),"4.1.3" );
@@ -95,8 +94,19 @@ function ranktal_wpbs_pagination($pages = '', $range = 2){
 
 function ranktal_widget_areas(){
 
-      // Above Footer Area
-      register_sidebar(array(
+    // Left Menu Area
+    register_sidebar(array(
+        'before_title' => '',
+        'after_title' => '',
+        'before_widget' => '',
+        'after_widget' => '',
+        'name' => 'Left Menu Area',
+        'id' => 'left-menu',
+        'description' => 'Left Nav Menu Area'
+    ));
+
+    // Above Footer Area
+    register_sidebar(array(
         'before_title' => '',
         'after_title' => '',
         'before_widget' => '',
@@ -179,3 +189,9 @@ function ranktal_widget_areas(){
     ));
 }
 add_action('widgets_init','ranktal_widget_areas');
+
+// Advanced Custom Feilds
+include_once('acf.php');
+
+// Custom Post Types
+include_once('custom-post-types.php');

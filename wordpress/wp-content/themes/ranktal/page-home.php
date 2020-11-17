@@ -81,20 +81,9 @@
             <?php endforeach; ?>         
           </ul>
 
-          <ul class="navbar-nav flex-row ml-md-auto d-none d-md-flex">
-            <li class="nav-item dropdown ">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-                aria-haspopup="true" aria-expanded="false">
-                EN
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <a class="dropdown-item" href="#">English</a>
-                <a class="dropdown-item" href="#">العربية (قريباً)</a>
-              </div>
-            </li>
-          </ul>
-          <a class="btn btn-outline-secondary my-2 mx-2" href="http://app.localhost/" target="_blank">Login</a>
-          <a class="btn btn-outline-success my-2 mx-2" href="http://app.localhost/en/register" target="_blank">Sign up</a>
+          <!-- Upper Left Menu -->
+          <?php dynamic_sidebar('left-menu'); ?>
+
         </div>
       </div>
     </nav>

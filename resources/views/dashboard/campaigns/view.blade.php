@@ -460,7 +460,7 @@ $allowedMetrics = [
                                     <tr>                                    
                                         <td><a href="{{$optimization->url}}" target="_blank"> {{ $optimization->url }} </a></td>
                                         <td> {{ $optimization->keyword }}</td>
-                                        <td>{{ $optimization->report['score'] }}</td>
+                                        <td>{{ $optimization->score }}</td>
                                         <td>
                                             <a href="{{route('lang.seo-campaign-view-optimization',['lang'=>app()->getLocale(),'campaign_id' => $campaign->id ,'page_id' => $optimization->id])}}" class="btn btn-xs btn-primary" target="_blank"><i class="fa fa-eye"></i> @lang('view')</a>
                                         </td>
