@@ -53,7 +53,7 @@ class CheckoutController extends Controller
         // Get pricing page url to scrape it
         $url = url('/');
         $parsed_url = parse_url($url);      
-        $ip = $_SERVER['REMOTE_ADDR']; 
+        $ip = 'nginx'; 
         $pricing_url = 'http://'.$ip.'/pricing';
         $pricing_html = file_get_contents($pricing_url, false);  
         $doc = new \DOMDocument();
