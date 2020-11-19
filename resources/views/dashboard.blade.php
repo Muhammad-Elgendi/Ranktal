@@ -93,8 +93,8 @@
                 <a href="{{route('lang.seo-campaign-view',['lang'=> app()->getLocale(),'id'=> $campaign->id])}}"><i class="campaign-ico fa fa-bullhorn"></i>{{$campaign->name}}</a>
             </h4>
 
-            {{-- Check if valid campaign --}}
-            @if(!$campaign->isEmpty() && !$campaign->site->isEmpty() && !$campaign->site->metric->isEmpty()))
+            {{-- Check if has valid metrics --}}
+            @if(!empty($campaign->site->metric))
             @foreach($campaign->site->metric->getAttributes() as $key => $value)
             @if(in_array($key,$metrics))
                 <div class="card col-xs-2 text-center" style="width: 24rem;">
