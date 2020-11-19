@@ -3,6 +3,10 @@ files to be placed in each environment
 laravel .env file
 laradock .env file
 wp-config.php file in wordpress folder
+nginx default.conf
+
+run containers in production
+sudo docker-compose -f production-docker-compose.yml up -d php-worker php-fpm workspace nginx postgres mariadb tomcat
 
 1-Install Linux mint KDE 18.3 or any equivalant distribution that built upon ubuntu 
 My Operating System --- Linux mint KDE 18.3
