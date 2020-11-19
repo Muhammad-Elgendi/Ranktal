@@ -4,6 +4,9 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use App;
+use Symfony\Component\Debug\Exception\FlattenException;
+
 
 class Handler extends ExceptionHandler
 {
@@ -49,5 +52,20 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         return parent::render($request, $exception);
+    }
+
+    /**
+     * Render Custom view for 500 error
+     */
+    protected function convertExceptionToResponse(Exception $e)
+    {
+        if (App::environment('production')) {
+            $e = FlattenException::create($e);
+            // Just return a basic view. We could use the exception variable we are passing to our view to style the stack trace but why bother? We probably don't want to show that to the user on a live environment anyway.
+            return response()->view('errors.500');
+        }
+
+        // If we're on the dev environment then do nothing special, just show the usual error page with stack trace.
+        return parent::convertExceptionToResponse($e);
     }
 }
