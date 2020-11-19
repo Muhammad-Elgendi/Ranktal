@@ -412,5 +412,6 @@
     "warning":"تنبيه",
     "no-subscribtion-message":"أنت غير مشترك حالياً ، ستنتهي الفتره التجريبيه في",
     "subscribe-now":"إشترك الأن",
-    "trial-plan":"الفترة التجريبية"
+    "trial-plan":"الفترة التجريبية",
+    "internal-error":"حدث خطأ ما"
 }

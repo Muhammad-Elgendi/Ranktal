@@ -412,5 +412,6 @@
     "warning":"Warning",
     "no-subscribtion-message":"You are not subscribed currently, the trial period will expire on",
     "subscribe-now":"Subscribe Now",
-    "trial-plan":"Trial Plan"
+    "trial-plan":"Trial Plan",
+    "internal-error":"Something Bad Happened"
 }
