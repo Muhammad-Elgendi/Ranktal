@@ -343,7 +343,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
                 <li class="header">@lang("support")</li>       
                 <li>
-                        <a href="{{config('app.homepage')}}/help" target="_blank">
+                        <a href="{{config('app.homepage')}}/contact-us" target="_blank">
                             <i class="fa fa-life-ring"></i> <span>@lang("help-desk")</span>
                         </a>                     
                     </li>     
