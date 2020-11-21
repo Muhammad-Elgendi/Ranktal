@@ -55,12 +55,26 @@ class CheckoutController extends Controller
         $parsed_url = parse_url($url);      
         $ip = 'nginx'; 
         $pricing_url = 'http://'.$ip.'/pricing';
+
         // We added ssl to production environment so let's use the secured url
-        if (App::environment('production')) {
-            // The environment is production
-            $pricing_url = 'https://'.$ip.'/pricing';
-        }
-        $pricing_html = file_get_contents($pricing_url, false);  
+        // but certification is only trusted by cloudflare
+        
+        // if (App::environment('production')) {
+        //     // The environment is production
+        //     $pricing_url = 'https://'.$ip.'/pricing';
+        // }
+
+        // using curl
+        $curl = curl_init($pricing_url);
+        curl_setopt($curl, CURLOPT_USERAGENT, "Ranktal App");
+        curl_setopt($curl, CURLOPT_FAILONERROR, true);
+        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        $pricing_html = curl_exec($curl);
+        curl_close($curl);
+
+        // $pricing_html = file_get_contents($pricing_url, false);  
+
         $doc = new \DOMDocument();
         libxml_use_internal_errors(true);
         $doc->loadHTML($pricing_html);
