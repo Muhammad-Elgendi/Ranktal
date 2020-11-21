@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-
+use App;
 
 class CheckoutController extends Controller
 {
@@ -55,6 +55,11 @@ class CheckoutController extends Controller
         $parsed_url = parse_url($url);      
         $ip = 'nginx'; 
         $pricing_url = 'http://'.$ip.'/pricing';
+        // We added ssl to production environment so let's use the secured url
+        if (App::environment('production')) {
+            // The environment is production
+            $pricing_url = 'https://'.$ip.'/pricing';
+        }
         $pricing_html = file_get_contents($pricing_url, false);  
         $doc = new \DOMDocument();
         libxml_use_internal_errors(true);
