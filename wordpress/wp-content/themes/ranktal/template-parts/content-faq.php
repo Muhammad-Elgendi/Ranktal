@@ -27,7 +27,9 @@
                                 <h5 class="mb-0">
                                     <button class="btn btn-link" data-toggle="collapse" data-target="#collapse<?php echo $loop->current_post; ?>"
                                         aria-expanded="true" aria-controls="collapse<?php echo $loop->current_post; ?>">
-                                        <?php the_title(); ?>
+                                        <div style="white-space:normal">                                 
+                                            <?php the_title(); ?>
+                                        </div>
                                     </button>
                                 </h5>
                             </div>

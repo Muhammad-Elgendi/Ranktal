@@ -92,6 +92,8 @@
     <link rel="icon" href="{{url('img/favicon.ico')}}">
     
     @yield('styles')
+
+    <meta name="robots" content="noindex">
 </head>
 
     {{--
