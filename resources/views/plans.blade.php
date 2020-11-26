@@ -41,7 +41,6 @@ display: block;
 }
 
 .third {
-width: 27.95%;
 margin: 0 30px 0 0;
 display: inline-block;
 }
