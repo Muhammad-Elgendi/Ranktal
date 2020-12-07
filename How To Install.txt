@@ -1,13 +1,24 @@
 Notes :-
+---------------
 files to be placed in each environment
 laravel .env file
 laradock .env file
 wp-config.php file in wordpress folder
 nginx default.conf
 
+
+backup ranktal app db
+----------------------
+sudo docker-compose exec pgadmin /usr/local/pgsql-12/pg_dump --file "/var/lib/pgadmin/storage/pgadmin4_pgadmin.org/ranktal-db-7-12" --host "postgres" --port "5432" --username "ranktalappelgendi" --password --verbose --format=p "ranktalappdb"
+
+
 run containers in production
+----------------------------
 sudo docker-compose -f production-docker-compose.yml up -d php-worker php-fpm workspace nginx postgres mariadb tomcat
 
+
+installation guide
+-------------------
 1-Install Linux mint KDE 18.3 or any equivalant distribution that built upon ubuntu 
 My Operating System --- Linux mint KDE 18.3
 Install it from https://linuxmint.com/edition.php?id=251
