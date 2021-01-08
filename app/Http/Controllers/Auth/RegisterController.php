@@ -55,6 +55,7 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
+            'company' => 'string|max:255|nullable',
         ]);
     }
 
@@ -66,12 +67,31 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+        $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
-            'subscribed_until' => Carbon::now()->addDay($this->trial_period)
+            'subscribed_until' => Carbon::now()->addDays($this->trial_period)
         ]);
+        
+        $trial_limits = '{
+            "optimizations_monthly": 30,
+            "audits_monthly": 30,
+            "crawl_monthly": 30,
+            "campaigns_monthly": 3
+        }';        
+        $user->limits = json_decode($trial_limits, true);
+
+        $init_usage = '{
+            "optimizations_monthly": 0,
+            "audits_monthly": 0,
+            "crawl_monthly": 0,
+            "campaigns_monthly": 0
+        }';
+        $user->usage =  json_decode($init_usage, true);
+
+        $user->save();
+        return $user;
     }
 
     // override the redirectTo property value

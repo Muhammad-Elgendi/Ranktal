@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace GeoIp2\WebService;
 
 use GeoIp2\Exception\AddressNotFoundException;
@@ -30,7 +32,7 @@ use MaxMind\WebService\Client as WsClient;
  * ## Usage ##
  *
  * The basic API for this class is the same for all of the web service end
- * points. First you create a web service object with your MaxMind `$userId`
+ * points. First you create a web service object with your MaxMind `$accountId`
  * and `$licenseKey`, then you call the method corresponding to a specific end
  * point, passing it the IP address you want to look up.
  *
@@ -47,12 +49,12 @@ class Client implements ProviderInterface
     private $client;
     private static $basePath = '/geoip/v2.1';
 
-    const VERSION = 'v2.7.0';
+    const VERSION = 'v2.11.0';
 
     /**
      * Constructor.
      *
-     * @param int    $userId     your MaxMind user ID
+     * @param int    $accountId  your MaxMind account ID
      * @param string $licenseKey your MaxMind license key
      * @param array  $locales    list of locale codes to use in name property
      *                           from most preferred to least preferred
@@ -65,16 +67,16 @@ class Client implements ProviderInterface
      *                           `http://username:password@127.0.0.1:10`.
      */
     public function __construct(
-        $userId,
-        $licenseKey,
-        $locales = ['en'],
-        $options = []
+        int $accountId,
+        string $licenseKey,
+        array $locales = ['en'],
+        array $options = []
     ) {
         $this->locales = $locales;
 
         // This is for backwards compatibility. Do not remove except for a
         // major version bump.
-        if (is_string($options)) {
+        if (\is_string($options)) {
             $options = ['host' => $options];
         }
 
@@ -84,10 +86,10 @@ class Client implements ProviderInterface
 
         $options['userAgent'] = $this->userAgent();
 
-        $this->client = new WsClient($userId, $licenseKey, $options);
+        $this->client = new WsClient($accountId, $licenseKey, $options);
     }
 
-    private function userAgent()
+    private function userAgent(): string
     {
         return 'GeoIP2-API/' . self::VERSION;
     }
@@ -102,7 +104,7 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\AddressNotFoundException if the address you
      *                                                    provided is not in our database (e.g., a private address).
      * @throws \GeoIp2\Exception\AuthenticationException  if there is a problem
-     *                                                    with the user ID or license key that you provided
+     *                                                    with the account ID or license key that you provided
      * @throws \GeoIp2\Exception\OutOfQueriesException    if your account is out
      *                                                    of queries
      * @throws \GeoIp2\Exception\InvalidRequestException} if your request was received by the web service but is
@@ -111,14 +113,12 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\HttpException            if an unexpected HTTP error code or message was returned.
      *                                                    This could indicate a problem with the connection between
      *                                                    your server and the web service or that the web service
-     *                                                    returned an invalid document or 500 error code.
+     *                                                    returned an invalid document or 500 error code
      * @throws \GeoIp2\Exception\GeoIp2Exception          This serves as the parent
      *                                                    class to the above exceptions. It will be thrown directly
      *                                                    if a 200 status code is returned but the body is invalid.
-     *
-     * @return \GeoIp2\Model\City
      */
-    public function city($ipAddress = 'me')
+    public function city(string $ipAddress = 'me'): \GeoIp2\Model\City
     {
         return $this->responseFor('city', 'City', $ipAddress);
     }
@@ -133,7 +133,7 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\AddressNotFoundException if the address you provided is not in our database (e.g.,
      *                                                    a private address).
      * @throws \GeoIp2\Exception\AuthenticationException  if there is a problem
-     *                                                    with the user ID or license key that you provided
+     *                                                    with the account ID or license key that you provided
      * @throws \GeoIp2\Exception\OutOfQueriesException    if your account is out of queries
      * @throws \GeoIp2\Exception\InvalidRequestException} if your request was received by the web service but is
      *                                                    invalid for some other reason.  This may indicate an
@@ -146,10 +146,8 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\GeoIp2Exception          This serves as the parent class to the above exceptions. It
      *                                                    will be thrown directly if a 200 status code is returned but
      *                                                    the body is invalid.
-     *
-     * @return \GeoIp2\Model\Country
      */
-    public function country($ipAddress = 'me')
+    public function country(string $ipAddress = 'me'): \GeoIp2\Model\Country
     {
         return $this->responseFor('country', 'Country', $ipAddress);
     }
@@ -164,7 +162,7 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\AddressNotFoundException if the address you
      *                                                    provided is not in our database (e.g., a private address).
      * @throws \GeoIp2\Exception\AuthenticationException  if there is a problem
-     *                                                    with the user ID or license key that you provided
+     *                                                    with the account ID or license key that you provided
      * @throws \GeoIp2\Exception\OutOfQueriesException    if your account is out
      *                                                    of queries
      * @throws \GeoIp2\Exception\InvalidRequestException} if your request was received by the web service but is
@@ -173,19 +171,17 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\HttpException            if an unexpected HTTP error code or message was returned.
      *                                                    This could indicate a problem with the connection between
      *                                                    your server and the web service or that the web service
-     *                                                    returned an invalid document or 500 error code.
+     *                                                    returned an invalid document or 500 error code
      * @throws \GeoIp2\Exception\GeoIp2Exception          This serves as the parent
      *                                                    class to the above exceptions. It will be thrown directly
      *                                                    if a 200 status code is returned but the body is invalid.
-     *
-     * @return \GeoIp2\Model\Insights
      */
-    public function insights($ipAddress = 'me')
+    public function insights(string $ipAddress = 'me'): \GeoIp2\Model\Insights
     {
         return $this->responseFor('insights', 'Insights', $ipAddress);
     }
 
-    private function responseFor($endpoint, $class, $ipAddress)
+    private function responseFor(string $endpoint, string $class, string $ipAddress)
     {
         $path = implode('/', [self::$basePath, $endpoint, $ipAddress]);
 

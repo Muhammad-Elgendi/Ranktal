@@ -1,8 +1,6 @@
 @extends('layouts.main')
 @section('direction',in_array(app()->getLocale(),config('app.rtl')) ? "rtl" : "ltr")
 @section('title', in_array(app()->getLocale(),config('app.rtl')) ? __('campaign')." ".$campaign->name : $campaign->name." ".__('campaign'))
-@section('user-image',url('/img/user.png'))
-@section('user-type',__('pro-plan'))
 @section('print-div','printable')
 @section('styles')
 <!-- Styles -->

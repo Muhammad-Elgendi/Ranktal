@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Laravel IDE Helper Generator
  *
@@ -16,6 +17,8 @@ use Barryvdh\Reflection\DocBlock\Tag;
 use Barryvdh\Reflection\DocBlock\Tag\ReturnTag;
 use Barryvdh\Reflection\DocBlock\Tag\ParamTag;
 use Barryvdh\Reflection\DocBlock\Serializer as DocBlockSerializer;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class Method
 {
@@ -26,29 +29,36 @@ class Method
     protected $method;
 
     protected $output = '';
+    protected $declaringClassName;
     protected $name;
     protected $namespace;
     protected $params = array();
     protected $params_with_default = array();
     protected $interfaces = array();
+    protected $real_name;
     protected $return = null;
+    protected $root;
 
     /**
-     * @param \ReflectionMethod $method
+     * @param \ReflectionMethod|\ReflectionFunctionAbstract $method
      * @param string $alias
      * @param \ReflectionClass $class
      * @param string|null $methodName
      * @param array $interfaces
      */
-    public function __construct(\ReflectionMethod $method, $alias, $class, $methodName = null, $interfaces = array())
+    public function __construct($method, $alias, $class, $methodName = null, $interfaces = array())
     {
         $this->method = $method;
         $this->interfaces = $interfaces;
         $this->name = $methodName ?: $method->name;
-        $this->namespace = $method->getDeclaringClass()->getNamespaceName();
+        $this->real_name = $method->isClosure() ? $this->name : $method->name;
+        $this->initClassDefinedProperties($method, $class);
+
+        //Reference the 'real' function in the declaring class
+        $this->root = '\\' . ltrim($class->getName(), '\\');
 
         //Create a DocBlock and serializer instance
-        $this->phpdoc = new DocBlock($method, new Context($this->namespace));
+        $this->initPhpDoc($method);
 
         //Normalize the description and inherit the docs from parents/interfaces
         try {
@@ -63,11 +73,25 @@ class Method
 
         //Make the method static
         $this->phpdoc->appendTag(Tag::createInstance('@static', $this->phpdoc));
+    }
 
-        //Reference the 'real' function in the declaringclass
+    /**
+     * @param \ReflectionMethod $method
+     */
+    protected function initPhpDoc($method)
+    {
+        $this->phpdoc = new DocBlock($method, new Context($this->namespace));
+    }
+
+    /**
+     * @param \ReflectionMethod $method
+     * @param \ReflectionClass $class
+     */
+    protected function initClassDefinedProperties($method, \ReflectionClass $class)
+    {
         $declaringClass = $method->getDeclaringClass();
+        $this->namespace = $declaringClass->getNamespaceName();
         $this->declaringClassName = '\\' . ltrim($declaringClass->name, '\\');
-        $this->root = '\\' . ltrim($class->getName(), '\\');
     }
 
     /**
@@ -91,6 +115,26 @@ class Method
     }
 
     /**
+     * @return bool
+     */
+    public function isInstanceCall()
+    {
+        return ! ($this->method->isClosure() || $this->method->isStatic());
+    }
+
+    /**
+     * @return string
+     */
+    public function getRootMethodCall()
+    {
+        if ($this->isInstanceCall()) {
+            return "\$instance->{$this->getRealName()}({$this->getParams()})";
+        } else {
+            return "{$this->getRoot()}::{$this->getRealName()}({$this->getParams()})";
+        }
+    }
+
+    /**
      * Get the docblock for this method
      *
      * @param string $prefix
@@ -110,6 +154,16 @@ class Method
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Get the real method name
+     *
+     * @return string
+     */
+    public function getRealName()
+    {
+        return $this->real_name;
     }
 
     /**
@@ -213,6 +267,12 @@ class Method
             // Set the changed content
             $tag->setContent($returnValue . ' ' . $tag->getDescription());
             $this->return = $returnValue;
+
+            if ($tag->getType() === '$this') {
+                Str::contains($this->root, Builder::class)
+                    ? $tag->setType($this->root . '|static')
+                    : $tag->setType($this->root);
+            }
         } else {
             $this->return = null;
         }
@@ -259,14 +319,14 @@ class Method
         $params = array();
         $paramsWithDefault = array();
         foreach ($method->getParameters() as $param) {
-            $paramStr = '$' . $param->getName();
+            $paramStr = $param->isVariadic() ? '...$' . $param->getName() : '$' . $param->getName();
             $params[] = $paramStr;
-            if ($param->isOptional()) {
+            if ($param->isOptional() && !$param->isVariadic()) {
                 $default = $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null;
                 if (is_bool($default)) {
                     $default = $default ? 'true' : 'false';
                 } elseif (is_array($default)) {
-                    $default = 'array()';
+                    $default = '[]';
                 } elseif (is_null($default)) {
                     $default = 'null';
                 } elseif (is_int($default)) {
@@ -274,7 +334,7 @@ class Method
                 } elseif (is_resource($default)) {
                     //skip to not fail
                 } else {
-                    $default = "'" . trim($default) . "'";
+                    $default = var_export($default, true);
                 }
                 $paramStr .= " = $default";
             }
@@ -302,7 +362,7 @@ class Method
         if ($method) {
             $namespace = $method->getDeclaringClass()->getNamespaceName();
             $phpdoc = new DocBlock($method, new Context($namespace));
-            
+
             if (strpos($phpdoc->getText(), '{@inheritdoc}') !== false) {
                 //Not at the end yet, try another parent/interface..
                 return $this->getInheritDoc($method);

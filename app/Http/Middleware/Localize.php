@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
 
 class Localize
 {
@@ -21,8 +22,9 @@ class Localize
 
                 $userLanguage = Auth::user()->language; // get user language
 
-                if (!empty($userLanguage)) {
+                if (!empty($userLanguage) && $requestLocale != $userLanguage) {
                     app()->setLocale($userLanguage);
+                    return redirect($userLanguage .'/'. substr(Request::path(),3));
                 }
             }
             else if(!empty($requestLocale)){

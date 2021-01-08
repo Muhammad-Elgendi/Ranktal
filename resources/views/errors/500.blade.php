@@ -34,6 +34,3 @@
 
 @section('scripts','')
 
-@section('user-image',url('/img/user.png'))
-
-@section('user-type',__('pro-plan'))

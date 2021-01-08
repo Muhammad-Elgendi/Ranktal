@@ -1,46 +1,36 @@
 <?php
-/*
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- * This software consists of voluntary contributions made by many individuals
- * and is licensed under the MIT license. For more information, see
- * <http://www.doctrine-project.org>.
- */
 
 namespace Doctrine\Common\Cache;
 
+use Traversable;
+use function array_values;
+use function count;
+use function iterator_to_array;
+
 /**
  * Cache provider that allows to easily chain multiple cache providers
- *
- * @author Michaël Gallego <mic.gallego@gmail.com>
  */
 class ChainCache extends CacheProvider
 {
-    /**
-     * @var CacheProvider[]
-     */
+    /** @var CacheProvider[] */
     private $cacheProviders = [];
 
+    /** @var int */
+    private $defaultLifeTimeForDownstreamCacheProviders = 0;
+
     /**
-     * Constructor
-     *
      * @param CacheProvider[] $cacheProviders
      */
     public function __construct($cacheProviders = [])
     {
-        $this->cacheProviders = $cacheProviders instanceof \Traversable
+        $this->cacheProviders = $cacheProviders instanceof Traversable
             ? iterator_to_array($cacheProviders, false)
             : array_values($cacheProviders);
+    }
+
+    public function setDefaultLifeTimeForDownstreamCacheProviders(int $defaultLifeTimeForDownstreamCacheProviders) : void
+    {
+        $this->defaultLifeTimeForDownstreamCacheProviders = $defaultLifeTimeForDownstreamCacheProviders;
     }
 
     /**
@@ -65,8 +55,8 @@ class ChainCache extends CacheProvider
                 $value = $cacheProvider->doFetch($id);
 
                 // We populate all the previous cache layers (that are assumed to be faster)
-                for ($subKey = $key - 1 ; $subKey >= 0 ; $subKey--) {
-                    $this->cacheProviders[$subKey]->doSave($id, $value);
+                for ($subKey = $key - 1; $subKey >= 0; $subKey--) {
+                    $this->cacheProviders[$subKey]->doSave($id, $value, $this->defaultLifeTimeForDownstreamCacheProviders);
                 }
 
                 return $value;
@@ -81,7 +71,7 @@ class ChainCache extends CacheProvider
      */
     protected function doFetchMultiple(array $keys)
     {
-        /* @var $traversedProviders CacheProvider[] */
+        /** @var CacheProvider[] $traversedProviders */
         $traversedProviders = [];
         $keysCount          = count($keys);
         $fetchedValues      = [];
@@ -92,7 +82,7 @@ class ChainCache extends CacheProvider
             // We populate all the previous cache layers (that are assumed to be faster)
             if (count($fetchedValues) === $keysCount) {
                 foreach ($traversedProviders as $previousCacheProvider) {
-                    $previousCacheProvider->doSaveMultiple($fetchedValues);
+                    $previousCacheProvider->doSaveMultiple($fetchedValues, $this->defaultLifeTimeForDownstreamCacheProviders);
                 }
 
                 return $fetchedValues;

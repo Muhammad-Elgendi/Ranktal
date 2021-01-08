@@ -1,8 +1,6 @@
 @extends('layouts.main')
 @section('direction',in_array(app()->getLocale(),config('app.rtl')) ? "rtl" : "ltr")
 @section('title', __('on-demand-crawl'))
-@section('user-image',url('/img/user.png'))
-@section('user-type',__('pro-plan'))
 @section('print-div','printable')
 @section('styles')
 <!-- Load c3.css -->

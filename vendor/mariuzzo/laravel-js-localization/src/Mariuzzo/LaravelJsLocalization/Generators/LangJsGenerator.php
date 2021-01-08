@@ -2,7 +2,9 @@
 
 namespace Mariuzzo\LaravelJsLocalization\Generators;
 
+use InvalidArgumentException;
 use Illuminate\Filesystem\Filesystem as File;
+use Illuminate\Support\Str;
 use JShrink\Minifier;
 
 /**
@@ -36,7 +38,7 @@ class LangJsGenerator
     /**
      * Name of the domain in which all string-translation should be stored under.
      * More about string-translation: https://laravel.com/docs/master/localization#retrieving-translation-strings
-     * 
+     *
      * @var string
      */
     protected $stringsDomain = 'strings';
@@ -68,7 +70,7 @@ class LangJsGenerator
             $this->sourcePath = $options['source'];
         }
 
-        $messages = $this->getMessages();
+        $messages = $this->getMessages($options['no-sort']);
         $this->prepareTarget($target);
 
         if ($options['no-lib']) {
@@ -109,11 +111,12 @@ class LangJsGenerator
     /**
      * Return all language messages.
      *
+     * @param bool $noSort Whether sorting of the messages should be skipped.
      * @return array
      *
      * @throws \Exception
      */
-    protected function getMessages()
+    protected function getMessages($noSort)
     {
         $messages = [];
         $path = $this->sourcePath;
@@ -137,7 +140,7 @@ class LangJsGenerator
             $key = str_replace('\\', '.', $key);
             $key = str_replace('/', '.', $key);
 
-            if (starts_with($key, 'vendor')) {
+            if (Str::startsWith($key, 'vendor')) {
                 $key = $this->getVendorKey($key);
             }
 
@@ -148,10 +151,17 @@ class LangJsGenerator
                 $key = $key.$this->stringsDomain;
                 $fileContent = file_get_contents($fullPath);
                 $messages[$key] = json_decode($fileContent, true);
+
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    throw new InvalidArgumentException('Error while decode ' . basename($fullPath) . ': ' . json_last_error_msg());
+                }
             }
         }
 
-        $this->sortMessages($messages);
+        if (!$noSort)
+        {
+            $this->sortMessages($messages);
+        }
 
         return $messages;
     }
@@ -196,7 +206,7 @@ class LangJsGenerator
 
         return true;
     }
-    
+
     private function getVendorKey($key)
     {
         $keyParts = explode('.', $key, 4);

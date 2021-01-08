@@ -1,22 +1,32 @@
 <?= '<?php' ?>
 
+// @formatter:off
+
 namespace PHPSTORM_META {
 
    /**
     * PhpStorm Meta file, to provide autocomplete information for PhpStorm
-    * Generated on <?= date("Y-m-d") ?>.
     *
     * @author Barry vd. Heuvel <barryvdh@gmail.com>
     * @see https://github.com/barryvdh/laravel-ide-helper
     */
-<?php foreach ($methods as $method): ?>
+<?php foreach ($methods as $method) : ?>
     override(<?= $method ?>, map([
         '' => '@',
-<?php foreach($bindings as $abstract => $class): ?>
+    <?php foreach ($bindings as $abstract => $class) : ?>
         '<?= $abstract ?>' => \<?= $class ?>::class,
-<?php endforeach; ?>
+    <?php endforeach; ?>
     ]));
 <?php endforeach; ?>
+
+<?php if (count($factories)) : ?>
+    override(\factory(0), map([
+        '' => '@FactoryBuilder',
+    <?php foreach ($factories as $factory) : ?>
+        '<?= $factory->getName() ?>' => \<?= $factory->getName() ?>FactoryBuilder::class,
+    <?php endforeach; ?>
+    ]));
+<?php endif; ?>
 
     override(\Illuminate\Support\Arr::add(0), type(0));
     override(\Illuminate\Support\Arr::except(0), type(0));
@@ -46,5 +56,7 @@ namespace PHPSTORM_META {
     override(\head(0), elementType(0));
     override(\last(0), elementType(0));
     override(\with(0), type(0));
+    override(\tap(0), type(0));
+    override(\optional(0), type(0));
 
 }

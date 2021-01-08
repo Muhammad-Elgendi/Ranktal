@@ -1,8 +1,6 @@
 @extends('layouts.main')
 @section('direction',in_array(app()->getLocale(),config('app.rtl')) ? "rtl" : "ltr")
 @section('title', __('keywords-tracker'))
-@section('user-image',url('/img/user.png'))
-@section('user-type',__('pro-plan'))
 @section('print-div','printable')
 @section('styles')
 <link href="{{url('typeahead/typeaheadjs.css')}}" rel="stylesheet">

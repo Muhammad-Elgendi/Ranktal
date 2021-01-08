@@ -34,7 +34,7 @@ class CheckoutController extends Controller
             
             $user->plan = $plans[$planID];
             $user->subscription_id = $subscriptionID;
-            $user->subscribed_until = Carbon::now()->addDay(30);
+            $user->subscribed_until = Carbon::now()->addMonths(1);
             $user->save();
             return view('thankyou')
             ->with('name',$user->name)

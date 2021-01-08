@@ -11,9 +11,6 @@
 |
 */
 
-use App\Http\Controllers\ProxyController;
-use App\Proxy;
-
 $optionalLanguageRoutes = function () {
 
     // Home الرئيسية
@@ -26,12 +23,12 @@ $optionalLanguageRoutes = function () {
 
     //Views
     Route::get('dashboard', 'HomeController@index')->name('dashboard'); //Dashboard
-    Route::get('dashboard/page-optimization', 'optimizerController@index')->name('page-optimization'); //Page optimization view    
-    Route::get('dashboard/seo-audit', 'checkerController@index')->name('seo-audit'); //Seo audit view
-    Route::get('dashboard/on-demand-crawl', 'CrawlingController@index')->name('on-demand-crawl'); // Site Crawl view
+    Route::get('dashboard/page-optimization', 'optimizerController@index')->name('page-optimization')->middleware('updateUsage:optimizations_monthly'); //Page optimization view    
+    Route::get('dashboard/seo-audit', 'checkerController@index')->name('seo-audit')->middleware('updateUsage:audits_monthly'); //Seo audit view
+    Route::get('dashboard/on-demand-crawl', 'CrawlingController@index')->name('on-demand-crawl')->middleware('updateUsage:crawl_monthly'); // Site Crawl view
     Route::get('dashboard/seo-campaigns', 'CampaignsController@index')->name('seo-campaigns'); // SEO Campaigns view
     Route::get('dashboard/plans', 'CheckoutController@plans')->name('plans'); // plans view
-
+    Route::get('settings', 'SettingsController@view')->name('settings'); // settings view
 
     // Route::get('dashboard/backlinks-checker', 'backlinksController@index')->name('backlinks-checker'); //Backlinks checker view
     // Route::get('dashboard/keyword-tracker', 'KeywordTrackerController@index')->name('keyword-tracker'); // Keyword Tracker View
@@ -57,20 +54,23 @@ $optionalLanguageRoutes = function () {
     // Actions routes - plans
     Route::post('dashboard/checkout', 'CheckoutController@updatePlan')->name('checkout'); // Update User Plan
 
+    // Actions routes - Account settings
+    Route::post('settings/edit', 'SettingsController@edit')->name('edit-settings'); // Edit Account settings
+
     // Actions routes - seo-audit
     Route::delete('seo-audit-delete/{id}', 'checkerController@destroy')->name('seoAuditDelete');
-    Route::get('seo-audit-reaudit', 'checkerController@reaudit')->name('seoAuditReaudit');
+    Route::get('seo-audit-reaudit', 'checkerController@reaudit')->name('seoAuditReaudit')->middleware('updateUsage:audits_monthly');
 
     // Actions routes - demand-crawl
     Route::delete('demand-crawl-delete/{id}', 'CrawlingController@destroy')->name('demandCrawlDelete');
-    Route::get('demand-crawl-recrawl', 'CrawlingController@recrawl')->name('demandCrawlRecrawl');
+    Route::get('demand-crawl-recrawl', 'CrawlingController@recrawl')->name('demandCrawlRecrawl')->middleware('updateUsage:crawl_monthly');
 
     // Actions routes - seo-campaigns
     Route::get('dashboard/seo-campaigns/create', 'CampaignsController@create')->name('seo-campaign-create'); // create SEO Campaign view
-    Route::post('dashboard/seo-campaigns/store', 'CampaignsController@store')->name('seo-campaign-store'); // store SEO Campaign
+    Route::post('dashboard/seo-campaigns/store', 'CampaignsController@store')->name('seo-campaign-store')->middleware('updateUsage:campaigns_monthly'); // store SEO Campaign
     Route::delete('seo-campaigns-delete/{id}', 'CampaignsController@destroy')->name('seoCampaignDelete');
     Route::get('dashboard/seo-campaigns/edit/{id}', 'CampaignsController@edit')->name('seo-campaign-edit'); // Edit SEO Campaign view
-    Route::post('dashboard/seo-campaigns/save', 'CampaignsController@saveEdit')->name('seo-campaign-saveEdit'); // save Edits SEO Campaign
+    Route::post('dashboard/seo-campaigns/save', 'CampaignsController@saveEdit')->name('seo-campaign-saveEdit')->middleware('updateUsage:campaigns_monthly'); // save Edits SEO Campaign
     Route::get('dashboard/seo-campaigns/view/{id}', 'CampaignsController@view')->name('seo-campaign-view'); // View SEO Campaign
     Route::get('dashboard/seo-campaigns/view/{campaign_id}/optimization/{page_id}', 'CampaignsController@viewOptimization')->name('seo-campaign-view-optimization'); // View optimization of page in Campaign
 

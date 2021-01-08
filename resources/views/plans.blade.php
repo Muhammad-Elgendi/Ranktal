@@ -234,6 +234,15 @@ circle:nth-of-type(4) {
 @section('content')
 
 <meta name="csrf-token" content="{{csrf_token()}}">
+
+@if($errors->any())
+  <div class="alert alert-warning fade in" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>@lang('warning') !</strong> : 
+    {{$errors->first()}}
+  </div>
+@endif
+
 <div id="plans">
 {!! $plan_html !!}
 </div>
@@ -317,6 +326,3 @@ paypal.Buttons({
 
 @endsection
 
-@section('user-image',url('/img/user.png'))
-
-@section('user-type',__('pro-plan'))

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Laravel IDE Helper Generator
  *
@@ -10,8 +11,8 @@
 
 namespace Barryvdh\LaravelIdeHelper\Console;
 
+use Barryvdh\LaravelIdeHelper\Eloquent;
 use Barryvdh\LaravelIdeHelper\Generator;
-use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Console\Input\InputOption;
@@ -76,9 +77,11 @@ class GeneratorCommand extends Command
      */
     public function handle()
     {
-        if (file_exists(base_path() . '/vendor/compiled.php') ||
+        if (
+            file_exists(base_path() . '/vendor/compiled.php') ||
             file_exists(base_path() . '/bootstrap/cache/compiled.php') ||
-            file_exists(base_path() . '/storage/framework/compiled.php')) {
+            file_exists(base_path() . '/storage/framework/compiled.php')
+        ) {
             $this->error(
                 'Error generating IDE Helper: first delete your compiled file (php artisan clear-compiled)'
             );
@@ -115,6 +118,10 @@ class GeneratorCommand extends Command
 
             if ($written !== false) {
                 $this->info("A new helper file was written to $filename");
+
+                if ($this->option('write_mixins')) {
+                    Eloquent::writeEloquentModelHelper($this, $this->files);
+                }
             } else {
                 $this->error("The helper file could not be created at $filename");
             }
@@ -158,12 +165,13 @@ class GeneratorCommand extends Command
     protected function getOptions()
     {
         $format = $this->config->get('ide-helper.format');
+        $writeMixins = $this->config->get('ide-helper.write_eloquent_model_mixins');
 
         return array(
             array('format', "F", InputOption::VALUE_OPTIONAL, 'The format for the IDE Helper', $format),
+            array('write_mixins', "W", InputOption::VALUE_OPTIONAL, 'Write mixins to Laravel Model?', $writeMixins),
             array('helpers', "H", InputOption::VALUE_NONE, 'Include the helper files'),
             array('memory', "M", InputOption::VALUE_NONE, 'Use sqlite memory driver'),
-            array('sublime', "S", InputOption::VALUE_NONE, 'DEPRECATED: Use different style for SublimeText CodeIntel'),
         );
     }
 }

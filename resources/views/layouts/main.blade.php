@@ -151,41 +151,49 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                 {{-- <!-- Languages Switcher --> --}}
-                <li class="dropdown" style="direction:ltr;">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <span class="flag-icon flag-icon-{{config('app.flags')[app()->getLocale()]}}"></span>
-                    {{-- <span class="caret"></span></a> --}}
-                    <ul class="dropdown-menu">
-                    {{-- Dynamic detect localization of current path --}}
-                      @if(in_array(substr(Request::path(),0,2),config('app.locales')))
-                        <li><a href="{{ url('ar/'.substr(Request::path(),3)) }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
-                        <li><a href="{{ url('en/'.substr(Request::path(),3))  }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
-                      @else
-                        <li><a href="{{ url('ar/'.Request::path()) }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
-                        <li><a href="{{ url('en/'.Request::path())  }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
-                      @endif
-                    </ul>
-                </li>
+                @if(!((Auth::check() && isset(Auth::user()->language))))
+                    <li class="dropdown" style="direction:ltr;">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+                        <span class="flag-icon flag-icon-{{config('app.flags')[app()->getLocale()]}}"></span>
+                        {{-- <span class="caret"></span></a> --}}
+                        <ul class="dropdown-menu">
+                        {{-- Dynamic detect localization of current path --}}
+                        @if(in_array(substr(Request::path(),0,2),config('app.locales')))
+                            <li><a href="{{ url('ar/'.substr(Request::path(),3)) }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
+                            <li><a href="{{ url('en/'.substr(Request::path(),3))  }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
+                        @else
+                            <li><a href="{{ url('ar/'.Request::path()) }}"><span class="flag-icon flag-icon-sa"></span> @lang('arabic') </a></li>
+                            <li><a href="{{ url('en/'.Request::path())  }}"><span class="flag-icon flag-icon-us"></span> @lang('english')</a></li>
+                        @endif
+                        </ul>
+                    </li>
+                @endif
                                    
                 <!-- User Account: style can be found in dropdown.less -->
                 @auth
                     <li class="dropdown user user-menu">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <img src="@yield('user-image')" class="user-image" alt="User Image">
+                            <img src="{{ Auth::user()->photo }}" class="user-image" alt="User Image">
                             <span class="hidden-xs">{{ Auth::user()->name }}</span>
                         </a>
                         <ul class="dropdown-menu">
                             <!-- User image -->
                             <li class="user-header">
-                                <img src="@yield('user-image')" class="img-circle" alt="User Image">
+                                <img src="{{ Auth::user()->photo }}" class="img-circle" alt="User Image">
 
                                 <p>
-                                    {{ Auth::user()->name }}                                    
+                                    {{ Auth::user()->name }}    
                                     <small>
-                                        @if(empty(Auth::user()->plan))
-                                        @lang('trial-plan')
+                                        @if(isset(Auth::user()->company))
+                                            <i class="fa fa-building" aria-hidden="true"></i>
+                                            {{ Auth::user()->company }} 
+                                        @endif
+                                    </small>                                
+                                    <small>
+                                        @if(empty(Auth::user()->plan) || Auth::user()->plan == "Trial" )
+                                        @lang('Trial')
                                         @else
-                                        {{ Auth::user()->plan }}
+                                        {{ __(Auth::user()->plan) }}
                                         @endif
                                     </small>
                                 </p>
@@ -193,10 +201,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                             <!-- Menu Footer-->
                             <li class="user-footer">
 
-                                {{-- profile button --}}
-                                {{-- <div class="pull-right">
-                                    <a href="#" class="btn btn-default btn-flat">@lang('profile')</a>
-                                </div> --}}
+                                {{-- settings button --}}
+                                <div class="pull-right">
+                                    <a href="{{ route('lang.settings', app()->getLocale()) }}" class="btn btn-default btn-flat">@lang('settings')</a>
+                                </div>
                                 
                                 <div class="pull-left">
                                     <a href="{{ route('lang.logout', app()->getLocale()) }}"
@@ -384,10 +392,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- /.content-wrapper -->
     <footer class="main-footer">
         <div class="pull-left hidden-xs">
-            <b>@lang("version")</b> 1.0
+            <b>@lang("version")</b> 1.1
         </div>&nbsp;       
       @lang('copyright-statement').
-      <strong> &copy; 2020 </strong>
+      <strong> &copy; 2021 </strong>
     </footer>
     {{-- <!-- Add the sidebar's background. This div must be placed
          immediately after the control sidebar --> --}}

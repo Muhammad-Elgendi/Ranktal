@@ -38,7 +38,7 @@
 @section('content')
 
 {{-- Show alerts for non-subscribed users after their login --}}
-@if(empty(Auth::user()->plan))
+@if(empty(Auth::user()->plan) || Auth::user()->plan == "Trial")
     <div class="alert alert-warning alert-dismissible fade in" role="alert">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <strong>@lang('warning') !</strong> : 
@@ -128,7 +128,3 @@ $(function () {
 @endsection
 
 
-@section('user-image',url('/img/user.png'))
-
-
-@section('user-type',__('pro-plan'))
