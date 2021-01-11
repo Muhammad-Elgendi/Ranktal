@@ -85,8 +85,12 @@
 
                 <div class="row">
                     <div class="col-lg-3 col-md-3 col-sm-4 col-xs-12" >
-                        <p class="title">@lang('keyword-found')</p> 
-                        <p class="title" id="found"></p> 
+                        <p class="title">@lang('keyword')
+                            <strong id="keyword"></strong> 
+                            <span class="title">@lang('found')</span> 
+                            <strong id="found"></strong> 
+                            <span class="title">@lang('times')</span>
+                        </p>
                     </div>
                     <div class="col-lg-3 col-md-3 col-sm-4 col-xs-6">
                         <p class="title">@lang('keyword-locations')</p> 
@@ -181,8 +185,9 @@ function updateView(jsondata){
     $('#btns-section').append("<button class=\"btn btn-primary\" onclick=\"toggle()\"\"> <i class=\"fa fa-bullseye\"></i> @lang('toggle-panels')</button>")
     $('#upper-board').show();
     $('#url-value').text(jsondata.url).attr('href',jsondata.url);
-    $('#title-value').text(jsondata.pageTitle);
-    $('#desc-value').text(jsondata.pageDescription);
+    $('#keyword').text(jsondata.keyword)
+    $('#title-value').text(jsondata.pageTitle ? jsondata.pageTitle : "@lang('not-found')");
+    $('#desc-value').text(jsondata.pageDescription ? jsondata.pageDescription : "@lang('not-found')");
     $('#found').text(jsondata.keywordFound);
     $('#locations').html("<li>Title : "+jsondata.keywordInTitleCount+"</li>"+
                         "<li>Body : "+jsondata.keywordInBodyCount+"</li>"+

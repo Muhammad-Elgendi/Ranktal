@@ -45,6 +45,9 @@ class CampaignsController extends Controller
         // adapt the report for the view template
         $newRequest = array();
         $counter = 0;
+        if(gettype($optimization->report) == 'string'){
+            $optimization->report = json_decode($optimization->report, true);
+        }
         foreach ($optimization->report  as $key => $value) {
             if (gettype($value) == "boolean" ) {
                 $newRequest['checks'][$counter]["type"] = empty($value) ? "glyphicon-remove-sign text-danger" : "glyphicon-ok-sign text-success";

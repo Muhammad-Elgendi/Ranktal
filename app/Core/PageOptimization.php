@@ -44,7 +44,8 @@ class PageOptimization
 
     private $doc;
 
-    private $keyword;
+    // keyword
+    public $keyword;
 
     //Page Title
     public $pageTitle;
