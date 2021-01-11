@@ -1,5 +1,10 @@
 <?php
-
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
+use App\campaign;
+use App\Http\Controllers\CampaignsController;
+use App\Mail\CampaignNotification;
+use Illuminate\Support\Carbon;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -70,7 +75,7 @@ $optionalLanguageRoutes = function () {
     Route::post('dashboard/seo-campaigns/store', 'CampaignsController@store')->name('seo-campaign-store')->middleware('updateUsage:campaigns_monthly'); // store SEO Campaign
     Route::delete('seo-campaigns-delete/{id}', 'CampaignsController@destroy')->name('seoCampaignDelete');
     Route::get('dashboard/seo-campaigns/edit/{id}', 'CampaignsController@edit')->name('seo-campaign-edit'); // Edit SEO Campaign view
-    Route::post('dashboard/seo-campaigns/save', 'CampaignsController@saveEdit')->name('seo-campaign-saveEdit')->middleware('updateUsage:campaigns_monthly'); // save Edits SEO Campaign
+    Route::post('dashboard/seo-campaigns/save', 'CampaignsController@saveEdit')->name('seo-campaign-saveEdit'); // save Edits SEO Campaign
     Route::get('dashboard/seo-campaigns/view/{id}', 'CampaignsController@view')->name('seo-campaign-view'); // View SEO Campaign
     Route::get('dashboard/seo-campaigns/view/{campaign_id}/optimization/{page_id}', 'CampaignsController@viewOptimization')->name('seo-campaign-view-optimization'); // View optimization of page in Campaign
 
@@ -162,3 +167,15 @@ $optionalLanguageRoutes();
 //Route::get('store','baseTestsController@store');
 //Route::get('test','baseTestsController@test');
 //Route::get('search/{id}','reportController@search');
+// Route::get('test-mail',function(){
+//      // Get the campaign that this job for
+//      $campaign = campaign::findOrFail(14);
+//      // check if last email send the day before if so skip
+//      if(empty($campaign->last_email_at) || $campaign->last_email_at < Carbon::now()->subDay(1) ){
+//         // update last email attribute
+//         $campaign->last_email_at = Carbon::now();
+//         // Send an email for the user
+//         Mail::to($campaign->user->email)->send(new CampaignNotification($campaign));
+//     }
+//     return "Success";
+// });

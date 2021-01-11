@@ -225,6 +225,11 @@ circle:nth-of-type(4) {
   }
 }
 
+/* Fix colors of user header */
+.navbar-nav>.user-menu>.dropdown-menu>li.user-header>p>small {
+   color: rgba(255,255,255,0.8);
+}
+
 /*!!! Loader Section */
 
 </style>
@@ -243,7 +248,7 @@ circle:nth-of-type(4) {
   </div>
 @endif
 
-<div id="plans">
+<div id="plans" dir="ltr">
 {!! $plan_html !!}
 </div>
 

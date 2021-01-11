@@ -442,6 +442,11 @@
     "error-password":"You have entered wrong password",
     "success-password":"Password changed successfully",
     "exceed-msg":"You have exceeded your subscription limits, please upgrade your subscription",
-    "subscription-end":"Your subscription period has expired, please subscribe again"
+    "subscription-end":"Your subscription period has expired, please subscribe again",
+    "pages-count":"Pages Count",
+    "Finished and Viewable":"Finished",
+    "latest-updates":"Latest Updates",
+    "yes":"Yes",
+    "no":"No"
 
 }

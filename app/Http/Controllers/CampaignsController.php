@@ -120,6 +120,12 @@ class CampaignsController extends Controller
         // validate exact check box        
         $exact = $request->get('exact') !== null;
         $site = $request->get('url');
+        $pages = $request->get('pages');
+        // validate pages count
+        $max_limit = Auth::user()->available_credit('crawl_monthly');
+        if($pages == null || $pages > $max_limit){
+            $pages = $max_limit;
+        }
 
         // validate inputs
         $areGoodInputs = $this->filterInputs($request, $site, $exact);
@@ -144,7 +150,7 @@ class CampaignsController extends Controller
             // TODO : set the remaining pages of the user account as a limit for the crawling request
 
             // send crawling request
-            $crawlingController->sendCrawlingRequest($site, $siteId, $exact);
+            $crawlingController->sendCrawlingRequest($site, $siteId, $exact,$pages);
         } else {
             // site is existed
             // assign campaign to the site
@@ -173,7 +179,7 @@ class CampaignsController extends Controller
         $campaign->save();
 
         // Add the job of geting metrics , pageInsights , page optimizations and sending email to queue
-        CampaignTrack::dispatch($campaign->id);
+        CampaignTrack::dispatch($campaign->id,$pages);
 
         // redirect to seo campaigns view
         return redirect(route('lang.seo-campaigns', app()->getLocale()));
@@ -256,7 +262,7 @@ class CampaignsController extends Controller
         }
 
         // Add update optimization job to queue
-        CampaignTrack::dispatch($campaign->id, false, true, false, false);
+        CampaignTrack::dispatch($campaign->id, null, false, true, false, false);
 
         // redirect to seo campaigns view
         return redirect(route('lang.seo-campaigns', app()->getLocale()));

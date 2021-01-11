@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use App\Site;
 use App\CrawlingJob;
 use App\Core\PageConnector;
@@ -55,9 +55,10 @@ class CrawlingController extends Controller
             $job->save();
 
             // TODO : set the remaining pages of the user account as a limit for the crawling request
+            $pages = Auth::user()->available_credit('crawl_monthly');
 
             // send recrawl request to the crawler
-            $this->sendCrawlingRequest($site->host,$site->id,$site->exact_match);
+            $this->sendCrawlingRequest($site->host,$site->id,$site->exact_match,$pages);
             // view checks
             return $this->viewSiteCrawlUsingAjax($request, $site->host, $site->exact_match);
         }
@@ -201,7 +202,9 @@ class CrawlingController extends Controller
                     foreach ($obj as $key => $value) {
                         if (in_array($key, ['url', 'src_url', 'dest_url', 'source_url', 'target_url', 'redirect1', 'redirect2'])) {
                             $issueArray['rows'][$ind][] = "<a href=\"" . $value . "\" target=\"_blank\" >" . $value . "</a>";
-                        } else {
+                        }else if($key == 'is_dofollow'){
+                            $issueArray['rows'][$ind][] = ($value) ? __('yes')." <span class=\"glyphicon glyphicon-ok-sign text-success fa-lg\"></span>" : __('no')." <span class=\"glyphicon glyphicon-remove-sign text-danger fa-lg\"></span>";
+                        }else {
                             $issueArray['rows'][$ind][] = $value;
                         }
                     }
@@ -229,10 +232,11 @@ class CrawlingController extends Controller
         return $array;
     }
 
-    public function doSiteCrawl(Request $request, $site = null, $exact = null, $campaign_id = null){
-        if ($site == null && $exact == null) {
+    public function doSiteCrawl(Request $request, $site = null, $exact = null, $campaign_id = null, $pages = null){
+        if ($site == null && $exact == null && $pages == null) {
             $site = $request->get('site');
             $exact = $request->get('exact');
+            $pages = $request->get('pages');
         }
 
         if(!is_bool($exact)){
@@ -253,11 +257,11 @@ class CrawlingController extends Controller
         if (!$isGoodUrl) {
             return;
         } else {
-            return $this->addSite($site, $exact,$campaign_id);
+            return $this->addSite($site, $exact,$campaign_id,$pages);
         }
     }
 
-    public function addSite($site, $exact, $campaign_id){
+    public function addSite($site, $exact, $campaign_id,$pages){
 
         $userId = Auth::user()->id; 
 
@@ -272,16 +276,39 @@ class CrawlingController extends Controller
             Auth::user()->sites()->attach($newSiteId);
 
             // TODO : set the remaining pages of the user account as a limit for the crawling request
+            $max_limit = Auth::user()->available_credit('crawl_monthly');
+            if($pages == null || $pages > $max_limit){
+                $pages = $max_limit;
+            }
 
             // send a request to the crawler
-            $this->sendCrawlingRequest($site,$newSiteId,$exact);
+            $this->sendCrawlingRequest($site,$newSiteId,$exact,$pages);
  
             return $this->showChecks($newSiteId);
         } else{
             // Add access to site's data to the user
             // if this user doesn't have access to it if not return checks            
-            if(Auth::user()->sites()->where('site_id',$existedSite->id)->first() === null)
+            if(Auth::user()->sites()->where('site_id',$existedSite->id)->first() === null){
                 Auth::user()->sites()->attach($existedSite->id);
+            }
+
+            // Add crawled pages count to user usage
+
+            if($existedSite->crawlingJob->status == "Finished"){
+                // get crawled pages count first
+                $urls = DB::select('select url ,status , crawl_depth from urls where site_id = ?', [$existedSite->id]);
+                //  you already decreased one using usage middleware
+                $pagesCrawled = count((array) $urls) -1;
+
+                // update user usage
+                Auth::user()->forceFill([
+                    'usage->crawl_monthly' => Auth::user()->usage->crawl_monthly + $pagesCrawled
+                ])->save();
+
+                $existedSite->crawlingJob->status = "Finished and Viewable";
+                $existedSite->push();
+            }
+                
             return $this->showChecks($existedSite->id);
         }
     }
@@ -313,7 +340,7 @@ class CrawlingController extends Controller
      * This function is responsable for sending a new crawling request to the crawler endpoint
      * @return status of response
      */
-    public function sendCrawlingRequest($siteUrl,$siteId,$exact,$pages = 3000,$crawlers = 3){
+    public function sendCrawlingRequest($siteUrl,$siteId,$exact,$pages = 99 ,$crawlers = 3){
         // Send Request to SEO-crawler server
         // For example
         // http://10.0.75.1:8888/audit?url=https://google.com/&pages=5000&crawlers=3&siteId=73&match=1

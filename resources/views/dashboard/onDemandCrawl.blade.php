@@ -96,6 +96,15 @@
                         {{ Form::text('url', null, ['class' => 'form-control','placeholder'=>__('site-url') ,'id'=>'urlInput','pattern'=>'https?://.+','required','title'=>'Page Link begins with http:// Or https://']) }}
                     </div>
                 </div>
+
+                <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12"> 
+                    <p class="title">@lang('pages-count')</p>
+                           
+                    <div class="form-group" id="pages-box">
+                        {{ Form::number('pages', Auth::user()->available_credit('crawl_monthly') , ['class' => 'form-control','placeholder'=>99 ,'id'=>'pages','max'=> Auth::user()->available_credit('crawl_monthly') ]) }}
+                    </div>
+                </div>
+
                 <!-- Default unchecked -->
                 <div class="form-check col-xs-12 hidden-lg hidden-md">
                     <input class="form-check-input" id="exact" type="checkbox" value="true" name="exact">
@@ -163,7 +172,7 @@
                                     </button>
                                     {!! Form::close() !!}  
 
-                                    @if($site->crawlingJob->status == 'Finished')
+                                    @if($site->crawlingJob->status == 'Finished and Viewable')
                                     <button class="btn btn-xs btn-success" onclick="recrawl({!! $site->id !!});return false;" >
                                         <i class="fa fa-refresh"></i> @lang('recrawl')
                                     </button>
@@ -265,15 +274,15 @@
         //disable button
         $("#button").attr("disabled", true);         
         let exact = ($("#exact").is(":checked") && $("#exact").is(":visible"))  || ($("#exact2").is(":checked") && $("#exact2").is(":visible"));
-        view($("#urlInput").val(),exact);     
+        view($("#urlInput").val(),exact,$("#pages").val());     
     }
     else {
         $("#the-form")[0].reportValidity();
     }
 });
 
-function view(host,exact){
-    $.get("{{route('lang.demandCrawlAjax',app()->getLocale())}}",{ site: host, exact: exact }, function (jsondata) {
+function view(host,exact,pages){
+    $.get("{{route('lang.demandCrawlAjax',app()->getLocale())}}",{ site: host, exact: exact, pages: pages }, function (jsondata) {
                 $("#the-form").hide();
 
                 $.get("{{url('templates/NewTableComponent.hbs')}}", function (data) {
@@ -360,7 +369,7 @@ function updateView(jsondata){
     }
     $('#total-issues').text( totalCount );
 
-    if(!jsondata.pagesCount > 0 && jsondata.status != "@lang('Finished')" ){
+    if(!jsondata.pagesCount > 0 && jsondata.status != "@lang('Finished and Viewable')" ){
         // show some things take some time
         $( "#upper-board" ).after( "<div class='alert alert-info text-center' role='alert'><i class='fa fa-hourglass-half'></i> <strong> @lang('takes-time') </strong> @lang('come-back-later')</div>");
     }else{

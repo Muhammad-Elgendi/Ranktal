@@ -100,6 +100,10 @@
             
             </div>
 
+            <p class="title">@lang('pages-count')</p>
+
+            {{ Form::number('pages', Auth::user()->available_credit('crawl_monthly') , ['class' => 'form-control','id'=>'campaign-pages','placeholder'=>99, 'max'=> Auth::user()->available_credit('crawl_monthly') ]) }}
+
             <p class="title">@lang('campaign-name')</p>
 
             {{ Form::text('name', null, ['class' => 'form-control','id'=>'campaign-name','placeholder'=>__('campaign-name') ]) }}

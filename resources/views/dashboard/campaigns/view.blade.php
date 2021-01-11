@@ -87,7 +87,7 @@
 
     }
     .metric{
-        font-size: 32px;
+        font-size: 28px;
     }
     .iphone {
         display: inline-block;

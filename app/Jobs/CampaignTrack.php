@@ -4,17 +4,21 @@ namespace App\Jobs;
 
 use Exception;
 use App\campaign;
+use App\Http\Controllers\CampaignsController;
 use App\Http\Controllers\CrawlingController;
 use App\Http\Controllers\metricsController;
 use App\Http\Controllers\optimizerController;
 use App\Http\Controllers\pageInsightsController;
+use App\Mail\CampaignNotification;
+use Illuminate\Support\Facades\Mail;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-
+use Illuminate\Support\Facades\DB;
 
 class CampaignTrack implements ShouldQueue
 {
@@ -25,6 +29,7 @@ class CampaignTrack implements ShouldQueue
     protected $pageInsight;
     protected $metrics;
     protected $campaignId;
+    protected $pages_limit;
     // protected $campaign;
 
     /**
@@ -46,9 +51,11 @@ class CampaignTrack implements ShouldQueue
      *
      * @return void
      */
-    public function __construct($campaignId,$onDemandCrawl = true,$optimization = true,$pageInsight = true,$metrics = true){
+    public function __construct($campaignId,$pages_limit = null, $onDemandCrawl = true,$optimization = true,$pageInsight = true,$metrics = true){
         // set the campaign id which this job for
         $this->campaignId    = $campaignId; 
+        // set the pages_limit of the user which this job for
+        $this->pages_limit    = $pages_limit; 
         // set job flags
         $this->onDemandCrawl = $onDemandCrawl;
         $this->optimization  = $optimization;
@@ -61,6 +68,7 @@ class CampaignTrack implements ShouldQueue
      *
      * Parameters with default values
      * $campaignId,
+     * $pages_limit = null
      * $onDemandCrawl = true,
      * $optimization = true,
      * $pageInsight = true,
@@ -81,10 +89,21 @@ class CampaignTrack implements ShouldQueue
         if($this->onDemandCrawl){
             // Check if there is a Crawling request that sent before dispatching or not 
             // And  if the interval days of the campaign passed than the updated_at time
-            if($campaign->site->crawlingJob->status == "Finished" && $campaign->site->crawlingJob->finished_at <  Carbon::now()->subDay($campaign->interval)){
+            if($campaign->site->crawlingJob->status == "Finished and Viewable" ||$campaign->site->crawlingJob->status == "Finished" && $campaign->site->crawlingJob->finished_at <  Carbon::now()->subDay($campaign->interval)){
                 $crawlingController = new CrawlingController();
-                // Send crawling request
-                $crawlingController->sendCrawlingRequest($campaign->site->host,$campaign->site->id,$campaign->site->exact_match);
+
+                // Get the user that this job for
+                $user = User::findOrFail($campaign->user_id);
+
+                // check if we got a pages_limit
+                if(isset($this->pages_limit)){                   
+                    // Send crawling request
+                    $crawlingController->sendCrawlingRequest($campaign->site->host,$campaign->site->id,$campaign->site->exact_match,$this->pages_limit);
+                }else{
+                    // Send crawling request
+                    $crawlingController->sendCrawlingRequest($campaign->site->host,$campaign->site->id,$campaign->site->exact_match,$user->available_credit('crawl_monthly'));
+                }
+                
             }          
         }
         
@@ -120,14 +139,22 @@ class CampaignTrack implements ShouldQueue
             $pageInsightController->getPageInsightsForSite(null,$campaign->site->host,"mobile",$campaign->interval,$campaign->site->id);
         }
 
-        // TODO : Send an email for the user
-        // check if last email send the day before if so skip
-
         // notify that campaign updating is done
         $campaign->last_track_at = Carbon::now();
 
         // change the status of the campaign
-        $campaign->status = "Finished";
+        $campaign->status = "Finished";     
+
+        // check if last email send the day before if so skip
+        if(empty($campaign->last_email_at) || $campaign->last_email_at < Carbon::now()->subDay(1) ){
+
+            // Send an email for the user
+            Mail::to($campaign->user->email)->queue(new CampaignNotification($campaign));
+
+            // update last email attribute
+            $campaign->last_email_at = Carbon::now();
+
+        }
 
         // save changes
         $campaign->save();
