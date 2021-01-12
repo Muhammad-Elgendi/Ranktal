@@ -14,15 +14,15 @@
             <!--<level>TRACE</level>-->
         <!--</filter>-->
         <encoder>
-            <pattern>%date{HH:mm:ss} %-5level [%thread] - [%logger{0}]- %msg%n</pattern>
+            <pattern>%date{dd MMM yyyy;HH:mm:ss} %-5level [%thread] - [%logger{0}]- %msg%n</pattern>
         </encoder>
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>${LOG_HOME}/${LOG_FILE_NAME}</file>
-        <append>false</append>
+        <append>true</append>
         <encoder>
-            <pattern>%date %-5level [%thread] - [%logger] - %msg%n</pattern>
+            <pattern>%date{dd MMM yyyy;HH:mm:ss} %-5level [%thread] - [%logger{0}]- %msg%n</pattern>
         </encoder>
     </appender>
 

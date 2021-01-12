@@ -10,7 +10,6 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import io.github.cdimascio.dotenv.Dotenv;
-import java.net.MalformedURLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import seocrawler.crawler.PostgresCrawlerFactory;
@@ -41,6 +40,7 @@ public class SampleLauncher {
             return;
         }
 
+
         // Handle arguments
         URL url = new URL(args[0]);
         mainUrl= args[0];
@@ -70,7 +70,7 @@ public class SampleLauncher {
 
         config.setPolitenessDelay(200);
 
-        config.setCrawlStorageFolder(dotenv.get("SEO_CRAWLER_STORAGE_DIR")+"/"+url.getHost());
+        config.setCrawlStorageFolder("/root/crawlerData/"+url.getHost());
 
         config.setMaxPagesToFetch(maxPages);
 

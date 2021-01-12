@@ -144,7 +144,7 @@ public class PostgresWebCrawler extends WebCrawler {
 
         // store url
         try {
-            postgresDBService.storeUrl(url,statusCode, SampleLauncher.siteId,null);
+            postgresDBService.storeUrl(url,statusCode, SampleLauncher.siteId,-1);
         } catch (RuntimeException e) {
             logger.error("Storing url in onUnexpectedStatusCode() failed", e);
         }
@@ -431,8 +431,7 @@ public class PostgresWebCrawler extends WebCrawler {
             boolean isExternal;
 
             for (Element link : links) {
-                isExternal = !link.attr("abs:href").isEmpty() && !link.attr("abs:href").contains(page.getWebURL().getSubDomain()+page.getWebURL().getDomain());
-
+                isExternal = !link.attr("abs:href").isEmpty() && !link.attr("abs:href").contains(page.getWebURL().getSubDomain()+'.'+page.getWebURL().getDomain());
 //                if(SampleLauncher.exactMatch) {
 //                    isExternal = !link.attr("abs:href").toLowerCase().startsWith(SampleLauncher.matchPattern);
 //                }else {

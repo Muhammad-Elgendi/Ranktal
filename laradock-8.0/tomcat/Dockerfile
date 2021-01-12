@@ -4,6 +4,6 @@ LABEL maintainer="deepak@softwareyoga.com"
 
 EXPOSE 8080
 
-RUN mkdir -p ~/crawlerData
+RUN mkdir -p ~/crawlerData/logs
 
 CMD ["catalina.sh", "run"]

@@ -57,7 +57,7 @@ services:
       volumes:
         - ${TOMCAT_APPS_PATH}:/usr/local/tomcat/webapps/
         - ${SEO_CRAWLER_ENV_PATH}:/usr/local/tomcat/webapps/.env
-        - ${SEO_CRAWLER_LOGS_HOST_PATH}:${SEO_CRAWLER_STORAGE_DIR}/logs/
+        - ${SEO_CRAWLER_DATA_PATH}:/root/crawlerData/
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       ports:

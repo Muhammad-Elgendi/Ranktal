@@ -7,8 +7,6 @@ import ch.qos.logback.classic.spi.LoggerContextListener;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.spi.ContextAwareBase;
 import ch.qos.logback.core.spi.LifeCycle;
-import io.github.cdimascio.dotenv.Dotenv;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import seocrawler.SampleLauncher;
@@ -29,19 +27,17 @@ public class LoggerStartupListener extends ContextAwareBase implements LoggerCon
     public void start() {
         if (started) return;
         
-        Dotenv dotenv = Dotenv.configure().directory("/usr/local/tomcat/webapps/").load();
-        
-        String logFile = SampleLauncher.matchPattern + "_"+ DEFAULT_LOG_FILE_NAME;
+        // Dotenv dotenv = Dotenv.configure().directory("/usr/local/tomcat/webapps/").load();
+        // String logHome = dotenv.get("SEO_CRAWLER_STORAGE_DIR")+"/logs";
+        // logHome = (logHome != null && logHome.length() > 0) ? logHome : DEFAULT_LOG_HOME;
 
-        String logHome = dotenv.get("SEO_CRAWLER_STORAGE_DIR")+"/logs";
+        String logFile = SampleLauncher.matchPattern + "__"+ DEFAULT_LOG_FILE_NAME; 
 
-        logFile = (logFile != null && logFile.length() > 0) ? logFile : DEFAULT_LOG_FILE_NAME;
-
-        logHome = (logHome != null && logHome.length() > 0) ? logHome : DEFAULT_LOG_HOME;
+        logFile = (SampleLauncher.matchPattern != null && logFile.length() > 0) ? logFile : DEFAULT_LOG_FILE_NAME;        
 
         Context context = getContext();
 
-        context.putProperty("LOG_HOME", logHome);
+        context.putProperty("LOG_HOME", DEFAULT_LOG_HOME);
         
         context.putProperty("LOG_FILE_NAME", logFile);
 
