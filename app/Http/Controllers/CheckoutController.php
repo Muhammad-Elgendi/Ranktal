@@ -24,6 +24,21 @@ class CheckoutController extends Controller
             'P-8HM887005N024444DL6I5HPY' => 'Agency'
         ];
 
+        $plans_limits =[
+            'Solo' => '{
+                "optimizations_monthly": 1000,
+                "audits_monthly": 1000,
+                "crawl_monthly": 3000,
+                "campaigns_monthly": 5
+            }',
+            'Agency' => '{
+                "optimizations_monthly": 4000,
+                "audits_monthly": 4000,
+                "crawl_monthly": 12000,
+                "campaigns_monthly": 20
+            }'
+        ];
+
         // Get plan ID and subscription ID from request
         $planID = $request->get('planID');
         $subscriptionID = $request->get('subscriptionID');
@@ -32,7 +47,8 @@ class CheckoutController extends Controller
         // Check if vaild subscribtion was made
         if(!empty($planID) && !empty($subscriptionID) && isset($plans[$planID]) ){
             
-            $user->plan = $plans[$planID];
+            $user->plan = $plans[$planID];           
+            $user->limits = json_decode($plans_limits[$user->plan], true);
             $user->subscription_id = $subscriptionID;
             $user->subscribed_until = Carbon::now()->addMonths(1);
             $user->save();

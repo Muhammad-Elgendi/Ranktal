@@ -16,9 +16,9 @@
         <?php while( $loop->have_posts()): ?>
         <?php $loop->the_post(); ?>
 
-          <section class="third lift plan-tier <?php echo ( $loop->current_post == 1 ) ? 'callout' : ''; ?>">
+          <section class="third lift plan-tier <?php echo ( has_excerpt() ) ? 'callout' : ''; ?>">
           <?php if(has_excerpt()):?>
-                <h6 class="bcolor-1"><?php echo get_the_excerpt(); ?></h6>
+                <h6 class="bcolor-2"><?php echo get_the_excerpt(); ?></h6>
           <?php endif; ?>
 
               <h4><?php the_title(); ?></h4>

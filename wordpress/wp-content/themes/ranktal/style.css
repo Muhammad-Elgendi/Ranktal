@@ -1,10 +1,10 @@
 /* 
 Theme Name: Ranktal
-Theme URI: http://ranktal.com
+Theme URI: https://ranktal.com
 Author: Muhammad Elgendi
 Author URI: https://www.linkedin.com/in/muhammad-elgendi/
 Description: Ranktal custom theme for a seo software
-Version: 1.0
+Version: 1.1
 Tags: white, blue, light, ranktal, seo, saas
 Text Domain: Ranktal
 */
@@ -491,10 +491,12 @@ Text Domain: Ranktal
 /* FOOTER */
 
 .social-area a{
-  color: #212529;
+  color: #fff;
   text-decoration: none;
 }
-
+.white{
+  color: #fff;
+}
 /*!!! FOOTER */
 
 
@@ -511,7 +513,7 @@ Text Domain: Ranktal
 
 .plan-tier ul,.plan-tier ol {
   list-style: none;
-  padding: 0;
+  padding: 0px 2em;
 }
 
 .plans {
@@ -634,10 +636,6 @@ width: 100%;
 padding: 15px 0 14px;
 color: white;
 font-size: 1.25em;
-}
-
-.plan-tier.callout h4 {
-background-color: #DC493A;
 }
 
 /*!!! Pricing */

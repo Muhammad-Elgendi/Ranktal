@@ -118,7 +118,7 @@ function ranktal_widget_areas(){
 
     // Social Links Area Above Footer
     register_sidebar(array(
-        'before_title' => '<div class="col-md-6 col-lg-5 text-center text-md-left mb-4 mb-md-0"> <h6 class="mb-0">',
+        'before_title' => '<div class="col-md-6 col-lg-5 text-center text-md-left mb-4 mb-md-0"> <h6 class="mb-0 white">',
         'after_title' => '</h6> </div> <div class="social-area col-md-6 col-lg-7 text-center text-md-right">',
         'before_widget' => '<div class="row py-4 d-flex align-items-center">',
         'after_widget' => '</div>',

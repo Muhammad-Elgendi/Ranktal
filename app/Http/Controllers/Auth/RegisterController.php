@@ -31,7 +31,7 @@ class RegisterController extends Controller
     protected $redirectTo = '/dashboard';
 
     // Register new users with trial period (In days)
-    public $trial_period = 3;
+    public $trial_period = 7;
     //
     /**
      * Create a new controller instance.

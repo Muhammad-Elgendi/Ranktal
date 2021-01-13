@@ -17,7 +17,7 @@
 
 .plan-tier ul,.plan-tier ol {
   list-style: none;
-  padding: 0;
+  padding: 0px 2em;
 }
 
 .plans {
@@ -135,9 +135,6 @@ color: white;
 font-size: 1.25em;
 }
 
-.plan-tier.callout h4 {
-background-color: #DC493A;
-}
 .callout{
     padding: 0;
 }
