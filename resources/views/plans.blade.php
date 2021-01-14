@@ -133,6 +133,7 @@ text-decoration: line-through;
 width: 100%;
 color: white;
 font-size: 1.25em;
+padding: 18px 0 15px;
 }
 
 .callout{
