@@ -19,10 +19,10 @@ $('[data-slide="prev"]').on('click', function () {
 
 // override Carousel with keyboard controls and to excute click event
 $(document).bind('keyup', function (e) {
-    if (e.which == 37) {
+    if (e.which == 39) {
         $('.carousel-control-next').trigger('click');
     }
-    else if (e.which == 39) {
+    else if (e.which == 37) {
         $('.carousel-control-prev').trigger('click');
     }
 });
