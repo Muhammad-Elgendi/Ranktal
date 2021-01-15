@@ -7,7 +7,7 @@
           <h2 class="my-3"><?php the_field('numbers_title'); ?></h2>
         </div>
         <div class="col-xs-12 col-xl-12">
-          <p class="mx-5 px-5 text-center ">
+          <p class="px-5 text-center ">
             <?php the_field('numbers_excerpt'); ?>
           </p>
         </div>
