@@ -500,6 +500,12 @@ Text Domain: Ranktal
 .white{
   color: #fff;
 }
+
+/* Hide Jquery mobile loading div */
+.ui-loading, .ui-loader {
+  display: none; 
+}
+
 /*!!! FOOTER */
 
 

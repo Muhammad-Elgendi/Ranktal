@@ -18,7 +18,7 @@ function ranktal_register_scripts(){
     wp_enqueue_script( 'ranktal-jQuery', "https://code.jquery.com/jquery-3.5.1.min.js", array(), '3.5.1', true );
     wp_enqueue_script( 'ranktal-Popper', "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js", array('ranktal-jQuery'), '1.14.3', true );
     wp_enqueue_script( 'ranktal-Bootstrap', "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js", array('ranktal-Popper'), '4.1.3', true );
-    wp_enqueue_script( 'ranktal-jQuery-mobile', "http://code.jquery.com/mobile/1.5.0-rc1/jquery.mobile-1.5.0-rc1.min.js", array('ranktal-jQuery'), '1.5.0', true );
+    wp_enqueue_script( 'ranktal-jQuery-mobile', "https://code.jquery.com/mobile/1.5.0-rc1/jquery.mobile-1.5.0-rc1.min.js", array('ranktal-jQuery'), '1.5.0-rc1', true );
     // Ranktal javascript
     // get theme version
     $version = wp_get_theme()->get('Version');
