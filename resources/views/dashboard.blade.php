@@ -14,6 +14,9 @@
 /*!!! Warning section*/
 
 /* Campaigns section*/
+.jumbotron {
+    background-color: transparent;
+}
 .card{
     background-color: #ffffff;
     padding: 10px;
@@ -75,7 +78,7 @@
 @endphp
 
 @if(Auth::user()->campaigns->isEmpty())
-<div class="jumbotron">
+<div class="jumbotron" style="background-image: url('{{url('img/dashboard-background.png')}}'); background-repeat: no-repeat; background-position: center;">
     <div class="text-center container">
     <h1 class="display-4">@lang('have-nothing')</h1>   
     <p class="lead">    

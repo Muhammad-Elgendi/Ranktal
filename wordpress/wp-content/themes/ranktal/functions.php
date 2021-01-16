@@ -1,5 +1,5 @@
 <?php
-function ranktal_register_styles(){
+function ranktal_register_styles(){   
     // Bootstrap CSS
     wp_enqueue_style( 'ranktal-bootstrap', "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css",array(),"4.1.3" );
     // Font Awesome Icons CSS For all types of styles solid regular light
@@ -18,6 +18,7 @@ function ranktal_register_scripts(){
     wp_enqueue_script( 'ranktal-jQuery', "https://code.jquery.com/jquery-3.5.1.min.js", array(), '3.5.1', true );
     wp_enqueue_script( 'ranktal-Popper', "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js", array('ranktal-jQuery'), '1.14.3', true );
     wp_enqueue_script( 'ranktal-Bootstrap', "https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js", array('ranktal-Popper'), '4.1.3', true );
+    wp_enqueue_script( 'ranktal-jQuery-mobile', "http://code.jquery.com/mobile/1.5.0-rc1/jquery.mobile-1.5.0-rc1.min.js", array('ranktal-jQuery'), '1.5.0', true );
     // Ranktal javascript
     // get theme version
     $version = wp_get_theme()->get('Version');

@@ -359,6 +359,9 @@ Text Domain: Ranktal
     left: auto;
     right: -15px;
   }
+  #featuresTabs .h5,#featuresTabs h5 {
+    font-size: 0.75rem;
+  }
 }
 
 /* change icons and colors */

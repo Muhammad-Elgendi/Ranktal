@@ -27,6 +27,20 @@ $(document).bind('keyup', function (e) {
     }
 });
 
+// add swipe gestures with the Bootstrap Carousel 
+$(document).ready(function() {  
+    $("#carouselExampleIndicators").swiperight(function() {  
+       $("#carouselExampleIndicators").carousel('prev'); 
+       $('.carousel-control-prev').trigger('click');
+     });  
+    $("#carouselExampleIndicators").swipeleft(function() {  
+       $("#carouselExampleIndicators").carousel('next'); 
+       $('.carousel-control-next').trigger('click'); 
+    });  
+ });  
+
+
+
 //!!! Tools features section
 
 // FAQ section

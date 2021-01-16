@@ -85,7 +85,7 @@ return [
      */
 
     'locales' => ['ar','en'],
-    'flags' => ['ar'=>'sa','en'=>'us'],
+    'flags' => ['ar'=>'eg','en'=>'us'],
     /**
      * Right to Left Languages
      */

@@ -23,7 +23,7 @@
         <?php while( $loop->have_posts()): ?>
             <?php $loop->the_post(); ?>
 
-            <div class="col-md-2 col-xs-12 text-center">
+            <div class="col-md-2 col-xs-12 text-center pt-5">
                 <div class="figure-counter">
                     <?php the_content();?>
                 </div>
