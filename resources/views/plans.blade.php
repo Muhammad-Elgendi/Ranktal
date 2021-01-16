@@ -41,7 +41,7 @@ display: block;
 }
 
 .third {
-margin: 0 30px 0 0;
+margin: 0 12px 0 0;
 display: inline-block;
 }
 
@@ -262,6 +262,45 @@ circle:nth-of-type(4) {
 	
 </div>
 
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Vodafone cash (<strong> Egypt only</strong> )</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Vodafone cash is an <strong>online payment method in Egypt only</strong>.<br> You can pay your subscription by transferring the cost to our Vodafone number.
+        <br><br>Send us the following information :
+        
+        <ol>
+          <li>Account's email address.</li>
+          <li>Your Vodafone number.</li>
+          <li>The plan that you want to subscribe to.</li>
+        </ol>
+
+        <br><strong>Please note that : </strong>
+        <br>
+        <ol>
+          <li>Upgrading accounts may take up to <strong> 24 hours </strong> after transaction completion.</li>
+          <li>Your subscription period <strong> starts after upgrading </strong> your plan.</li>
+        </ol>
+     
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+        <a href="{{config('app.homepage')}}/contact-us" target="_blank" class="btn btn-primary">Contact Us to Get Our Vodafone Number</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection
 
 @section('scripts')
@@ -269,6 +308,8 @@ circle:nth-of-type(4) {
 <script src="https://www.paypal.com/sdk/js?client-id=AXa8kAmW6osPvSCXl_ClAaM2KkGsKXNJks3ttRxySwoAwTG5TfKF_NGs-a9Zz7l60mR9-K9DEqRTm0qu&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
 
 <script>
+
+var Vodafone = "<a href=\"#exampleModalCenter\" role=\"button\" data-toggle=\"modal\"><img src=\"{{url('img/vodafone-cash.jpeg')}}\" height=\"64px\" width=\"274px\"></a>";
 
 function notifyBackend(subscription,plan){
 
@@ -325,6 +366,8 @@ paypal.Buttons({
       notifyBackend(data.subscriptionID,'P-8HM887005N024444DL6I5HPY');
     }
 }).render('#plan1');
+
+$( "#plan0,#plan1" ).parent().parent().append( "<li>"+Vodafone+"</li>" );
 
 </script>
 

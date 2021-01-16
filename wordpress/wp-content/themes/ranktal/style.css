@@ -501,11 +501,6 @@ Text Domain: Ranktal
   color: #fff;
 }
 
-/* Hide Jquery mobile loading div */
-.ui-loading, .ui-loader {
-  display: none; 
-}
-
 /*!!! FOOTER */
 
 
