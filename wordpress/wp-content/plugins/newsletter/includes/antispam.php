@@ -92,6 +92,9 @@ class NewsletterAntispam {
         }
         $this->logger->debug('IP blacklist check');
         foreach ($this->options['ip_blacklist'] as $item) {
+            if (substr($item, 0, 1) === '#') {
+                continue;
+            }
             if ($this->ip_match($ip, $item)) {
                 return true;
             }
@@ -140,6 +143,9 @@ class NewsletterAntispam {
             return true;
         }
         if (stripos($text, 'www.') !== false) {
+            return true;
+        }
+        if (preg_match('|[^\s\.]+\.[^\s\.]+\.[^\s\.]{2,}|', $text)) {
             return true;
         }
 

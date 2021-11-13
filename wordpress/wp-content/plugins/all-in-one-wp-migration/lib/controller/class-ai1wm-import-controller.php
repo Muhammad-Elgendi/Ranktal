@@ -69,9 +69,6 @@ class Ai1wm_Import_Controller {
 							// Run function hook
 							$params = call_user_func_array( $hook['function'], array( $params ) );
 
-							// Log request
-							Ai1wm_Log::import( $params );
-
 						} catch ( Ai1wm_Import_Retry_Exception $e ) {
 							if ( defined( 'WP_CLI' ) ) {
 								WP_CLI::error( sprintf( __( 'Unable to import. Error code: %s. %s', AI1WM_PLUGIN_NAME ), $e->getCode(), $e->getMessage() ) );
@@ -120,9 +117,10 @@ class Ai1wm_Import_Controller {
 							exit;
 						}
 
-						wp_remote_post(
+						wp_remote_request(
 							apply_filters( 'ai1wm_http_import_url', add_query_arg( array( 'ai1wm_import' => 1 ), admin_url( 'admin-ajax.php?action=ai1wm_import' ) ) ),
 							array(
+								'method'    => apply_filters( 'ai1wm_http_import_method', 'POST' ),
 								'timeout'   => apply_filters( 'ai1wm_http_import_timeout', 10 ),
 								'blocking'  => apply_filters( 'ai1wm_http_import_blocking', false ),
 								'sslverify' => apply_filters( 'ai1wm_http_import_sslverify', false ),

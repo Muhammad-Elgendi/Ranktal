@@ -89,29 +89,29 @@ class BackLinks{
     /**
      * set alexa backLinks if succeed
      */
-	public function setAlexaBackLinks(){
-        //form the request url
-        $requestUrl = 'https://www.alexa.com/siteinfo/'. $this->domain;
-        $content = $this->makeConnection($requestUrl);
-        if ($content) {
-            // search for "sites liking in"
-            $doc = new \DOMDocument;
-            libxml_use_internal_errors(true);
-            $doc->loadHTML($content);
-            libxml_use_internal_errors(false);
-            try {
-                $anchors = $doc->getElementsByTagName('table')->item(3)->getElementsByTagName('a');
-                foreach ($anchors as $anchor) {
-                    $link = $anchor->getAttribute('href');
-                    if (stripos($link, 'siteinfo/') === false)
-                        $this->backlinks[] =['Source URL'=> $link, 'Target URL' => $this->domain ] ;
-                }
-            }
-            catch (\Exception $e) {
-                return;
-            }
-        }
-    }
+	// public function setAlexaBackLinks(){
+    //     //form the request url
+    //     $requestUrl = 'https://www.alexa.com/siteinfo/'. $this->domain;
+    //     $content = $this->makeConnection($requestUrl);
+    //     if ($content) {
+    //         // search for "sites liking in"
+    //         $doc = new \DOMDocument;
+    //         libxml_use_internal_errors(true);
+    //         $doc->loadHTML($content);
+    //         libxml_use_internal_errors(false);
+    //         try {
+    //             $anchors = $doc->getElementsByTagName('table')->item(3)->getElementsByTagName('a');
+    //             foreach ($anchors as $anchor) {
+    //                 $link = $anchor->getAttribute('href');
+    //                 if (stripos($link, 'siteinfo/') === false)
+    //                     $this->backlinks[] =['Source URL'=> $link, 'Target URL' => $this->domain ] ;
+    //             }
+    //         }
+    //         catch (\Exception $e) {
+    //             return;
+    //         }
+    //     }
+    // }
 
 	/*
 		Currently the request is set to page_to_domain means that it shows all backlinks that refer to the domain of URL not Just the Page

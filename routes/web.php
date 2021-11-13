@@ -36,7 +36,7 @@ $optionalLanguageRoutes = function () {
     Route::get('dashboard/plans', 'CheckoutController@plans')->name('plans'); // plans view
     Route::get('settings', 'SettingsController@view')->name('settings'); // settings view
 
-    // Route::get('dashboard/backlinks-checker', 'backlinksController@index')->name('backlinks-checker'); //Backlinks checker view
+    Route::get('dashboard/backlinks-checker', 'backlinksController@index')->name('backlinks-checker'); //Backlinks checker view
     // Route::get('dashboard/keyword-tracker', 'KeywordTrackerController@index')->name('keyword-tracker'); // Keyword Tracker View
     // Route::get('dashboard/keyword-research', 'KeywordResearchController@index')->name('keyword-research'); // Keyword Research View
 

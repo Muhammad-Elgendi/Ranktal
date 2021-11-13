@@ -36,7 +36,7 @@ if ($controls->is_action('resend_welcome')) {
     $controls->messages = __('Welcome email sent.', 'newsletter');
 }
 
-if ($controls->is_action('remove')) {
+if ($controls->is_action('delete')) {
     $this->delete_user($controls->button_data);
     unset($controls->data['subscriber_id']);
 }
@@ -169,7 +169,7 @@ $controls->data['search_page'] ++;
             <table class="widefat">
                 <thead>
                     <tr>
-                        <th><input type="checkbox" onchange="jQuery('input.tnp-selector').prop('checked', this.checked)"></th>
+                        <td class="check-column"><input type="checkbox" onchange="jQuery('input.tnp-selector').prop('checked', this.checked)"></th>
                         <th>Id</th>
                         <th>Email</th>
                         <th><?php _e('Name', 'newsletter') ?></th>
@@ -178,14 +178,14 @@ $controls->data['search_page'] ++;
                             <th><?php _e('Lists', 'newsletter') ?></th>
                         <?php } ?>
                         <th>&nbsp;</th>
-                        <th>&nbsp;</th>
+                        
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
                 <?php $i = 0; ?>
                 <?php foreach ($list as $s) { ?>
-                    <tr class="<?php echo ($i++ % 2 == 0) ? 'alternate' : ''; ?>">
-                        <td><input class="tnp-selector" type="checkbox" name="ids[]" value="<?php echo $s->id; ?>"/></td>
+                    <tr>
+                        <th scope="row" class="check-column" style="vertical-align: middle"><input class="tnp-selector" type="checkbox" name="ids[]" value="<?php echo $s->id; ?>"/></td>
                         <td>
                             <?php echo $s->id; ?>
                         </td>
@@ -200,7 +200,7 @@ $controls->data['search_page'] ++;
 
                         <td>
                             <small>
-                                <?php echo $this->get_user_status_label($s) ?>
+                                <?php echo $this->get_user_status_label($s, true) ?>
                             </small>
                         </td>
 
@@ -220,16 +220,16 @@ $controls->data['search_page'] ++;
                         <?php } ?>
 
                         <td>
-                            <a class="button-secondary" href="<?php echo $this->get_admin_page_url('edit'); ?>&amp;id=<?php echo $s->id; ?>"><?php _e('Edit', 'newsletter') ?></a>
+                            <?php $controls->button_icon_edit($this->get_admin_page_url('edit') . '&amp;id=' . $s->id)?>
                         </td>
-                        <td>
-                            <?php $controls->button_confirm('remove', __('Remove', 'newsletter'), '', $s->id); ?>
-                        </td>
-                        <td style="text-align: center">    
+                        
+                        <td style="white-space: nowrap">
+                            <?php $controls->button_icon_delete($s->id); ?>
+                       
                             <?php if ($s->status == "C") { ?>
-                            <?php $controls->button_confirm('resend_welcome', __('Resend welcome', 'newsletter'), '', $s->id); ?>
+                            <?php $controls->button_icon('resend_welcome', 'fa-redo', __('Resend welcome', 'newsletter'), $s->id, true); ?>
                             <?php } else { ?>
-                            <?php $controls->button_confirm('resend', __('Resend activation', 'newsletter'), '', $s->id); ?>
+                            <?php $controls->button_icon('resend', 'fa-redo', __('Resend activation', 'newsletter'), $s->id, true); ?>
                             <?php } ?>
                         </td>
 

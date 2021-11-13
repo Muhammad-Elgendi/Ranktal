@@ -38,12 +38,11 @@ class backlinksController extends Controller
         if( (empty($target) && empty($src)) || (!empty($src) && !$isGoodSrc) || (!empty($target)&& !$isGoodTarget) ) {
                 return "Not Vaild Parameters";
         }else{
-            $this->getBacklinks($target,$src);
+            return $this->getBacklinks($target,$src);
         }
     }
 
-    public function getBacklinks($target,$src){
-  
+    public function getBacklinks($target,$src){       
         if(!empty($target) && !empty($src)){
             $foundBacklinks = Backlink::where('source_url','like','%'.$src.'%')->where('target_url','like','%'.$target.'%')->get();
             if($foundBacklinks->isEmpty()){
@@ -90,7 +89,7 @@ class backlinksController extends Controller
                 $newLink->source_url = $backlink['Source URL'];
                 $newLink->target_url = $backlink['Target URL'];
                 $newLink->anchor_text = $backlink['Anchor Text'];
-                $newLink->is_doFollow = $backlink['isDoFollow'];
+                $newLink->is_dofollow = $backlink['isDoFollow'];
                 $newLink->save();
             }
         }
@@ -100,9 +99,9 @@ class backlinksController extends Controller
 
     public function viewBacklinksUsingAjax(Request $request)
     {
-        if (!$request->ajax()) {
-            return "This page isn't for you ! ^_^";
-        }
+        // if (!$request->ajax()) {
+        //     return redirect()->route('dashboard');
+        // }
         $json = $this->handleBacklinks($request);
         $array = json_decode($json);
     

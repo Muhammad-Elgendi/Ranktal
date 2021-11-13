@@ -344,12 +344,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                 {{-- </li> --}}
 
                 {{-- Backlinks  --}}
-                {{-- <li class="header">@lang("backlinks")</li>
+                <li class="header">@lang("backlinks")</li>
                 <li>
                     <a href="{{route('lang.backlinks-checker',app()->getLocale())}}">
                         <i class="fa fa-crosshairs"></i> <span>@lang("backlinks-checker")</span>
                     </a>              
-                </li>   --}}
+                </li>
             
                 <li class="header">@lang("support")</li>       
                 <li>
