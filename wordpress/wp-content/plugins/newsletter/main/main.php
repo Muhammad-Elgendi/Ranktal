@@ -246,7 +246,7 @@ if (!empty($return_path)) {
                             <td>
                                 <?php $controls->text('scheduler_max', 5); ?> (min. 10)
                                 <p class="description">
-                                    <a href="?page=newsletter_main_status#tnp-speed">See the collected statistics</a>
+                                    <a href="?page=newsletter_system_status#tnp-speed">See the collected statistics</a>
                             </td>
                         </tr>
                     </table>

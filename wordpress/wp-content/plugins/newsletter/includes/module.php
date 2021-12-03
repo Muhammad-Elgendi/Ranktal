@@ -310,6 +310,14 @@ class TNP_Subscription {
     public function __construct() {
         $this->data = new TNP_Subscription_Data();
     }
+    
+    public function is_single_optin() {
+        return $this->optin == 'single';
+    }
+    
+    public function is_double_optin() {
+        return $this->optin == 'double';
+    }
 
 }
 
@@ -1826,6 +1834,7 @@ class NewsletterModule {
     }
 
     function process_ip($ip) {
+        
         $option = Newsletter::instance()->options['ip'];
         if (empty($option)) {
             return $ip;
@@ -2317,7 +2326,14 @@ class NewsletterModule {
         if (empty($ip)) {
             return '';
         }
-        return preg_replace('/[^0-9a-fA-F:., ]/', '', trim($ip));
+        $ip = preg_replace('/[^0-9a-fA-F:., ]/', '', trim($ip));
+        if (strlen($ip) > 50) $ip = substr($ip, 0, 50);
+        
+        // When more than one IP is present due to firewalls, proxies, and so on. The first one should be the origin.
+        if (strpos($ip, ',') !== false) {
+            list($ip, $tail) = explode(',', $ip, 2);
+        }
+        return $ip; 
     }
 
     static function get_remote_ip() {
@@ -2325,9 +2341,7 @@ class NewsletterModule {
         if (!empty($_SERVER['HTTP_X_REAL_IP'])) {
             $ip = $_SERVER['HTTP_X_REAL_IP'];
         } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            // Sometimes this is a list of IPs representing the chain of proxies
-            $ip = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'], 1);
-            $ip = $ip[0];
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
         } elseif (isset($_SERVER['REMOTE_ADDR'])) {
             $ip = $_SERVER['REMOTE_ADDR'];
         }

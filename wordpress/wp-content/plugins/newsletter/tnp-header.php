@@ -226,7 +226,6 @@ $warning |= empty($status_options['mail']);
                 <a href="?page=<?php echo $p ?>"><i class="fas fa-check-square"></i> <?php _e('License active', 'newsletter') ?></a>
             </li>
 
-
         <?php } ?>
     </ul>
 </div>

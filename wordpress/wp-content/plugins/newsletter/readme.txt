@@ -1,7 +1,7 @@
 === Newsletter ===
 Tags: newsletter, email marketing, welcome email, signup forms, contact, lead generation, marketing automation
-Tested up to: 5.8.1
-Stable tag: 7.3.1
+Tested up to: 5.8.2
+Stable tag: 7.3.2
 Contributors: satollo,webagile,michael-travan
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -117,6 +117,14 @@ Thank you, The Newsletter Team
 3. The Reports extension
 
 == Changelog ==
+
+= 7.3.2 =
+
+* Fixed the remote ip retrieval and clean up
+* Fixed header link to status page
+* Fixed database error with too long IPs
+* Fixed the subscription of cancelled addresses
+* Fixed sender and name customization
 
 = 7.3.1 =
 

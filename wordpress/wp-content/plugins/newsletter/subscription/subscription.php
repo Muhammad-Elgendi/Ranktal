@@ -262,7 +262,6 @@ class NewsletterSubscription extends NewsletterModule {
         $this->save_options($profile_options, 'profile');
         $this->save_options($lists_options, 'lists');
 
-
         $default_options = $this->get_default_options();
 
         if (empty($this->options['error_text'])) {
@@ -542,21 +541,30 @@ class NewsletterSubscription extends NewsletterModule {
 
             // We cannot communicate with bounced addresses, there is no reason to proceed
             // TODO: Evaluate if the bounce status is very old, possible reset it
-            if ($user->status == TNP_User::STATUS_BOUNCED) {
+            if ($user->status == TNP_User::STATUS_BOUNCED || $user->status == TNP_User::STATUS_COMPLAINED) {
                 return new WP_Error('bounced', 'Subscriber present and blocked');
             }
+            
+            if ($user->status == TNP_User::STATUS_UNSUBSCRIBED) {
+                // Special behavior?
+            }
 
-            // If the existing subscriber esists and is already confirmed, park the data until the new subscription is confirmed itself
-            if ($user->status == TNP_User::STATUS_CONFIRMED && $subscription->optin == 'double') {
+            if ($subscription->optin == 'single') {
+                $user->status = TNP_User::STATUS_CONFIRMED;
+            } else {
+                if ($user->status == TNP_User::STATUS_CONFIRMED) {
 
-                set_transient('newsletter_subscription_' . $user->id, $subscription->data, 3600 * 48);
+                    set_transient('newsletter_subscription_' . $user->id, $subscription->data, 3600 * 48);
 
-                // This status is *not* stored it indicate a temporary status to show the correct messages
-                $user->status = TNP_User::STATUS_NOT_CONFIRMED;
+                    // This status is *not* stored it indicate a temporary status to show the correct messages
+                    $user->status = TNP_User::STATUS_NOT_CONFIRMED;
 
-                $this->send_message('confirmation', $user);
+                    $this->send_message('confirmation', $user);
 
-                return $user;
+                    return $user;
+                } else {
+                    $user->status = TNP_User::STATUS_NOT_CONFIRMED;
+                }
             }
 
             // Can be updated on the fly?
@@ -572,6 +580,8 @@ class NewsletterSubscription extends NewsletterModule {
             $user->status = $subscription->optin == 'single' ? TNP_User::STATUS_CONFIRMED : TNP_User::STATUS_NOT_CONFIRMED;
             $user->updated = time();
         }
+        
+        $user->ip = $this->process_ip($user->ip);
 
         $user = apply_filters('newsletter_user_subscribe', $user);
 
@@ -644,7 +654,6 @@ class NewsletterSubscription extends NewsletterModule {
 
         $user = $this->get_user($email);
 
-
         if ($user != null) {
             // Email already registered in our database
             $this->logger->info('Subscription of an address with status ' . $user->status);
@@ -691,7 +700,6 @@ class NewsletterSubscription extends NewsletterModule {
         }
 
         $user = $this->update_user_from_request($user);
-
 
         $user['token'] = $this->get_token();
         $ip = $this->process_ip($ip);
@@ -1318,10 +1326,10 @@ class NewsletterSubscription extends NewsletterModule {
     function shortcode_newsletter_field($attrs, $content = '') {
         // Counter to create unique ID for checkbox and labels
         static $idx = 0;
-        
+
         $idx++;
         $attrs['id'] = 'tnp-' . $idx;
-            
+
         $this->setup_form_options();
         $language = $this->get_current_language();
 
@@ -1334,7 +1342,7 @@ class NewsletterSubscription extends NewsletterModule {
 
             $buffer .= $this->_shortcode_label('email', $attrs);
 
-            $buffer .= '<input class="tnp-email" type="email" name="ne" id="'. esc_attr($attrs['id']) . '" value=""';
+            $buffer .= '<input class="tnp-email" type="email" name="ne" id="' . esc_attr($attrs['id']) . '" value=""';
             if (isset($attrs['placeholder'])) {
                 $buffer .= ' placeholder="' . esc_attr($attrs['placeholder']) . '"';
             }
@@ -1355,7 +1363,7 @@ class NewsletterSubscription extends NewsletterModule {
             $buffer .= '<div class="tnp-field tnp-field-firstname">';
             $buffer .= $this->_shortcode_label('name', $attrs);
 
-            $buffer .= '<input class="tnp-name" type="text" name="nn" id="'. esc_attr($attrs['id']) . '" value=""';
+            $buffer .= '<input class="tnp-name" type="text" name="nn" id="' . esc_attr($attrs['id']) . '" value=""';
             if (isset($attrs['placeholder'])) {
                 $buffer .= ' placeholder="' . esc_attr($attrs['placeholder']) . '"';
             }
@@ -1371,7 +1379,7 @@ class NewsletterSubscription extends NewsletterModule {
             $buffer .= '<div class="tnp-field tnp-field-surname">';
             $buffer .= $this->_shortcode_label('surname', $attrs);
 
-            $buffer .= '<input class="tnp-surname" type="text" name="ns" id="'. esc_attr($attrs['id']) . '" value=""';
+            $buffer .= '<input class="tnp-surname" type="text" name="ns" id="' . esc_attr($attrs['id']) . '" value=""';
             if (isset($attrs['placeholder'])) {
                 $buffer .= ' placeholder="' . esc_attr($attrs['placeholder']) . '"';
             }
@@ -1645,7 +1653,7 @@ class NewsletterSubscription extends NewsletterModule {
         if (isset($options_profile['sex_status']) && $options_profile['sex_status'] == 2) {
             $buffer .= $this->shortcode_newsletter_field(['name' => 'gender']);
         }
-        
+
         // Extra profile fields
         for ($i = 1; $i <= NEWSLETTER_PROFILE_MAX; $i++) {
             // Not for subscription form
@@ -1670,7 +1678,7 @@ class NewsletterSubscription extends NewsletterModule {
             $buffer .= $this->shortcode_newsletter_field(['name' => 'lists']);
         }
 
-        
+
 
         // Deprecated
         $extra = apply_filters('newsletter_subscription_extra', array());
@@ -1784,7 +1792,6 @@ class NewsletterSubscription extends NewsletterModule {
             'button_radius' => '', 'placeholder' => $this->form_options['email']), $attrs);
 
         $form = '';
-
 
         $form .= '<div class="tnp tnp-subscription-minimal ' . $attrs['class'] . '">';
         $form .= '<form action="' . esc_attr($this->build_action_url('s')) . '" method="post">';
